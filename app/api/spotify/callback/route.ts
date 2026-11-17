@@ -20,9 +20,9 @@ export async function GET(req: Request) {
 
   try {
     const refresh = await exchangeCode(url.searchParams.get("code") ?? "", `${url.origin}/api/spotify/callback`);
-    if (storageMode === "redis") return page("Spotify connected ✓", "<p>Saved. The ♪ widget in the taskbar will pick it up within a minute.</p>");
+    if (storageMode === "redis") return page("Spotify connected", "<p>Saved. The now-playing widget in the taskbar will pick it up within a minute.</p>");
     // no Redis (local dev): show the token once so it can go into .env.local
-    return page("Spotify connected ✓", `<p>No Redis configured, so add this to <code>.env.local</code> as <code>SPOTIFY_REFRESH_TOKEN</code>:</p><pre style="white-space:pre-wrap;word-break:break-all;background:#000;padding:12px">${refresh}</pre>`);
+    return page("Spotify connected", `<p>No Redis configured, so add this to <code>.env.local</code> as <code>SPOTIFY_REFRESH_TOKEN</code>:</p><pre style="white-space:pre-wrap;word-break:break-all;background:#000;padding:12px">${refresh}</pre>`);
   } catch (e) {
     return page("Spotify: something went wrong", `<p>${(e as Error).message}</p><p>Check that the redirect URI in your Spotify app is exactly <code>${url.origin}/api/spotify/callback</code>.</p>`, 500);
   }

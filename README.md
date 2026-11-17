@@ -6,7 +6,7 @@
 
 Boot an isometric pixel-art computer, drag floppy disks into the drive, and explore my work through draggable windows and a real terminal, with a bear who wanders the taskbar.
 
-**[▶ Live site](https://YOUR-DOMAIN)** · [Résumé](public/resume.pdf) · [LinkedIn](https://linkedin.com/in/daniel-bantay) · [Email](mailto:dj.bantay@berkeley.edu)
+**[Live site →](https://YOUR-DOMAIN)** · [Résumé](public/resume.pdf) · [LinkedIn](https://linkedin.com/in/daniel-bantay) · [Email](mailto:dj.bantay@berkeley.edu)
 
 <img src="docs/screenshots/intro.webp" alt="The DB-1 isometric pixel-art computer intro, with floppy disks to drag into the drive" width="860">
 

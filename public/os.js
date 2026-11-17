@@ -240,14 +240,14 @@ function renderProjects(b){
   b.innerHTML = `<div class="h">projects/</div><div class="sub">${DATA.projects.length} items · double-click or tap to open</div><div class="grid"></div>`;
   const g=b.querySelector(".grid");
   DATA.projects.forEach((p,i)=>{
-    const c=el("button",{class:"card"},`<div class="hex">${toHex(0x1000+i*0x100)}</div><div class="n">${esc(p.name)}</div>${p.award?`<div style="color:#7be08a;font-size:11px">★ ${esc(p.award)}</div>`:""}<div class="d">${esc(p.blurb)}</div>${p.tech.slice(0,4).map(t=>`<span class="tag">${esc(t)}</span>`).join("")}`);
+    const c=el("button",{class:"card"},`<div class="hex">${toHex(0x1000+i*0x100)}</div><div class="n">${esc(p.name)}</div>${p.award?`<div style="color:#7be08a;font-size:11px">* ${esc(p.award)}</div>`:""}<div class="d">${esc(p.blurb)}</div>${p.tech.slice(0,4).map(t=>`<span class="tag">${esc(t)}</span>`).join("")}`);
     c.onclick=()=>openProject(i); g.appendChild(c);
   });
 }
 function openProject(i){
   const p=DATA.projects[i]; if(!p) return false;
   openWin("proj"+i,{app:{title:p.name.toLowerCase().replace(/\s+/g,"_")+".md",w:520,h:420,render(b){
-    b.innerHTML=`<div class="sub">project ${String(i+1).padStart(2,"0")} · ${toHex(0x1000+i*0x100)}</div><div class="h" style="margin:4px 0 4px">${esc(p.name)}</div>${p.award?`<div style="color:#7be08a;font-size:12px;margin-bottom:8px">★ ${esc(p.award)}</div>`:""}
+    b.innerHTML=`<div class="sub">project ${String(i+1).padStart(2,"0")} · ${toHex(0x1000+i*0x100)}</div><div class="h" style="margin:4px 0 4px">${esc(p.name)}</div>${p.award?`<div style="color:#7be08a;font-size:12px;margin-bottom:8px">* ${esc(p.award)}</div>`:""}
     <p>${esc(p.blurb)}</p><ul style="margin:12px 0 12px 18px">${p.details.map(d=>`<li>${esc(d)}</li>`).join("")}</ul>
     <p>${p.tech.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</p>
     <p style="margin-top:12px"><a class="btn" href="/projects/${esc(p.slug)}">read write-up →</a><a class="btn" href="${esc(p.repo||DATA.links.github)}" target="_blank" rel="noopener">${p.repo?"source":"github"} ↗</a>${p.demo?`<a class="btn" href="${esc(p.demo)}" target="_blank" rel="noopener">live demo ↗</a>`:""}</p>`; }}});
@@ -262,12 +262,12 @@ function renderSkills(b){
   b.innerHTML = `<div class="h">skills.exe</div><div class="sub" style="margin-bottom:10px">running diagnostics… <span class="scan" style="color:#7be08a"></span></div>` +
     cats.map(([c,list],i)=>`<div class="skc" style="opacity:0;transition:opacity .3s ${i*0.18}s"><div class="sub" style="color:var(--gold);margin-top:12px">${toHex(0x10*(i+1))} · ${esc(c)}</div><div>${list.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div></div>`).join("");
   setTimeout(()=>{ b.querySelectorAll(".skc").forEach(x=>x.style.opacity=1); },60);
-  setTimeout(()=>{ const s=b.querySelector(".scan"); if(s) s.textContent=`${cats.reduce((n,[,l])=>n+l.length,0)} modules loaded ✓`; },60+cats.length*180);
+  setTimeout(()=>{ const s=b.querySelector(".scan"); if(s) s.textContent=`${cats.reduce((n,[,l])=>n+l.length,0)} modules loaded [OK]`; },60+cats.length*180);
 }
 function renderContact(b){
   const L=DATA.links;
   b.innerHTML = `<div class="h">contact.lnk</div><div class="sub" style="margin-bottom:12px">open a secure channel</div>
-    <p>✉ email: <a href="mailto:${esc(L.email)}">${esc(L.email)}</a> <button class="btn" style="font-size:16px;padding:0 8px" id="cp">copy</button></p>
+    <p>@ email: <a href="mailto:${esc(L.email)}">${esc(L.email)}</a> <button class="btn" style="font-size:16px;padding:0 8px" id="cp">copy</button></p>
     <p>in linkedin: <a href="${esc(L.linkedin)}" target="_blank" rel="noopener">${esc(L.linkedin.replace(/^https?:\/\/(www\.)?/,""))}</a></p>
     <p>⌥ github: <a href="${esc(L.github)}" target="_blank" rel="noopener">${esc(L.github.replace(/^https?:\/\//,""))}</a></p>
     <p>▤ résumé: <a href="${esc(L.resume)}" target="_blank" rel="noopener">${esc(L.resume)}</a></p>
@@ -285,7 +285,7 @@ function renderVault(b){
   <div id="vout" style="margin-top:12px;font-family:var(--pixel);font-size:20px"></div>`;
   const f=b.querySelector("form"), o=b.querySelector("#vout");
   f.onsubmit=e=>{ e.preventDefault(); const v=f.querySelector("input").value.trim().toLowerCase().replace(/[^a-z]/g,"");
-    if(v==="gobears"){ o.innerHTML=`<span style="color:#7be08a">DECRYPTED ✓</span><br>You found the vault. Thanks for exploring — let's talk: <a href="mailto:${esc(DATA.links.email)}">${esc(DATA.links.email)}</a>`; bearSay("GO BEARS!! 🐻",3000); }
+    if(v==="gobears"){ o.innerHTML=`<span style="color:#7be08a">DECRYPTED [OK]</span><br>You found the vault. Thanks for exploring — let's talk: <a href="mailto:${esc(DATA.links.email)}">${esc(DATA.links.email)}</a>`; bearSay("GO BEARS!!",3000); }
     else { o.innerHTML=`<span style="color:#ff7a6b">ACCESS DENIED</span> — sha256 mismatch`; f.querySelector("input").value=""; } };
 }
 function renderGuestbook(b){
@@ -304,7 +304,7 @@ function renderHoney(b){
   |  |NEY|  |     status: sticky
    \\ '---' /
     '-...-'</pre>
-  <p style="margin-top:12px">You poked the bear ten times, so he left.<br>He did leave you this, though. 🍯</p>
+  <p style="margin-top:12px">You poked the bear ten times, so he left.<br>He did leave you this, though.</p>
   <p style="margin-top:10px;color:var(--dim)">(He might come back if you type <span style="color:var(--gold)">apologize</span> in the terminal.)</p>`;
 }
 function wireOpeners(b){ b.querySelectorAll("[data-open]").forEach(x=>x.onclick=()=>openWin(x.dataset.open)); }
@@ -353,7 +353,7 @@ function renderTerminal(b){
     sign:async a=>{ if(!remote) return print(`sign: permission denied. guests can only sign from a remote session.\nhint: <span class="p">ssh daniel@berkeley.edu</span>`,"e");
       const msg=a.join(" ").trim(); if(!msg) return print("usage: sign your message here (max 140 chars)","e");
       inp.disabled=true; print("writing to guestbook …","m"); const j=await api("/api/guestbook",{name:visitor,message:msg}); inp.disabled=false; inp.focus();
-      if(j.error) return print(j.error,"e"); print(`signed ✓ thanks, ${esc(visitor)}! type <span class="p">guestbook</span> to see it.`,"ok"); },
+      if(j.error) return print(j.error,"e"); print(`signed. thanks, ${esc(visitor)}! type <span class="p">guestbook</span> to see it.`,"ok"); },
     ask:async a=>{ const q=a.join(" ").trim();
       if(!q) return print(`usage: ask &lt;question&gt;\n  e.g. <span class="p">ask what did Daniel build at the hackathon?</span>\n       <span class="p">ask what languages does he use?</span>`,"m");
       inp.disabled=true; const line=el("div",{class:"spin"},"thinking |"); out.appendChild(line); b.scrollTop=b.scrollHeight;
@@ -365,7 +365,7 @@ function renderTerminal(b){
       askHist.push({q,a:txt}); if(askHist.length>3) askHist.shift(); inp.disabled=false; inp.focus(); },
     mail:()=>{ mail={step:0,data:{},body:[]}; mode="mail";
       print(`<span class="p">mail</span> to ${esc(DATA.links.email)}. press ctrl+c to cancel.`); setPrompt(`<span class="c">your name:</span>`); },
-    weather:()=>print(`📍 Berkeley, CA\n☁  foggy, 58°F. bring a hoodie.`),
+    weather:()=>print(`Berkeley, CA\nfoggy, 58°F. bring a hoodie.`),
     git:a=>{ const sub=a.join(" ");
       if(/^log/.test(sub) && !/--career/.test(sub)){ return (async()=>{
           print(`fetching github.com/${esc(DATA.handle)} …`,"m"); inp.disabled=true;
@@ -376,7 +376,7 @@ function renderTerminal(b){
           } else { print("couldn't reach GitHub, showing the career log instead:","m"); CMDS.git(["log","--career"]); }
         })(); }
       if(/^log/.test(sub)){ const h=t=>{ let x=0x811c9dc5; for(const c of t){ x^=c.charCodeAt(0); x=Math.imul(x,16777619)>>>0; } return x.toString(16).padStart(8,"0").slice(0,7); };
-        const commits=[["(HEAD -> main, origin/main)","chore: hide easter eggs in portfolio 🐻"]]
+        const commits=[["(HEAD -> main, origin/main)","chore: hide easter eggs in portfolio"]]
           .concat(DATA.experience.map(x=>["",`feat(${x.org.toLowerCase().replace(/[^a-z0-9]+/g,"-")}): ${x.role} (${x.when})`]))
           .concat(DATA.projects.map(p=>[p.award?"(tag: "+p.award.split("·")[0].trim().toLowerCase()+")":"",`feat(projects): ship ${p.name}`]))
           .concat([["","init: start CS @ UC Berkeley"]]);
@@ -396,7 +396,7 @@ function renderTerminal(b){
       print("One more thing. What's your name?","c"); mode="ssh-name"; setPrompt(`<span class="c">name:</span>`);
       inp.disabled=false; inp.focus(); },
     apologize:()=>{ if(!bearGone) return print("apologize for what? the bear is fine.","m");
-      bearGone=false; bearClicks=0; print("the bear accepts your apology. 🐻 (he's still a little grumpy)","ok"); setTimeout(()=>walkBear(),400); },
+      bearGone=false; bearClicks=0; print("the bear accepts your apology. (he's still a little grumpy)","ok"); setTimeout(()=>walkBear(),400); },
     whoami:()=>remote? print(`<span class="p">${esc(visitor)}</span>, logged in to daniel@berkeley.edu from ${esc(from)}`) : print(`<span class="p">${esc(DATA.name)}</span> — ${esc(DATA.title)}\n${esc(DATA.bio)}`),
     about:()=>{ CMDS.whoami(); openWin("about"); },
     projects:()=>{ DATA.projects.forEach((p,i)=>print(`  [${i+1}] <span class="p">${esc(p.name)}</span> — ${esc(p.blurb)}  <span class="m">(${p.tech.map(esc).join(", ")})</span>`)); print(`type <span class="p">project 1</span> to open one.`,"m"); openWin("projects"); },
@@ -415,20 +415,20 @@ function renderTerminal(b){
     echo:a=>print(esc(a.join(" "))),
     binary:a=>print(toBin(a.join(" ")||"hello")),
     matrix:()=>print(rain.toggle()?"rain: on":"rain: off","ok"),
-    bear:()=>{ if(bearGone) return print("the bear is sulking somewhere off-screen. 🍯 maybe try: apologize","m"); print(`<pre style="color:var(--gold);line-height:1">${BEAR_A.map(r=>r.replace(/g/g,"█").replace(/k/g," ").replace(/\./g," ")).join("\n")}</pre>`); walkBear(true); },
+    bear:()=>{ if(bearGone) return print("the bear is sulking somewhere off-screen. maybe try: apologize","m"); print(`<pre style="color:var(--gold);line-height:1">${BEAR_A.map(r=>r.replace(/g/g,"█").replace(/k/g," ").replace(/\./g," ")).join("\n")}</pre>`); walkBear(true); },
     sudo:()=>print(`[sudo] password for guest: \n<span class="e">guest is not in the sudoers file. This incident will be reported.</span>`),
     rm:()=>print("rm: refusing to remove '/' — this portfolio is load-bearing.","e"),
     hack:()=>hack(print),
     exit:()=>{ if(remote){ remote=false; user="guest"; host="daniel-os"; setPrompt(); print(`logout\nConnection to berkeley.edu closed.`,"m"); } else closeWin("terminal"); },
-    ping:()=>print("PONG — 0.42 ms (latency to Berkeley ✓)","ok"),
+    ping:()=>print("PONG — 0.42 ms (latency to Berkeley: ok)","ok"),
   };
   CMDS.ll=CMDS.ls; CMDS.dir=CMDS.ls; CMDS.cls=CMDS.clear; CMDS["?"]=CMDS.help; CMDS.sorry=CMDS.apologize; CMDS.music=CMDS.np; CMDS.spotify=CMDS.np;
   CMDS.reboot=()=>{ print("Broadcast message: the system is going down for reboot NOW!","e"); setTimeout(reboot,700); };
   CMDS.restart=CMDS.reboot;
   CMDS.shutdown=()=>{ print("Broadcast message: the system is going down for power-off NOW!","e"); setTimeout(shutdown,700); };
-  CMDS.poweroff=CMDS.shutdown; CMDS.halt=CMDS.shutdown; CMDS.come=()=>{ if(bearGone) return print("he's not listening. (try: apologize)","m"); B.called=true; if(B.state==="off") B.x=-160; bearGoTo(innerWidth/2-60); print("🐾 here, bear!","ok"); }; CMDS.logout=CMDS.exit;
+  CMDS.poweroff=CMDS.shutdown; CMDS.halt=CMDS.shutdown; CMDS.come=()=>{ if(bearGone) return print("he's not listening. (try: apologize)","m"); B.called=true; if(B.state==="off") B.x=-160; bearGoTo(innerWidth/2-60); print("here, bear!","ok"); }; CMDS.logout=CMDS.exit;
   CMDS.screensaver=()=>{ print("starting screensaver…","m"); setTimeout(startSaver,300); };
-  CMDS.chime=()=>{ if(!Sound.on) return print("sound is off. turn it on with the ♪ button in the taskbar.","m"); campanile(new Date().getHours()%12||12); print("🔔 the Campanile chimes.","ok"); };
+  CMDS.chime=()=>{ if(!Sound.on) return print("sound is off. turn it on with the ♪ button in the taskbar.","m"); campanile(new Date().getHours()%12||12); print("the Campanile chimes.","ok"); };
   inp.addEventListener("keydown",async e=>{
     if(is8() && e.key.length===1) Sound.tone(1400,.02,"square",.02);
     if(e.key==="c" && e.ctrlKey && mode){ e.preventDefault(); print("^C","m"); mode=null; mail=null; setPrompt(); return; }
@@ -443,7 +443,7 @@ function renderTerminal(b){
       if(raw.trim()==="."){ const data={...mail.data,message:mail.body.join("\n")}; mode=null; mail=null; setPrompt();
         if(!data.message.trim()) return print("empty message, not sent.","e");
         inp.disabled=true; print("sending …","m");
-        api("/api/mail",data).then(j=>{ inp.disabled=false; inp.focus(); j.error? print(j.error,"e") : print("message sent ✓ Daniel will get back to you soon.","ok"); });
+        api("/api/mail",data).then(j=>{ inp.disabled=false; inp.focus(); j.error? print(j.error,"e") : print("message sent. Daniel will get back to you soon.","ok"); });
         return; }
       mail.body.push(raw); print(`<span class="c">&gt;</span> ${esc(raw)}`); return; }
     if(e.key==="Enter" && mode==="ssh-name"){ const raw=inp.value.trim(); inp.value=""; mode=null;
@@ -451,7 +451,7 @@ function renderTerminal(b){
       visitor=(raw.replace(/[^\p{L}\p{N} .'-]/gu,"").slice(0,24).trim())||"friend";
       print(`<span class="c">name:</span> ${esc(visitor)}`);
       remote=true; user=visitor.toLowerCase().replace(/\s+/g,"-"); host="berkeley"; setPrompt();
-      print(`\n<span class="p">Welcome to daniel@berkeley.edu, ${esc(visitor)}!</span> 🐻\nLast login: ${new Date().toDateString()} from ${esc(from)}\n\n * You're in Daniel's remote shell. Most visitors never type ssh on a portfolio.\n * Every normal command still works here. Try <span class="p">git log</span>.\n * Sign the guestbook: <span class="p">sign your message</span>\n * Want to talk? Type <span class="p">contact</span>.\n\nType <span class="p">exit</span> to log out.`);
+      print(`\n<span class="p">Welcome to daniel@berkeley.edu, ${esc(visitor)}!</span>\nLast login: ${new Date().toDateString()} from ${esc(from)}\n\n * You're in Daniel's remote shell. Most visitors never type ssh on a portfolio.\n * Every normal command still works here. Try <span class="p">git log</span>.\n * Sign the guestbook: <span class="p">sign your message</span>\n * Want to talk? Type <span class="p">contact</span>.\n\nType <span class="p">exit</span> to log out.`);
       if(is8()) Sound.seq([523,659,784],.08); return; }
     if(e.key==="Enter"){ busy(180); const raw=inp.value.trim(); inp.value=""; print(`<span class="p">${prompt()}</span> ${esc(raw)}`);
       if(!raw) return; hist.push(raw); hi=hist.length; const [c,...a]=raw.split(/\s+/); const f=CMDS[c.toLowerCase()];
@@ -470,14 +470,14 @@ async function hack(print){
   let bar=""; const line=el("div",{class:"ok"}); print(""); const outs=document.querySelectorAll(".term .out"); outs[outs.length-1].appendChild(line);
   for(let i=0;i<=20;i++){ bar="█".repeat(i)+"░".repeat(20-i); line.textContent=`[${bar}] ${i*5}%`; await sleep(60); }
   rain.boost(1);
-  print(`<span class="ok">ACCESS GRANTED.</span> Just kidding — this is a portfolio, not an exploit. 😄\nBut if you liked that, type <span class="p">contact</span>.`);
+  print(`<span class="ok">ACCESS GRANTED.</span> Just kidding — this is a portfolio, not an exploit.\nBut if you liked that, type <span class="p">contact</span>.`);
   const ov=$("#overlay"); ov.innerHTML=`<div class="big glow">ACCESS GRANTED</div><div>${toBin("HIRE DANIEL")}</div>`; ov.style.display="flex"; setTimeout(()=>ov.style.display="none",1600);
 }
 
 /* ---------- bear: walks, wanders, follows clicks, can be dragged ---------- */
 const bearEl=$("#bear"), bubble=$("#bubble");
 bearEl.innerHTML=OUTLINE_BEAR();
-const quips=["rawr. (that means hi)","Go Bears! 🐻","try the terminal →","psst… vault.enc has a password","01000111 01001111","I guard the projects folder.","psst… ↑↑↓↓←→←→BA","have you tried ssh?","click the desktop, I'll come over","you can pick me up, you know"];
+const quips=["rawr. (that means hi)","Go Bears!","try the terminal →","psst… vault.enc has a password","01000111 01001111","I guard the projects folder.","psst… ↑↑↓↓←→←→BA","have you tried ssh?","click the desktop, I'll come over","you can pick me up, you know"];
 let bearClicks=0, bearGone=false, bearRun=false;
 const B={x:-160,y:0,vy:0,dir:1,target:0,state:"off",idleAt:0,idleFor:9000,hover:false,said:0,W:120,H:72,called:false};
 function bearSay(t,ms=2200){ if(!t){ bubble.style.display="none"; return; } bubble.textContent=t; bubble.style.display="block"; B.said=Date.now()+ms; placeBubble(); }
@@ -488,7 +488,7 @@ function bearArrive(){
   if(bearRun){ bearRun=false; bearGone=true; B.state="off"; addHoney(); return; }
   if(B.x<-120||B.x>innerWidth+10){ B.state="off"; return; }
   B.state="idle"; B.idleAt=Date.now(); B.idleFor=7000+Math.random()*9000;
-  if(B.called){ B.called=false; bearSay(["you called?","here! 🐾","*sniff sniff*","what's up?"][Math.random()*4|0]); }
+  if(B.called){ B.called=false; bearSay(["you called?","here!","*sniff sniff*","what's up?"][Math.random()*4|0]); }
   else if(Math.random()<.6) bearSay(quips[Math.random()*quips.length|0]);
 }
 function bearTick(){
@@ -526,7 +526,7 @@ bearEl.addEventListener("pointerup",()=>{
   if(!dragInfo) return; const d=dragInfo; dragInfo=null;
   if(d.moved){ B.state="fall"; B.vy=0; return; }
   bearClicks++; if(is8()) Sound.tone(220+bearClicks*40,.08);
-  if(bearClicks>=10){ bearSay("THAT'S IT. I'M OUT. 😤",1600); Sound.seq([392,330,262,196],.12); bearRun=true; bearGoTo(innerWidth+60,true); return; }
+  if(bearClicks>=10){ bearSay("THAT'S IT. I'M OUT.",1600); Sound.seq([392,330,262,196],.12); bearRun=true; bearGoTo(innerWidth+60,true); return; }
   bearSay(ANNOY[bearClicks]||quips[Math.random()*quips.length|0]);
 });
 bearEl.addEventListener("keydown",e=>{ if(e.key==="Enter") bearSay("rawr!"); });
@@ -630,7 +630,7 @@ function saverTick(){
   if(sb.x<=0||sb.x>=W){ sb.vx*=-1; sb.x=Math.max(0,Math.min(W,sb.x)); hx=true; }
   if(sb.y<=0||sb.y>=H){ sb.vy*=-1; sb.y=Math.max(0,Math.min(H,sb.y)); hy=true; }
   if(hx||hy){ sb.c=(sb.c+1)%SAVER_COLORS.length; sBear.style.color=SAVER_COLORS[sb.c]; Sound.tone(hx&&hy?1047:392,.06,"square",.03); }
-  if(hx&&hy){ const ov=$("#saverHint"); ov.textContent="★ CORNER HIT ★"; setTimeout(()=>ov.textContent="move the mouse or press any key to wake",2000); }
+  if(hx&&hy){ const ov=$("#saverHint"); ov.textContent="* CORNER HIT *"; setTimeout(()=>ov.textContent="move the mouse or press any key to wake",2000); }
   sBear.style.transform=`scaleX(${sb.vx<0?1:-1})`;
   sBear.style.left=sb.x+"px"; sBear.style.top=sb.y+"px"; requestAnimationFrame(saverTick);
 }
@@ -686,7 +686,7 @@ function busy(ms=150){ const b=$("#busy"); if(!b) return; b.classList.add("on");
 /* ================= INTRO: DB-1 computer ================= */
 let pendingOpen=null, desktopReady=false;
 function openFromDisk(o){
-  if(o==="bear"){ if(bearGone){ bearGone=false; bearClicks=0; } B.called=true; if(B.state==="off") B.x=-160; bearGoTo(innerWidth/2-60); setTimeout(()=>bearSay("you found my disk! 🐻",2600),1600); return; }
+  if(o==="bear"){ if(bearGone){ bearGone=false; bearClicks=0; } B.called=true; if(B.state==="off") B.x=-160; bearGoTo(innerWidth/2-60); setTimeout(()=>bearSay("you found my disk!",2600),1600); return; }
   openWin(o);
 }
 function sfx(fn){ const w=Sound.on; Sound.on=true; try{ fn(); }finally{ Sound.on=w; } }
@@ -869,7 +869,7 @@ const Intro=(()=>{
     sfx(()=>{ [0,.09,.18,.32,.41,.55].forEach((t,i)=>Sound.tone(i%2?160:220,.035,"square",.05,t)); Sound.tone(70,.5,"sawtooth",.02,.1); });
     for(let i=0;i<10;i++){ blink(dled,70); await sleep(90); }
     const name=d.dataset.open.toUpperCase();
-    line(PROMPT+"mount /dev/fd0"); line(`mounted <span class="c">${name}.DSK</span> at /Volumes/${name} <span class="ok">✓</span>`);
+    line(PROMPT+"mount /dev/fd0"); line(`mounted <span class="c">${name}.DSK</span> at /Volumes/${name} <span class="ok">[OK]</span>`);
     pendingOpen=d.dataset.open; powering=false; powerOn();
   }
 
@@ -897,7 +897,7 @@ const Intro=(()=>{
     root.style.display="block"; root.style.opacity="1"; active=true; fit();
     out.querySelectorAll("div:not(#icur)").forEach(d=>d.remove());
     if(opts.reboot){ line("Broadcast message from daniel@db-1:","m"); line("The system is going down for reboot NOW!","e"); line("[  OK  ] Stopped bear.service","ok"); line("[  OK  ] Unmounted /Volumes/*","ok"); line("press <span class='p'>POWER</span> or run <span class='p'>./power_on.sh</span> to start again","m"); }
-    else { line("Broadcast message from daniel@db-1:","m"); line("The system is going down for power-off NOW!","e"); line("logout","m"); line("Connection closed. Thanks for visiting 🐻","ok"); }
+    else { line("Broadcast message from daniel@db-1:","m"); line("The system is going down for power-off NOW!","e"); line("logout","m"); line("Connection closed. Thanks for visiting.","ok"); }
     cur.innerHTML="";
     zoom.classList.remove("zooming"); zoom.style.transform="";
     const r=scr.getBoundingClientRect(), s=Math.max(innerWidth/r.width,innerHeight/r.height)*1.06;

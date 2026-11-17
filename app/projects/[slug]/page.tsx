@@ -41,7 +41,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         <div className="doc-body">
           <div className="doc-kicker">project {String(i + 1).padStart(2, "0")} · 0x{(0x1000 + i * 0x100).toString(16).toUpperCase()}</div>
           <h1>{p.name}</h1>
-          {p.award && <div className="doc-award">★ {p.award}</div>}
+          {p.award && <div className="doc-award">* {p.award}</div>}
           <p className="doc-lede">{p.blurb}</p>
           <p>{p.tech.map((t) => <span className="tag" key={t}>{t}</span>)}</p>
           <Writeup />
