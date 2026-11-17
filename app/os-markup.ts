@@ -48,7 +48,7 @@ export const OS_MARKUP = `
   <footer id="taskbar">
     <button id="start" aria-haspopup="true">▣ START</button>
     <div id="tasks"></div>
-    <div id="tray"><button id="pwr" title="Restart (back to the computer)" aria-label="Restart">⏻</button><button id="snd" aria-pressed="false" title="Sound (enables Campanile chimes)">♪ off</button><span class="bits" id="trayBits">0000</span><span id="hits" title="visitor counter" aria-label="visitor counter"></span><span id="clock">--:--</span></div>
+    <div id="tray"><button id="pwr" title="Restart (back to the computer)" aria-label="Restart">⏻</button><button id="snd" aria-pressed="false" title="Sound (enables Campanile chimes)">♪ off</button><span class="bits" id="trayBits">0000</span><a id="np" target="_blank" rel="noopener" hidden></a><span id="hits" title="visitor counter" aria-label="visitor counter"></span><span id="clock">--:--</span></div>
   </footer>
 
   <div id="overlay" aria-live="assertive"></div>

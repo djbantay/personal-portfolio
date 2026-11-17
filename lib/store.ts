@@ -69,3 +69,14 @@ export async function zremWhere(key: string, pred: (member: string) => boolean):
   mem.z.set(key, keep);
   return list.length - keep.length;
 }
+
+/** Plain string get/set (used to keep Spotify's refresh token current). */
+const memStr = new Map<string, string>();
+export async function getString(key: string): Promise<string | null> {
+  if (redis) return (await redis.get<string>(key)) ?? null;
+  return memStr.get(key) ?? null;
+}
+export async function setString(key: string, value: string): Promise<void> {
+  if (redis) { await redis.set(key, value); return; }
+  memStr.set(key, value);
+}

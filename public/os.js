@@ -314,7 +314,7 @@ function renderTerminal(b){
   b.classList.add("term");
   b.innerHTML=`<div class="out"></div><div class="line"><span class="p pr">guest@daniel-os:~$</span><input aria-label="terminal input" autocomplete="off" autocapitalize="off" spellcheck="false"></div>`;
   const out=b.querySelector(".out"), inp=b.querySelector("input"), prEl=b.querySelector(".pr"); const hist=[]; let hi=0;
-  let user="guest", host="daniel-os", remote=false, mode=null, visitor="", mail=null; const askHist=[];
+  let user="guest", host="daniel-os", remote=false, mode=null, visitor="", mail=null, whereP=null, from="your-browser"; const askHist=[];
   const prompt=()=>`${esc(user)}@${esc(host)}:~$`; const setPrompt=t=>prEl.innerHTML=t??prompt();
   const print=(html,cls="")=>{ out.appendChild(el("div",cls?{class:cls}:{},html)); b.scrollTop=b.scrollHeight; };
   b.addEventListener("click",()=>inp.focus());
@@ -336,9 +336,15 @@ function renderTerminal(b){
   guestbook      read the guestbook
   git log        latest commits on GitHub
   visitors       the hit counter
+  np             what Daniel's listening to
 <span class="p">fun</span>
   hack · matrix · bear · come · binary TEXT · sudo
 <span class="m">↑/↓ history · TAB autocomplete · ctrl+L clear</span>`),
+    np:async()=>{ const j=await api("/api/now-playing");
+      if(j.error||!j.configured) return print("♪ the jukebox is unplugged right now.","m");
+      if(!j.track) return print("♪ nothing on the turntable right now.","m");
+      const t=j.track, link=t.url?`<a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.title)}</a>`:esc(t.title);
+      print(t.playing ? `<span class="ok">♪ now playing:</span> ${link} <span class="m">by</span> ${esc(t.artist)}` : `<span class="m">♪ last played${t.playedAt?" "+esc(ago(t.playedAt)):""}:</span> ${link} <span class="m">by</span> ${esc(t.artist)}`); },
     visitors:()=>api("/api/hits").then(j=>print(j.error?"counter offline.":`you are one of <span class="p">${String(j.count).padStart(6,"0")}</span> visitors. thanks for stopping by!`)),
     guestbook:async()=>{ const j=await api("/api/guestbook"); if(j.error) return print(j.error,"e");
       if(!j.entries.length) print("the guestbook is empty. be the first!","m");
@@ -382,7 +388,7 @@ function renderTerminal(b){
       if(!t) return print("usage: ssh user@host","e");
       if(remote) return print("already connected. type exit to log out first.","e");
       if(!/^daniel@(berkeley\.edu|daniel-os)$/i.test(t)){ await sleep(500); print(`ssh: connect to host ${esc(t.split("@").pop())} port 22: Connection refused`,"e"); return print("hint: ssh daniel@berkeley.edu","m"); }
-      inp.disabled=true; const fp=Array.from({length:43},()=>"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[Math.random()*64|0]).join("");
+      whereP=api("/api/whereami"); inp.disabled=true; const fp=Array.from({length:43},()=>"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[Math.random()*64|0]).join("");
       print("Connecting to berkeley.edu port 22 ...","m"); await sleep(600);
       print(`The authenticity of host 'berkeley.edu' can't be established.\nED25519 key fingerprint is SHA256:${fp}.\nAre you sure you want to continue connecting (yes/no)? yes`); await sleep(800);
       print("Warning: Permanently added 'berkeley.edu' (ED25519) to the list of known hosts.","m"); await sleep(500);
@@ -391,7 +397,7 @@ function renderTerminal(b){
       inp.disabled=false; inp.focus(); },
     apologize:()=>{ if(!bearGone) return print("apologize for what? the bear is fine.","m");
       bearGone=false; bearClicks=0; print("the bear accepts your apology. 🐻 (he's still a little grumpy)","ok"); setTimeout(()=>walkBear(),400); },
-    whoami:()=>remote? print(`<span class="p">${esc(visitor)}</span>, logged in to daniel@berkeley.edu`) : print(`<span class="p">${esc(DATA.name)}</span> — ${esc(DATA.title)}\n${esc(DATA.bio)}`),
+    whoami:()=>remote? print(`<span class="p">${esc(visitor)}</span>, logged in to daniel@berkeley.edu from ${esc(from)}`) : print(`<span class="p">${esc(DATA.name)}</span> — ${esc(DATA.title)}\n${esc(DATA.bio)}`),
     about:()=>{ CMDS.whoami(); openWin("about"); },
     projects:()=>{ DATA.projects.forEach((p,i)=>print(`  [${i+1}] <span class="p">${esc(p.name)}</span> — ${esc(p.blurb)}  <span class="m">(${p.tech.map(esc).join(", ")})</span>`)); print(`type <span class="p">project 1</span> to open one.`,"m"); openWin("projects"); },
     project:a=>{ const i=parseInt(a[0])-1; if(!openProject(i)) print(`usage: project 1-${DATA.projects.length}`,"e"); else print(`opening ${esc(DATA.projects[i].name)}…`,"ok"); },
@@ -416,14 +422,14 @@ function renderTerminal(b){
     exit:()=>{ if(remote){ remote=false; user="guest"; host="daniel-os"; setPrompt(); print(`logout\nConnection to berkeley.edu closed.`,"m"); } else closeWin("terminal"); },
     ping:()=>print("PONG — 0.42 ms (latency to Berkeley ✓)","ok"),
   };
-  CMDS.ll=CMDS.ls; CMDS.dir=CMDS.ls; CMDS.cls=CMDS.clear; CMDS["?"]=CMDS.help; CMDS.sorry=CMDS.apologize;
+  CMDS.ll=CMDS.ls; CMDS.dir=CMDS.ls; CMDS.cls=CMDS.clear; CMDS["?"]=CMDS.help; CMDS.sorry=CMDS.apologize; CMDS.music=CMDS.np; CMDS.spotify=CMDS.np;
   CMDS.reboot=()=>{ print("Broadcast message: the system is going down for reboot NOW!","e"); setTimeout(reboot,700); };
   CMDS.restart=CMDS.reboot;
   CMDS.shutdown=()=>{ print("Broadcast message: the system is going down for power-off NOW!","e"); setTimeout(shutdown,700); };
   CMDS.poweroff=CMDS.shutdown; CMDS.halt=CMDS.shutdown; CMDS.come=()=>{ if(bearGone) return print("he's not listening. (try: apologize)","m"); B.called=true; if(B.state==="off") B.x=-160; bearGoTo(innerWidth/2-60); print("🐾 here, bear!","ok"); }; CMDS.logout=CMDS.exit;
   CMDS.screensaver=()=>{ print("starting screensaver…","m"); setTimeout(startSaver,300); };
   CMDS.chime=()=>{ if(!Sound.on) return print("sound is off. turn it on with the ♪ button in the taskbar.","m"); campanile(new Date().getHours()%12||12); print("🔔 the Campanile chimes.","ok"); };
-  inp.addEventListener("keydown",e=>{
+  inp.addEventListener("keydown",async e=>{
     if(is8() && e.key.length===1) Sound.tone(1400,.02,"square",.02);
     if(e.key==="c" && e.ctrlKey && mode){ e.preventDefault(); print("^C","m"); mode=null; mail=null; setPrompt(); return; }
     if(e.key==="Enter" && mode==="mail"){ e.preventDefault(); const raw=inp.value; inp.value="";
@@ -441,10 +447,11 @@ function renderTerminal(b){
         return; }
       mail.body.push(raw); print(`<span class="c">&gt;</span> ${esc(raw)}`); return; }
     if(e.key==="Enter" && mode==="ssh-name"){ const raw=inp.value.trim(); inp.value=""; mode=null;
+      { const w = whereP ? await whereP : {}; from = placeName(w) || "your-browser"; }
       visitor=(raw.replace(/[^\p{L}\p{N} .'-]/gu,"").slice(0,24).trim())||"friend";
       print(`<span class="c">name:</span> ${esc(visitor)}`);
       remote=true; user=visitor.toLowerCase().replace(/\s+/g,"-"); host="berkeley"; setPrompt();
-      print(`\n<span class="p">Welcome to daniel@berkeley.edu, ${esc(visitor)}!</span> 🐻\nLast login: ${new Date().toDateString()} from your-browser\n\n * You're in Daniel's remote shell. Most visitors never type ssh on a portfolio.\n * Every normal command still works here. Try <span class="p">git log</span>.\n * Sign the guestbook: <span class="p">sign your message</span>\n * Want to talk? Type <span class="p">contact</span>.\n\nType <span class="p">exit</span> to log out.`);
+      print(`\n<span class="p">Welcome to daniel@berkeley.edu, ${esc(visitor)}!</span> 🐻\nLast login: ${new Date().toDateString()} from ${esc(from)}\n\n * You're in Daniel's remote shell. Most visitors never type ssh on a portfolio.\n * Every normal command still works here. Try <span class="p">git log</span>.\n * Sign the guestbook: <span class="p">sign your message</span>\n * Want to talk? Type <span class="p">contact</span>.\n\nType <span class="p">exit</span> to log out.`);
       if(is8()) Sound.seq([523,659,784],.08); return; }
     if(e.key==="Enter"){ busy(180); const raw=inp.value.trim(); inp.value=""; print(`<span class="p">${prompt()}</span> ${esc(raw)}`);
       if(!raw) return; hist.push(raw); hi=hist.length; const [c,...a]=raw.split(/\s+/); const f=CMDS[c.toLowerCase()];
@@ -561,7 +568,7 @@ function showDesktop(){
   document.addEventListener("click",e=>{ if(!sm.contains(e.target)) sm.style.display="none"; });
   if(!mobile()) setTimeout(()=>openWin("terminal",{x:Math.max(140,innerWidth*.5-420),y:Math.max(40,innerHeight*.38)}),300);
   setTimeout(()=>walkBear(),1500);
-  loadHits();
+  loadHits(); loadNowPlaying();
   desktopReady=true; if(pendingOpen){ const o=pendingOpen; pendingOpen=null; setTimeout(()=>openFromDisk(o),700); }
 }
 let replayBoot=false;
@@ -641,6 +648,28 @@ function campanile(hour){
 }
 let lastChime=-1;
 setInterval(()=>{ const d=new Date(); if(d.getMinutes()===0 && d.getHours()!==lastChime){ lastChime=d.getHours(); campanile(d.getHours()%12||12); } },1000);
+
+/* ================= approximate location (ssh "Last login from …") ================= */
+function placeName(w){
+  if(!w || !w.city) return w && w.country ? regionName(w.country) : "";
+  if(w.country==="US") return w.region ? `${w.city}, ${w.region}` : w.city;
+  return `${w.city}, ${regionName(w.country)}`;
+}
+function regionName(code){ try{ return new Intl.DisplayNames(["en"],{type:"region"}).of(code) || code; }catch(e){ return code; } }
+
+/* ================= Spotify now playing (taskbar) ================= */
+async function loadNowPlaying(){
+  const a=$("#np"); if(!a) return;
+  const j=await api("/api/now-playing");
+  if(j.error || !j.configured || !j.track){ a.hidden=true; return; }
+  const t=j.track, txt=`${t.title} — ${t.artist}`;
+  a.hidden=false; a.classList.toggle("playing",!!t.playing);
+  a.href=t.url||"#"; a.title=(t.playing?"Daniel is listening to: ":"Daniel last played: ")+txt;
+  a.innerHTML=`<span class="eq"><i></i><i></i><i></i></span>${t.playing?"":'<span class="lbl">last:</span>'}<span class="scroll"><span>${esc(txt)}</span></span>`;
+  const sc=a.querySelector(".scroll"); if(sc.scrollWidth>sc.clientWidth+2){ sc.classList.add("go"); sc.firstChild.insertAdjacentHTML("afterend",`<span>${esc(txt)}</span>`); }
+}
+setInterval(()=>{ if(desktopReady && !document.hidden) loadNowPlaying(); },45000);
+document.addEventListener("visibilitychange",()=>{ if(desktopReady && !document.hidden) loadNowPlaying(); });
 
 /* ================= 90s hit counter ================= */
 async function loadHits(){

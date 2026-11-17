@@ -1,6 +1,7 @@
 import { zadd, zlatest, zremWhere } from "@/lib/store";
 import { rateLimit, clientId, tooMany } from "@/lib/ratelimit";
 import { clean, looksLikeLink } from "@/lib/text";
+import { isAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
 const KEY = "guestbook";
@@ -29,10 +30,9 @@ export async function POST(req: Request) {
   return Response.json({ ok: true, entry });
 }
 
-/** Moderation: DELETE /api/guestbook?id=abcd1234 with header `Authorization: Bearer $GUESTBOOK_ADMIN_TOKEN`. */
+/** Moderation: DELETE /api/guestbook?id=abcd1234 with header `Authorization: Bearer $ADMIN_TOKEN`. */
 export async function DELETE(req: Request) {
-  const token = process.env.GUESTBOOK_ADMIN_TOKEN;
-  if (!token || req.headers.get("authorization") !== `Bearer ${token}`) return Response.json({ error: "unauthorized" }, { status: 401 });
+  if (!isAdmin(req.headers.get("authorization")?.replace(/^Bearer\s+/i, ""))) return Response.json({ error: "unauthorized" }, { status: 401 });
   const id = new URL(req.url).searchParams.get("id");
   if (!id) return Response.json({ error: "id required" }, { status: 400 });
   const removed = await zremWhere(KEY, (m) => { try { return JSON.parse(m).id === id; } catch { return false; } });

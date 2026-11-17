@@ -245,3 +245,20 @@ body.eightbit #start{background:#FF004D;color:#FFF1E8}
 .gb .who{color:var(--gold);font-family:var(--pixel);font-size:19px}
 .gb .when{color:var(--dim);font-size:11px;margin-left:6px}
 @media (max-width:720px){#hits b{display:none}}
+
+/* ---------- Spotify now playing ---------- */
+#np{display:flex;align-items:center;gap:6px;max-width:240px;font-family:var(--pixel);font-size:16px;color:var(--ink);text-decoration:none;border:1px solid var(--rock);padding:0 8px;height:24px;overflow:hidden}
+#np[hidden]{display:none}
+#np:hover{border-color:var(--gold);color:var(--gold)}
+#np .eq{display:flex;align-items:flex-end;gap:2px;height:12px;flex:none}
+#np .eq i{width:3px;background:#7be08a;height:4px}
+#np.playing .eq i{animation:eq .9s steps(4) infinite alternate}
+#np.playing .eq i:nth-child(2){animation-delay:-.3s}#np.playing .eq i:nth-child(3){animation-delay:-.6s}
+@keyframes eq{to{height:12px}}
+#np:not(.playing) .eq i{background:var(--dim)}
+#np .scroll{overflow:hidden;white-space:nowrap;flex:1;min-width:0}
+#np .scroll span{display:inline-block;padding-right:28px}
+#np .scroll.go span{animation:marq 12s linear infinite}
+@keyframes marq{to{transform:translateX(-100%)}}
+#np .lbl{color:var(--dim);flex:none}
+@media (max-width:900px){#np{display:none!important}}
