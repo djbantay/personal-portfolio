@@ -42,7 +42,7 @@ export async function retroCard(opts: { kicker: string; title: string; subtitle:
         <div style={{ position: "absolute", left: 28, top: 28, right: 28, bottom: 28, border: "4px solid #FDB515", display: "flex" }} />
         <div style={{ position: "absolute", left: 28, top: 28, right: 28, height: 44, background: "#FDB515", color: "#001428", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 18px", fontSize: 34 }}>
           <span>DANIEL_OS — {opts.kicker}</span>
-          <span>_ □ ×</span>
+          <span>[_] [X]</span>
         </div>
         {/* text */}
         <div style={{ position: "absolute", left: 70, top: 110, width: 760, display: "flex", flexDirection: "column" }}>
