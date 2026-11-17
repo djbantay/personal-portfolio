@@ -1,0 +1,22 @@
+<Stats items={[["6", "unit tests, one per scoring rule"], ["2-sided", "matching flow"], ["bcrypt", "hashed passwords"]]} />
+
+## The problem
+
+Matching students with mentors by hand doesn't scale, and opaque matching makes it hard for people to trust the results.
+
+## What I built
+
+Mentor Matcher is a FastAPI engine that ranks mentors with a transparent, capacity-aware compatibility score based on major, shared interests and first-gen alignment.
+
+<Screenshot src="/projects/mentor-matcher/api.png" alt="API docs" caption="The REST API." />
+
+## How it works
+
+- **Scoring:** each rule in the compatibility score (major, shared interests, first-gen alignment) is covered by its own unit test, 6 in total. Mentor capacity is respected so nobody gets overloaded.
+- **Data model:** the two-sided matching, request and approval flow lives in a relational schema built with SQLAlchemy and SQLite.
+- **API:** a REST API with Pydantic validation, and bcrypt-hashed passwords for profiles and match requests.
+
+## Stack
+
+Python · FastAPI · SQLAlchemy · SQLite · Pydantic · bcrypt
+

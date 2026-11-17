@@ -1,0 +1,25 @@
+<Stats items={[["Finalist", "~20-team hackathon"], ["1.56s", "median vision latency"], ["37", "pytest tests"]]} />
+
+## The problem
+
+Solo event photographers can't watch every corner of a room. If the person you most need a photo of walks in while you're shooting something else, you miss the moment.
+
+## What I built
+
+Wallflower is an AI spotter. A FastAPI backend runs Gemini vision on live camera frames, tracks the guests you've starred, and pushes real-time WebSocket alerts to a React/TypeScript app on your phone.
+
+<Screenshot src="/projects/wallflower/phone-alert.png" alt="phone alert" caption="An alert arriving on the phone when a starred guest is spotted." />
+
+## How it works
+
+- **Vision:** I benchmarked 6 Gemini models and picked one with a 1.56s median latency that got 6/6 test cases right.
+- **Reliability:** every call has a timeout and fails over to Gemma 4 running on-device through Ollama (10/10 correct, no API quota).
+- **Alert rules:** a guest has to be seen on 2 consecutive ticks before an alert fires, with cooldowns and thresholds that adjust from feedback, so you don't get spammed.
+- **Testing:** 37 pytest tests cover the alert logic, plus a go/no-go webcam script with explicit pass criteria.
+
+<Video src="/projects/wallflower/demo.mp4" caption="Live demo from the hackathon." />
+
+## Stack
+
+Python · FastAPI · WebSockets · TypeScript · React · Gemini API · Ollama · pytest
+
