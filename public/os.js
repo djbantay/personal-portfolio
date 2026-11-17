@@ -170,7 +170,7 @@ async function boot(){
 /* ---------- window manager ---------- */
 let Z=100; const wins={};
 const APPS = {
-  about:      {title:"about.txt",       icon:"about",  w:520,h:470, render:renderAbout},
+  about:      {title:"about.txt",       icon:"about",  w:540,h:560, render:renderAbout},
   projects:   {title:"C:\\projects\\",  icon:"folder", w:640,h:460, render:renderProjects},
   experience: {title:"experience.log",  icon:"exp",    w:640,h:520, render:renderExperience},
   skills:     {title:"skills.exe",      icon:"skills", w:520,h:460, render:renderSkills},
@@ -233,6 +233,12 @@ function renderAbout(b){
   <p class="sub" style="margin-top:16px">education</p>
   <p><b style="color:var(--gold)">${esc(DATA.education.school)}</b><br>${esc(DATA.education.degree)}${DATA.education.when?" · "+esc(DATA.education.when):""}</p>
   <p style="margin-top:6px">${(DATA.education.courses||[]).map(c=>`<span class="tag">${esc(c)}</span>`).join("")}</p>
+  ${DATA.personal ? `<p class="sub" style="margin-top:18px">off the clock</p>
+  <p>${esc(DATA.personal.intro)}</p>
+  <div style="display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin-top:8px;font-size:13px">${DATA.personal.hobbies.map(h=>`<span style="color:var(--gold)">${esc(h.name)}</span><span style="color:var(--dim)">${esc(h.quip)}</span>`).join("")}</div>
+  <p style="margin-top:10px;font-size:13px"><span style="color:var(--gold)">dessert spot:</span> ${esc(DATA.personal.dessertSpot)} &nbsp;·&nbsp; <span style="color:var(--gold)">learning:</span> ${esc(DATA.personal.learning)}</p>
+  <p style="margin-top:6px;font-size:13px"><span style="color:var(--gold)">fun fact:</span> ${esc(DATA.personal.funFacts[0])}</p>
+  <p style="margin-top:6px;font-size:12px;color:var(--dim)">more in the terminal: <span style="color:var(--gold)">neofetch</span>, <span style="color:var(--gold)">hobbies</span>, <span style="color:var(--gold)">funfact</span></p>` : ""}
   <p style="margin-top:14px"><button class="btn" data-open="projects">view projects →</button><button class="btn" data-open="terminal">open terminal</button></p>`;
   wireOpeners(b);
 }
@@ -320,11 +326,12 @@ function renderTerminal(b){
   b.addEventListener("click",()=>inp.focus());
   print(`DANIEL_OS terminal [v1.0] — type <span class="p">help</span> to see commands. (some are hidden.)`,"m");
   print(`<span class="c">tip:</span> try <span class="p">whoami</span>, <span class="p">projects</span>, or <span class="p">hack</span>`,"m");
-  const files = {"about.txt":()=>DATA.bio, "contact.txt":()=>`email: ${DATA.links.email}\nlinkedin: ${DATA.links.linkedin}\ngithub: ${DATA.links.github}`, ".secret":()=>"01100111 01101111 01100010 01100101 01100001 01110010 01110011  (decode me)"};
+  const files = {"hobbies.txt":()=>DATA.personal.hobbies.map(h=>`${h.name.padEnd(20)} # ${h.quip}`).join("\n"), "about.txt":()=>DATA.bio, "contact.txt":()=>`email: ${DATA.links.email}\nlinkedin: ${DATA.links.linkedin}\ngithub: ${DATA.links.github}`, ".secret":()=>"01100111 01101111 01100010 01100101 01100001 01110010 01110011  (decode me)"};
   const CMDS = {
     help:()=>print(
 `<span class="p">navigation</span>
   about · projects · project N · experience
+  neofetch · hobbies · funfact
   skills · contact · resume · open NAME
 <span class="p">system</span>
   ls · cat FILE · cd DIR · whoami · clear
@@ -340,6 +347,28 @@ function renderTerminal(b){
 <span class="p">fun</span>
   hack · matrix · bear · come · binary TEXT · sudo
 <span class="m">↑/↓ history · TAB autocomplete · ctrl+L clear</span>`),
+    neofetch:()=>{
+      const P=DATA.personal, art=[
+"   _       _   ",
+"  ( \\_____/ )  ",
+"   \\  o o  /   ",
+"   (   v   )   ",
+"    \\ ___ /    ",
+"     '---'     ",
+"               ",
+"  DANIEL_OS    "];
+      const who=remote?visitor.toLowerCase().replace(/\s+/g,"-"):"guest";
+      const rows=[
+        [`<span class="p">daniel</span>@<span class="p">berkeley</span>`,""],["-----------------",""],
+        ["OS","DANIEL_OS v1.0 (bear edition)"],["Host","UC Berkeley, Computer Science"],["Shell","bash, ssh-friendly"],
+        ["Uptime","since the last cafe run"],["Stack",Object.values(DATA.skills)[0].join(", ")],
+        ["Hobbies",P.hobbies.slice(0,4).map(h=>h.name).join(", ")],["Also",P.hobbies.slice(4).map(h=>h.name).join(", ")],
+        ["Learning",`${P.learning} (tones: WIP)`],["Dessert",P.dessertSpot],["Twin","yes. he's the other one"],["User",who]];
+      const right=rows.map(([k,v])=>v===""?k:`<span class="p">${esc(k)}</span>: ${esc(v)}`).join("\n");
+      const blocks=["#001428","#003262","#3B7EA1","#FDB515","#C4820E","#E9E4D4","#7be08a","#ff7a6b"].map(c=>`<span style="background:${c}">   </span>`).join("");
+      print(`<div style="display:flex;gap:18px;flex-wrap:wrap"><pre style="margin:0;color:var(--gold);font:inherit">${esc(art.join("\n"))}</pre><div style="white-space:pre-wrap">${right}\n\n${blocks}</div></div>`); },
+    hobbies:()=>{ print(`<span class="p">~/hobbies.txt</span>`); DATA.personal.hobbies.forEach(h=>print(`  ${esc(h.name.padEnd(20))}<span class="m"># ${esc(h.quip)}</span>`)); print(`  <span class="p">dessert spot</span>        ${esc(DATA.personal.dessertSpot)}`); },
+    funfact:()=>{ const f=DATA.personal.funFacts; print(`<span class="p">fun fact:</span> ${esc(f[Math.random()*f.length|0])}`); },
     np:async()=>{ const j=await api("/api/now-playing");
       if(j.error||!j.configured) return print("♪ the jukebox is unplugged right now.","m");
       if(!j.track) return print("♪ nothing on the turntable right now.","m");
@@ -406,7 +435,7 @@ function renderTerminal(b){
     contact:()=>{ const L=DATA.links; print(`  email    <a href="mailto:${esc(L.email)}">${esc(L.email)}</a>\n  linkedin <a href="${esc(L.linkedin)}" target="_blank" rel="noopener">${esc(L.linkedin)}</a>\n  github   <a href="${esc(L.github)}" target="_blank" rel="noopener">${esc(L.github)}</a>`); },
     resume:()=>{ openWin("resume"); print("opening resume.pdf…","ok"); },
     open:a=>{ const k=(a[0]||"").replace(/\..*$/,"").replace(/\/$/,""); const m={vault:"secret"}[k]||k; if(APPS[m]) { openWin(m); print(`opening ${m}…`,"ok"); } else print(`open: no such app '${esc(a[0]||"")}'. try: ${Object.keys(APPS).join(", ")}`,"e"); },
-    ls:()=>print(`<span class="c">projects/  experience/</span>  about.txt  contact.txt  resume.pdf  vault.enc`),
+    ls:()=>print(`<span class="c">projects/  experience/</span>  about.txt  hobbies.txt  contact.txt  resume.pdf  vault.enc`),
     cat:a=>{ const f=a[0]; if(files[f]) print(esc(files[f]())); else if(f==="resume.pdf") CMDS.resume(); else if(f==="vault.enc") print("binary file — try: open vault","e"); else print(`cat: ${esc(f||"")}: no such file`,"e"); },
     cd:a=>{ const d=(a[0]||"").replace(/\/$/,""); if(d==="projects") CMDS.projects(); else if(d==="experience") CMDS.experience(); else print(`cd: ${esc(a[0]||"~")}: permission denied (nice try)`,"e"); },
     clear:()=>out.innerHTML="",
@@ -422,7 +451,7 @@ function renderTerminal(b){
     exit:()=>{ if(remote){ remote=false; user="guest"; host="daniel-os"; setPrompt(); print(`logout\nConnection to berkeley.edu closed.`,"m"); } else closeWin("terminal"); },
     ping:()=>print("PONG — 0.42 ms (latency to Berkeley: ok)","ok"),
   };
-  CMDS.ll=CMDS.ls; CMDS.dir=CMDS.ls; CMDS.cls=CMDS.clear; CMDS["?"]=CMDS.help; CMDS.sorry=CMDS.apologize; CMDS.music=CMDS.np; CMDS.spotify=CMDS.np;
+  CMDS.ll=CMDS.ls; CMDS.dir=CMDS.ls; CMDS.cls=CMDS.clear; CMDS["?"]=CMDS.help; CMDS.sorry=CMDS.apologize; CMDS["fun-facts"]=CMDS.funfact; CMDS.funfacts=CMDS.funfact; CMDS.music=CMDS.np; CMDS.spotify=CMDS.np;
   CMDS.reboot=()=>{ print("Broadcast message: the system is going down for reboot NOW!","e"); setTimeout(reboot,700); };
   CMDS.restart=CMDS.reboot;
   CMDS.shutdown=()=>{ print("Broadcast message: the system is going down for power-off NOW!","e"); setTimeout(shutdown,700); };
@@ -477,7 +506,7 @@ async function hack(print){
 /* ---------- bear: walks, wanders, follows clicks, can be dragged ---------- */
 const bearEl=$("#bear"), bubble=$("#bubble");
 bearEl.innerHTML=OUTLINE_BEAR();
-const quips=["rawr. (that means hi)","Go Bears!","try the terminal →","psst… vault.enc has a password","01000111 01001111","I guard the projects folder.","psst… ↑↑↓↓←→←→BA","have you tried ssh?","click the desktop, I'll come over","you can pick me up, you know"];
+const quips=["rawr. (that means hi)","Go Bears!","try the terminal →","psst… vault.enc has a password","01000111 01001111","I guard the projects folder.","psst… ↑↑↓↓←→←→BA","have you tried ssh?","box box. bear needs a pit stop.","Daniel's dessert spot? Hui Lau Shan.","I climb trees. Daniel climbs walls.","click the desktop, I'll come over","you can pick me up, you know"];
 let bearClicks=0, bearGone=false, bearRun=false;
 const B={x:-160,y:0,vy:0,dir:1,target:0,state:"off",idleAt:0,idleFor:9000,hover:false,said:0,W:120,H:72,called:false};
 function bearSay(t,ms=2200){ if(!t){ bubble.style.display="none"; return; } bubble.textContent=t; bubble.style.display="block"; B.said=Date.now()+ms; placeBubble(); }

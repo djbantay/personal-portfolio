@@ -110,6 +110,25 @@ export const PROFILE = {
     "when": "",
     "courses": []
   },
+  "personal": {
+    "intro": "Off the clock I'm usually on a climbing wall, in the gym, or hunting for the next great cafe.",
+    "hobbies": [
+      { "name": "rock climbing", "quip": "falling off walls, recreationally" },
+      { "name": "the gym", "quip": "git commit -m \"gains\"" },
+      { "name": "golf", "quip": "ctrl+z does not work on the course" },
+      { "name": "volleyball", "quip": "bump, set, ship it" },
+      { "name": "fashion & shopping", "quip": "fit check before every git push" },
+      { "name": "new cafes & food", "quip": "will review your favorite spot, honestly" },
+      { "name": "cars & F1", "quip": "box box, it's boba o'clock" }
+    ],
+    "dessertSpot": "Hui Lau Shan",
+    "learning": "Mandarin",
+    "funFacts": [
+      "I have a twin brother. Statistically, one of us is the better coder.",
+      "I'm learning Mandarin: 你好 (nǐ hǎo) is locked in, the tones are still a work in progress.",
+      "My go-to dessert spot in Berkeley is Hui Lau Shan."
+    ]
+  },
   "skills": {
     "Languages": [
       "Python",
@@ -158,6 +177,7 @@ export const PROFILE = {
   projects: Project[]; experience: Job[];
   education: { school: string; degree: string; when: string; courses: string[] };
   skills: Record<string, string[]>;
+  personal: { intro: string; hobbies: { name: string; quip: string }[]; dessertSpot: string; learning: string; funFacts: string[] };
 };
 
 export const SITE_URL =

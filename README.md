@@ -35,6 +35,7 @@ Most portfolios are a page you scroll. This one is a small operating system you 
 | `git log` | my latest real commits from GitHub |
 | `mail` | an interactive mail client that actually emails me |
 | `np` | what I'm playing on Spotify right now |
+| `neofetch` | a system-info card, except the system is me (hobbies, dessert spot, twin status) |
 
 <details>
 <summary>Spoilers: easter eggs</summary>
