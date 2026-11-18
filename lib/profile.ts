@@ -120,13 +120,14 @@ export const PROFILE = {
       { "name": "volleyball", "scene": "volley", "detail": "", "quip": "bump, set, ship it" },
       { "name": "fashion & shopping", "scene": "fashion", "detail": "favorite brands: Diesel, Buck Mason", "quip": "fit check before every git push" },
       { "name": "cafes & food", "scene": "cafe", "detail": "top Berkeley spot: Mind Coffee", "quip": "will review your favorite spot, honestly" },
-      { "name": "cars & F1", "scene": "car", "detail": "dream car: BMW M4 Competition", "quip": "box box, it's boba o'clock" }
+      { "name": "cars & F1", "scene": "car", "detail": "F1 team: Ferrari · dream car: BMW M4 Competition", "quip": "box box, it's boba o'clock" }
     ],
     "cafes": [
       { "name": "Mind Coffee", "city": "Berkeley", "note": "current #1" }
     ],
     "dessertSpot": "Hui Lau Shan",
     "dreamCar": "BMW M4 Competition",
+    "f1Team": "Ferrari",
     "learning": "Mandarin",
     "learningWhy": "I'm learning Mandarin so I can travel in China someday, understand the culture firsthand, and talk with my friends in their language.",
     "photos": [
@@ -136,7 +137,8 @@ export const PROFILE = {
       "I have a twin brother. Statistically, one of us is the better coder.",
       "I'm learning Mandarin: 你好 (nǐ hǎo) is locked in, the tones are still a work in progress.",
       "My go-to dessert spot in Berkeley is Hui Lau Shan.",
-      "Dream car: BMW M4 Competition. Current car: a laptop."
+      "Dream car: BMW M4 Competition. Current car: a laptop.",
+      "F1 team: Ferrari. Yes, even through the strategy calls."
     ]
   },
   "skills": {
@@ -188,7 +190,7 @@ export const PROFILE = {
   education: { school: string; degree: string; when: string; courses: string[] };
   skills: Record<string, string[]>;
   personal: { intro: string; hobbies: { name: string; scene?: string; detail: string; quip: string }[]; cafes: { name: string; city: string; note: string }[];
-    dessertSpot: string; dreamCar: string; learning: string; learningWhy: string; photos: { src: string; caption: string }[]; funFacts: string[] };
+    dessertSpot: string; dreamCar: string; f1Team: string; learning: string; learningWhy: string; photos: { src: string; caption: string }[]; funFacts: string[] };
 };
 
 export const SITE_URL =

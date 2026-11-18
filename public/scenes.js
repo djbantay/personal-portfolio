@@ -157,9 +157,9 @@
   }
 
   /* ---- dream car: burgundy performance coupe at sunset ---- */
-  /* F1: an open-wheel car in a Berkeley blue + gold livery, lapping past the grandstand.
+  /* F1: an open-wheel car in racing red (Daniel's a Ferrari fan) with a Berkeley gold stripe, lapping past the grandstand.
      Built from spans with an automatic outline; wheels spin, DRS opens on hover. */
-  const F1PAL = { o:"#0b0b0f", L:"#4a8ae0", b:"#1d4f91", d:"#12305a", g:"#FDB515", G:"#ffe08a", k:"#1a1a20", K:"#2c2c34", w:"#f2efe6", v:"#2a3550", h:"#e9e4d4" };
+  const F1PAL = { o:"#0b0b0f", L:"#ff4a3a", b:"#d40000", d:"#8a0000", g:"#FDB515", G:"#ffe08a", k:"#1a1a20", K:"#2c2c34", w:"#f2efe6", v:"#2a3550", h:"#e9e4d4" };
   const FW = 58, FH = 13, F1WHEELS = [[11, 8, 5], [45, 9, 4]];
   function buildF1(drs) {
     const grid = Array.from({ length: FH }, () => Array(FW).fill(""));

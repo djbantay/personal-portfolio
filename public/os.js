@@ -370,7 +370,7 @@ function renderTerminal(b){
         ["OS","DANIEL_OS v1.0 (hacker edition)"],["Host","UC Berkeley, Computer Science"],["Shell","bash, ssh-friendly"],
         ["Uptime","since the last cafe run"],["Stack",Object.values(DATA.skills)[0].join(", ")],
         ["Hobbies",P.hobbies.slice(0,4).map(h=>h.name).join(", ")],["Also",P.hobbies.slice(4).map(h=>h.name).join(", ")],
-        ["Learning",`${P.learning} (tones: WIP)`],["Cafe",P.cafes[0].name],["Dessert",P.dessertSpot],["Dream car",P.dreamCar],["Twin","yes. he's the other one"],["User",who]];
+        ["Learning",`${P.learning} (tones: WIP)`],["Cafe",P.cafes[0].name],["Dessert",P.dessertSpot],["Dream car",P.dreamCar],["F1 team",P.f1Team],["Twin","yes. he's the other one"],["User",who]];
       const right=rows.map(([k,v])=>v===""?k:`<span class="p">${esc(k)}</span>: ${esc(v)}`).join("\n");
       const blocks=["#001428","#003262","#3B7EA1","#FDB515","#C4820E","#E9E4D4","#7be08a","#ff7a6b"].map(c=>`<span style="background:${c}">   </span>`).join("");
       print(`<div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start"><pre style="margin:0;color:var(--gold);font:inherit">${esc(art.join("\n"))}</pre><div style="white-space:pre-wrap">${right}\n\n${blocks}</div></div>`); },
