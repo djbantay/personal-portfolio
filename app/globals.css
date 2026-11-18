@@ -212,8 +212,6 @@ body.eightbit #start{background:#FF004D;color:#FFF1E8}
 .disk.lift{transition:none;filter:drop-shadow(0 28px 18px rgba(0,0,0,.65));z-index:5;cursor:grabbing}
 .disk:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
 #diskHint{position:absolute;left:30px;top:56px;font-family:var(--pixel);font-size:20px;color:#8a8170;width:170px}
-#nap{position:absolute;color:var(--gold);pointer-events:none;
-  filter:drop-shadow(4px 0 0 #16161a) drop-shadow(-4px 0 0 #16161a) drop-shadow(0 4px 0 #16161a) drop-shadow(0 -4px 0 #16161a)}
 .zz{position:absolute;font-family:var(--pixel);color:#c9c0ad;font-size:24px;pointer-events:none}
 .zz span{position:absolute;opacity:0;animation:zz 3s infinite}
 .zz span:nth-child(2){animation-delay:1s}.zz span:nth-child(3){animation-delay:2s}
@@ -262,3 +260,10 @@ body.eightbit #start{background:#FF004D;color:#FFF1E8}
 @keyframes marq{to{transform:translateX(-100%)}}
 #np .lbl{color:var(--dim);flex:none}
 @media (max-width:900px){#np{display:none!important}}
+
+
+#nap{background-image:url(/bear/bear-sheet.png);background-repeat:no-repeat;image-rendering:pixelated;filter:drop-shadow(0 5px 2px rgba(0,0,0,.35))}
+
+/* screensaver logo */
+#saverBear{width:auto!important;height:auto!important;background:none!important;filter:none;font-family:var(--pixel);font-size:72px;line-height:1;padding:6px 14px;
+  border:3px solid currentColor;text-shadow:0 0 18px currentColor;box-shadow:0 0 24px -6px currentColor;color:var(--gold)}

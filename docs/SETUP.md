@@ -74,7 +74,7 @@ app/
   api/{hits,guestbook,commits,ask,mail}/route.ts
   projects/[slug]/           write-up pages + their link previews
   opengraph-image.tsx        home link preview
-public/os.js                 desktop behaviour (windows, terminal, bear, easter eggs)
+public/os.js                 desktop behaviour (windows, terminal, easter eggs)
 lib/                         profile data, storage, rate limiting, OG card
 content/projects/            MDX write-ups
 ```

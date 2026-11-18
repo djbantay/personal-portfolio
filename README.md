@@ -4,7 +4,7 @@
 
 **A retro operating system that happens to be my portfolio.**
 
-Boot an isometric pixel-art computer, drag floppy disks into the drive, and explore my work through draggable windows and a real terminal, with a bear who wanders the taskbar.
+Boot an isometric pixel-art computer, drag floppy disks into the drive, and explore my work through draggable windows and a real terminal.
 
 **[Live site →](https://YOUR-DOMAIN)** · [Résumé](public/resume.pdf) · [LinkedIn](https://linkedin.com/in/daniel-bantay) · [Email](mailto:dj.bantay@berkeley.edu)
 
@@ -23,7 +23,7 @@ Most portfolios are a page you scroll. This one is a small operating system you 
 - **A working terminal.** `help`, `projects`, `ask`, `mail`, `git log`, `ssh`… plus a few hidden commands.
 - **Live data.** A visitor counter, a guestbook, my latest GitHub commits, what I'm listening to on Spotify, and an AI that answers questions about my experience.
 
-<img src="docs/screenshots/desktop.webp" alt="The DANIEL_OS desktop: icons, a terminal showing git log and an ssh session, the visitor counter and the bear" width="100%">
+<img src="docs/screenshots/desktop.webp" alt="The DANIEL_OS desktop: icons, a terminal showing git log and an ssh session and the visitor counter" width="100%">
 
 ## Try these in the terminal
 
@@ -40,7 +40,7 @@ Most portfolios are a page you scroll. This one is a small operating system you 
 <details>
 <summary>Spoilers: easter eggs</summary>
 
-The Konami code (8-bit mode with chiptunes), clicking my name 5 times, poking the bear 10 times (he leaves `honey.txt`), the Campanile chimes on the hour if sound is on, `weather`, `hack`, `sudo`, `vault.enc` (password hint in the window), and a DVD-style bouncing-bear screensaver after 60 seconds idle.
+The Konami code (8-bit mode with chiptunes), clicking my name 5 times, the Campanile chimes on the hour if sound is on, `weather`, `hack`, `sudo`, `vault.enc` (password hint in the window), and a DVD-style bouncing-logo screensaver after 60 seconds idle.
 
 </details>
 
@@ -106,7 +106,7 @@ app/
   page.tsx · os-markup.ts       the DB-1 computer + desktop markup
   api/*/route.ts                ask, mail, guestbook, hits, commits, now-playing, whereami, spotify
   projects/[slug]/              MDX write-up pages + their OG images
-public/os.js                    the desktop: window manager, terminal, isometric renderer, bear
+public/os.js                    the desktop: window manager, terminal, isometric renderer
 lib/                            profile data, Redis store, rate limiting, Spotify, OG card
 content/projects/*.mdx          project write-ups
 docs/SETUP.md                   run it locally, deploy, configure keys

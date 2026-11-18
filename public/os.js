@@ -25,19 +25,6 @@ const toHex = n => "0x"+n.toString(16).toUpperCase().padStart(4,"0");
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 const mobile = () => innerWidth <= 720;
 
-/* ---------- bear cursor + paw print ---------- */
-const PAW_SVG=`<svg viewBox="0 0 32 32" width="100%" height="100%"><g fill="currentColor"><ellipse cx="16" cy="22" rx="8" ry="6.5"/><ellipse cx="6.5" cy="13" rx="3.2" ry="4"/><ellipse cx="12.5" cy="7.5" rx="3.2" ry="4.2"/><ellipse cx="19.5" cy="7.5" rx="3.2" ry="4.2"/><ellipse cx="25.5" cy="13" rx="3.2" ry="4"/></g></svg>`;
-(()=>{
-  const head=`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g stroke="#001428" stroke-width="2"><circle cx="7.5" cy="8" r="4.5" fill="#FDB515"/><circle cx="24.5" cy="8" r="4.5" fill="#FDB515"/><circle cx="16" cy="17" r="11" fill="#FDB515"/></g><circle cx="7.5" cy="8" r="2" fill="#C4820E"/><circle cx="24.5" cy="8" r="2" fill="#C4820E"/><ellipse cx="16" cy="21.5" rx="5.5" ry="4.2" fill="#FFE3A3"/><circle cx="11.5" cy="15" r="1.7" fill="#001428"/><circle cx="20.5" cy="15" r="1.7" fill="#001428"/><ellipse cx="16" cy="19.6" rx="2.4" ry="1.7" fill="#001428"/></svg>`;
-  const paw=`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g fill="#FDB515" stroke="#001428" stroke-width="1.6"><ellipse cx="16" cy="22" rx="8" ry="6.5"/><ellipse cx="6.5" cy="13" rx="3.2" ry="4"/><ellipse cx="12.5" cy="7.5" rx="3.2" ry="4.2"/><ellipse cx="19.5" cy="7.5" rx="3.2" ry="4.2"/><ellipse cx="25.5" cy="13" rx="3.2" ry="4"/></g></svg>`;
-  const u=x=>`url("data:image/svg+xml,${encodeURIComponent(x)}")`;
-  document.head.appendChild(el("style",{},`
-    html,body,#screen,#screen *{cursor:${u(head)} 16 19, auto}
-    #screen a,#screen button,#screen .icon,#screen .card,#screen .icon *,#screen .card *,#screen .btn,#screen .task,#screen .bar button,#hero h1{cursor:${u(paw)} 16 8, pointer}
-    #screen .bar,#screen #bear,#screen #bear *{cursor:${u(paw)} 16 8, grab}
-    #screen input,#screen .term,#screen .term *{cursor:text}`));
-})();
-
 /* ---------- sound (Web Audio, off by default) ---------- */
 const Sound = {
   on:false, ctx:null,
@@ -66,51 +53,9 @@ const ICONS = {
   term:  P(["gggggggggggg","gkkkkkkkkkkg","gkgkkkkkkkkg","gkkgkkkkkkkg","gkkkgkkkkkkg","gkkgkkkkkkkg","gkgkkwwwwkkg","gkkkkkkkkkkg","gkkkkkkkkkkg","gggggggggggg","...gggggg...","..gggggggg.."],C),
   mail:  P(["............","gggggggggggg","ggwwwwwwwwgg","gwgwwwwwwgwg","gwwgwwwwgwwg","gwwwggggwwwg","gwwwwwwwwwwg","gwwwwwwwwwwg","gwwwwwwwwwwg","gggggggggggg","............","............"],C),
   lock:  P(["....gggg....","...g....g...","..g......g..","..g......g..","gggggggggggg","gmmmmmmmmmmg","gmmmmkkmmmmg","gmmmmkkmmmmg","gmmmmmkmmmmg","gmmmmmmmmmmg","gggggggggggg","............"],C),
-  honey: P(["...gggggg...","..g......g..","...gggggg...","..gmmmmmmg..",".gmmggggmmg.",".gmgmmmmgmg.",".gmgmmmmgmg.",".gmmggggmmg.",".gmmmmmmmmg.","..gmmmmmmg..","...gggggg...","............"],C),
   book:  P(["............",".gggggggggg.",".gbbbbbbbbg.",".gbwwwwwwbg.",".gbbbbbbbbg.",".gbwwwwwbbg.",".gbbbbbbbbg.",".gbwwwwwwbg.",".gbbbbbbbbg.",".gggggggggg.",".mmmmmmmmmm.","............"],C),
   doc:   P(["gggggggg....","gwwwwwwgg...","gwwwwwwgwg..","gwwwwwwggggg","gwnnnnnwwwwg","gwwwwwwwwwwg","gwnnnnnnnnwg","gwwwwwwwwwwg","gwnnnnnnwwwg","gwwwwwwwwwwg","gggggggggggg","............"],C),
 };
-
-/* ---------- original pixel bear (two walk frames) ---------- */
-const BEAR_A = [
-  "..................gg....",
-  "......gggggggg...gggg...",
-  "....gggggggggggggggggg..",
-  "...gggggggggggggggggkggg",
-  "..gggggggggggggggggggggg",
-  "..ggggggggggggggggggg...",
-  "..gggggggggggggggggg....",
-  "..ggggggggggggggggg.....",
-  "...gggggggggggggggg.....",
-  "...ggg..ggg...ggg..gg...",
-  "...ggg..gg....ggg..gg...",
-  "...gg...gg....gg...gg...",
-  "..ggg..ggg...ggg..ggg...",
-  "........................"];
-const BEAR_B = BEAR_A.slice(0,9).concat([
-  "....ggg..gg..ggg..ggg...",
-  "....gg...gg...gg..gg....",
-  "....gg..gg....gg...gg...",
-  "...ggg.ggg...ggg..ggg...",
-  "........................"]);
-const LEG_F="M48,50 L74,50 L72,104 Q72,113 63,113 L42,113 Q34,113 37,106 Q41,101 50,101 Z";
-const LEG_H="M142,48 L172,52 Q180,86 172,104 Q170,113 161,113 L141,113 Q133,113 136,106 Q140,101 148,101 Z";
-const OUTLINE_BEAR = () => `<g class="ob" stroke="currentColor" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" style="fill:var(--bearfill,#001a33)">
-  <g class="leg l2 far" transform="translate(18 -2)"><path d="${LEG_F}"/></g>
-  <g class="leg l3 far" transform="translate(-16 -2)"><path d="${LEG_H}"/></g>
-  <g class="leg l1"><path d="${LEG_F}"/></g>
-  <g class="leg l4"><path d="${LEG_H}"/></g>
-  <g class="torso"><g transform="translate(0 -10)">
-    <path d="M7,56 C7,49 15,45 25,42 C31,32 40,26 50,26 C50,17 61,15 63,24 C70,25 78,30 84,34 C98,26 118,24 140,28 C162,32 178,44 182,62 C185,74 182,84 176,88 L68,86 C60,82 52,76 46,72 C36,70 22,68 13,64 C9,62 7,59 7,56 Z"/>
-    <path d="M46,70 L52,81 L54,72 L60,85 L62,76" fill="none" stroke-width="3.5"/>
-    <path d="M100,40 C108,52 110,62 106,76 L112,72 L108,84" fill="none" stroke-width="3.5"/>
-    <path d="M152,46 C162,58 164,70 160,82" fill="none" stroke-width="3.5"/>
-    <path d="M53,28 C56,23 59,23 60,27" fill="none" stroke-width="3"/>
-    <circle cx="33" cy="43" r="3.4" fill="currentColor" stroke="none"/>
-    <circle cx="9" cy="53" r="4.2" fill="currentColor" stroke="none"/>
-    <path d="M14,63 C21,66 27,66 33,64" fill="none" stroke-width="2.5"/>
-  </g></g></g>`;
-const bearSVG = rows => { let r=""; rows.forEach((row,y)=>[...row].forEach((ch,x)=>{ if(ch==="g") r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="currentColor"/>`; if(ch==="k") r+=`<rect x="${x}" y="${y}" width="1" height="1" fill="#001428"/>`; })); return r; };
 
 /* ---------- digital rain (binary) ---------- */
 const rain = (() => {
@@ -143,10 +88,10 @@ const rain = (() => {
 /* ---------- boot sequence ---------- */
 const BOOT = [
   ["<span class='g'>DANIEL_OS BIOS v1.0</span>  (c) Bantay Systems",0],
-  ["CPU: Golden Bear 8-bit @ 4.77 MHz",120],
+  ["CPU: DB-1 8-bit @ 4.77 MHz",120],
   ["Memory test: <span class='b'>640K</span> ................ <span class='ok'>OK</span>",220],
   ["Detecting drives ......... /dev/projects /dev/experience",180],
-  ["Loading kernel modules: [crypto] [netsec] [bear.sys]",200],
+  ["Loading kernel modules: [crypto] [netsec] [glitch.sys]",200],
   ["Verifying signature ...... <span class='ok'>SHA-256 MATCH</span>",240],
   ["Establishing secure channel (TLS 1.3) ... <span class='ok'>OK</span>",200],
   ["",80],
@@ -178,11 +123,10 @@ const APPS = {
   contact:    {title:"contact.lnk",     icon:"mail",   w:440,h:360, render:renderContact},
   resume:     {title:"resume.pdf",      icon:"doc",    w:420,h:260, render:renderResume},
   guestbook:  {title:"guestbook.txt",   icon:"book",   w:480,h:440, render:renderGuestbook},
-  honey:      {title:"honey.txt",       icon:"honey",  w:440,h:330, render:renderHoney},
   secret:     {title:"vault.enc",       icon:"lock",   w:440,h:330, render:renderVault},
 };
 const ICON_ORDER = ["about","projects","experience","skills","terminal","contact","resume","guestbook","secret"];
-const LABELS = {guestbook:"guestbook",about:"about.txt",projects:"projects",experience:"experience",skills:"skills.exe",terminal:"terminal",contact:"contact",resume:"resume.pdf",secret:"vault.enc",honey:"honey.txt"};
+const LABELS = {guestbook:"guestbook",about:"about.txt",projects:"projects",experience:"experience",skills:"skills.exe",terminal:"terminal",contact:"contact",resume:"resume.pdf",secret:"vault.enc"};
 
 function openWin(id, opts={}){
   if(wins[id]){ focusWin(id); if(wins[id].dataset.min==="1") restore(id); return wins[id]; }
@@ -291,7 +235,7 @@ function renderVault(b){
   <div id="vout" style="margin-top:12px;font-family:var(--pixel);font-size:20px"></div>`;
   const f=b.querySelector("form"), o=b.querySelector("#vout");
   f.onsubmit=e=>{ e.preventDefault(); const v=f.querySelector("input").value.trim().toLowerCase().replace(/[^a-z]/g,"");
-    if(v==="gobears"){ o.innerHTML=`<span style="color:#7be08a">DECRYPTED [OK]</span><br>You found the vault. Thanks for exploring — let's talk: <a href="mailto:${esc(DATA.links.email)}">${esc(DATA.links.email)}</a>`; bearSay("GO BEARS!!",3000); }
+    if(v==="gobears"){ o.innerHTML=`<span style="color:#7be08a">DECRYPTED [OK]</span><br>You found the vault. Thanks for exploring — let's talk: <a href="mailto:${esc(DATA.links.email)}">${esc(DATA.links.email)}</a>`; }
     else { o.innerHTML=`<span style="color:#ff7a6b">ACCESS DENIED</span> — sha256 mismatch`; f.querySelector("input").value=""; } };
 }
 function renderGuestbook(b){
@@ -301,17 +245,6 @@ function renderGuestbook(b){
     if(j.error){ l.textContent="guestbook is offline right now."; return; }
     l.innerHTML = j.entries.length ? j.entries.map(e=>`<div class="gb"><span class="who">${esc(e.name)}</span><span class="when">${esc(ago(e.at))}</span><div>${esc(e.message)}</div></div>`).join("") : "no signatures yet. be the first!";
     l.style.color=""; });
-}
-function renderHoney(b){
-  b.innerHTML = `<pre class="ascii glow" style="font-size:13px">
-    .-~~~-.
-   /  ___  \\      honey.txt
-  |  |HUN|  |     owner: bear
-  |  |NEY|  |     status: sticky
-   \\ '---' /
-    '-...-'</pre>
-  <p style="margin-top:12px">You poked the bear ten times, so he left.<br>He did leave you this, though.</p>
-  <p style="margin-top:10px;color:var(--dim)">(He might come back if you type <span style="color:var(--gold)">apologize</span> in the terminal.)</p>`;
 }
 function wireOpeners(b){ b.querySelectorAll("[data-open]").forEach(x=>x.onclick=()=>openWin(x.dataset.open)); }
 
@@ -345,28 +278,27 @@ function renderTerminal(b){
   visitors       the hit counter
   np             what Daniel's listening to
 <span class="p">fun</span>
-  hack · matrix · bear · come · binary TEXT · sudo
+  hack · matrix · binary TEXT · sudo
 <span class="m">↑/↓ history · TAB autocomplete · ctrl+L clear</span>`),
     neofetch:()=>{
       const P=DATA.personal, art=[
-"   _       _   ",
-"  ( \\_____/ )  ",
-"   \\  o o  /   ",
-"   (   v   )   ",
-"    \\ ___ /    ",
-"     '---'     ",
+" ____    ____  ",
+"|  _ \\  | __ ) ",
+"| | | | |  _ \\ ",
+"| |_| | | |_) |",
+"|____/  |____/ ",
 "               ",
-"  DANIEL_OS    "];
+"   DANIEL_OS   "];
       const who=remote?visitor.toLowerCase().replace(/\s+/g,"-"):"guest";
       const rows=[
         [`<span class="p">daniel</span>@<span class="p">berkeley</span>`,""],["-----------------",""],
-        ["OS","DANIEL_OS v1.0 (bear edition)"],["Host","UC Berkeley, Computer Science"],["Shell","bash, ssh-friendly"],
+        ["OS","DANIEL_OS v1.0 (hacker edition)"],["Host","UC Berkeley, Computer Science"],["Shell","bash, ssh-friendly"],
         ["Uptime","since the last cafe run"],["Stack",Object.values(DATA.skills)[0].join(", ")],
         ["Hobbies",P.hobbies.slice(0,4).map(h=>h.name).join(", ")],["Also",P.hobbies.slice(4).map(h=>h.name).join(", ")],
         ["Learning",`${P.learning} (tones: WIP)`],["Dessert",P.dessertSpot],["Twin","yes. he's the other one"],["User",who]];
       const right=rows.map(([k,v])=>v===""?k:`<span class="p">${esc(k)}</span>: ${esc(v)}`).join("\n");
       const blocks=["#001428","#003262","#3B7EA1","#FDB515","#C4820E","#E9E4D4","#7be08a","#ff7a6b"].map(c=>`<span style="background:${c}">   </span>`).join("");
-      print(`<div style="display:flex;gap:18px;flex-wrap:wrap"><pre style="margin:0;color:var(--gold);font:inherit">${esc(art.join("\n"))}</pre><div style="white-space:pre-wrap">${right}\n\n${blocks}</div></div>`); },
+      print(`<div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start"><pre style="margin:0;color:var(--gold);font:inherit">${esc(art.join("\n"))}</pre><div style="white-space:pre-wrap">${right}\n\n${blocks}</div></div>`); },
     hobbies:()=>{ print(`<span class="p">~/hobbies.txt</span>`); DATA.personal.hobbies.forEach(h=>print(`  ${esc(h.name.padEnd(20))}<span class="m"># ${esc(h.quip)}</span>`)); print(`  <span class="p">dessert spot</span>        ${esc(DATA.personal.dessertSpot)}`); },
     funfact:()=>{ const f=DATA.personal.funFacts; print(`<span class="p">fun fact:</span> ${esc(f[Math.random()*f.length|0])}`); },
     np:async()=>{ const j=await api("/api/now-playing");
@@ -424,8 +356,6 @@ function renderTerminal(b){
       print(`Authenticating with public key "guest@daniel-os" ... <span class="ok">ok</span>`); await sleep(500);
       print("One more thing. What's your name?","c"); mode="ssh-name"; setPrompt(`<span class="c">name:</span>`);
       inp.disabled=false; inp.focus(); },
-    apologize:()=>{ if(!bearGone) return print("apologize for what? the bear is fine.","m");
-      bearGone=false; bearClicks=0; print("the bear accepts your apology. (he's still a little grumpy)","ok"); setTimeout(()=>walkBear(),400); },
     whoami:()=>remote? print(`<span class="p">${esc(visitor)}</span>, logged in to daniel@berkeley.edu from ${esc(from)}`) : print(`<span class="p">${esc(DATA.name)}</span> — ${esc(DATA.title)}\n${esc(DATA.bio)}`),
     about:()=>{ CMDS.whoami(); openWin("about"); },
     projects:()=>{ DATA.projects.forEach((p,i)=>print(`  [${i+1}] <span class="p">${esc(p.name)}</span> — ${esc(p.blurb)}  <span class="m">(${p.tech.map(esc).join(", ")})</span>`)); print(`type <span class="p">project 1</span> to open one.`,"m"); openWin("projects"); },
@@ -444,18 +374,17 @@ function renderTerminal(b){
     echo:a=>print(esc(a.join(" "))),
     binary:a=>print(toBin(a.join(" ")||"hello")),
     matrix:()=>print(rain.toggle()?"rain: on":"rain: off","ok"),
-    bear:()=>{ if(bearGone) return print("the bear is sulking somewhere off-screen. maybe try: apologize","m"); print(`<pre style="color:var(--gold);line-height:1">${BEAR_A.map(r=>r.replace(/g/g,"█").replace(/k/g," ").replace(/\./g," ")).join("\n")}</pre>`); walkBear(true); },
     sudo:()=>print(`[sudo] password for guest: \n<span class="e">guest is not in the sudoers file. This incident will be reported.</span>`),
     rm:()=>print("rm: refusing to remove '/' — this portfolio is load-bearing.","e"),
     hack:()=>hack(print),
     exit:()=>{ if(remote){ remote=false; user="guest"; host="daniel-os"; setPrompt(); print(`logout\nConnection to berkeley.edu closed.`,"m"); } else closeWin("terminal"); },
     ping:()=>print("PONG — 0.42 ms (latency to Berkeley: ok)","ok"),
   };
-  CMDS.ll=CMDS.ls; CMDS.dir=CMDS.ls; CMDS.cls=CMDS.clear; CMDS["?"]=CMDS.help; CMDS.sorry=CMDS.apologize; CMDS["fun-facts"]=CMDS.funfact; CMDS.funfacts=CMDS.funfact; CMDS.music=CMDS.np; CMDS.spotify=CMDS.np;
+  CMDS.ll=CMDS.ls; CMDS.dir=CMDS.ls; CMDS.cls=CMDS.clear; CMDS["?"]=CMDS.help; CMDS["fun-facts"]=CMDS.funfact; CMDS.funfacts=CMDS.funfact; CMDS.music=CMDS.np; CMDS.spotify=CMDS.np;
   CMDS.reboot=()=>{ print("Broadcast message: the system is going down for reboot NOW!","e"); setTimeout(reboot,700); };
   CMDS.restart=CMDS.reboot;
   CMDS.shutdown=()=>{ print("Broadcast message: the system is going down for power-off NOW!","e"); setTimeout(shutdown,700); };
-  CMDS.poweroff=CMDS.shutdown; CMDS.halt=CMDS.shutdown; CMDS.come=()=>{ if(bearGone) return print("he's not listening. (try: apologize)","m"); B.called=true; if(B.state==="off") B.x=-160; bearGoTo(innerWidth/2-60); print("here, bear!","ok"); }; CMDS.logout=CMDS.exit;
+  CMDS.poweroff=CMDS.shutdown; CMDS.halt=CMDS.shutdown; CMDS.logout=CMDS.exit;
   CMDS.screensaver=()=>{ print("starting screensaver…","m"); setTimeout(startSaver,300); };
   CMDS.chime=()=>{ if(!Sound.on) return print("sound is off. turn it on with the ♪ button in the taskbar.","m"); campanile(new Date().getHours()%12||12); print("the Campanile chimes.","ok"); };
   inp.addEventListener("keydown",async e=>{
@@ -503,88 +432,12 @@ async function hack(print){
   const ov=$("#overlay"); ov.innerHTML=`<div class="big glow">ACCESS GRANTED</div><div>${toBin("HIRE DANIEL")}</div>`; ov.style.display="flex"; setTimeout(()=>ov.style.display="none",1600);
 }
 
-/* ---------- bear: walks, wanders, follows clicks, can be dragged ---------- */
-const bearEl=$("#bear"), bubble=$("#bubble");
-bearEl.innerHTML=OUTLINE_BEAR();
-const quips=["rawr. (that means hi)","Go Bears!","try the terminal →","psst… vault.enc has a password","01000111 01001111","I guard the projects folder.","psst… ↑↑↓↓←→←→BA","have you tried ssh?","box box. bear needs a pit stop.","Daniel's dessert spot? Hui Lau Shan.","I climb trees. Daniel climbs walls.","click the desktop, I'll come over","you can pick me up, you know"];
-let bearClicks=0, bearGone=false, bearRun=false;
-const B={x:-160,y:0,vy:0,dir:1,target:0,state:"off",idleAt:0,idleFor:9000,hover:false,said:0,W:120,H:72,called:false};
-function bearSay(t,ms=2200){ if(!t){ bubble.style.display="none"; return; } bubble.textContent=t; bubble.style.display="block"; B.said=Date.now()+ms; placeBubble(); }
-function placeBubble(){ bubble.style.left=Math.max(8,Math.min(innerWidth-bubble.offsetWidth-30,B.x+10))+"px"; bubble.style.bottom=(46+B.y+B.H+12)+"px"; }
-function bearGoTo(x,run=false){ if(bearGone) return; B.target=Math.round(x); B.state=run?"run":"walk"; }
-function walkBear(){ if(bearGone||B.state==="drag"||B.state==="fall") return; if(B.state==="off"){ B.x=-160; } bearGoTo(innerWidth*(.15+Math.random()*.5)); }
-function bearArrive(){
-  if(bearRun){ bearRun=false; bearGone=true; B.state="off"; addHoney(); return; }
-  if(B.x<-120||B.x>innerWidth+10){ B.state="off"; return; }
-  B.state="idle"; B.idleAt=Date.now(); B.idleFor=7000+Math.random()*9000;
-  if(B.called){ B.called=false; bearSay(["you called?","here!","*sniff sniff*","what's up?"][Math.random()*4|0]); }
-  else if(Math.random()<.6) bearSay(quips[Math.random()*quips.length|0]);
-}
-function bearTick(){
-  const moving = B.state==="walk"||B.state==="run", paused = B.hover && B.state==="walk";
-  if(moving && !paused){
-    const sp = B.state==="run"?11:1.7, dx=B.target-B.x;
-    if(Math.abs(dx)<=sp){ B.x=B.target; bearArrive(); } else { B.dir=Math.sign(dx); B.x+=B.dir*sp; }
-  }
-  if(B.state==="fall"){ B.vy-=0.9; B.y+=B.vy; if(B.y<=0){ B.y=0; if(B.vy<-9){ B.vy=-B.vy*.32; Sound.tone(110,.08,"triangle",.08); } else { B.vy=0; B.state="idle"; B.idleAt=Date.now(); bearSay(["oof.","ow. rude.","…I meant to do that.","next time, gently."][Math.random()*4|0]); } } }
-  if(B.state==="idle" && Date.now()-B.idleAt>B.idleFor && !B.hover){
-    const r=Math.random(); bearGoTo(r<.2 ? (Math.random()<.5?-170:innerWidth+20) : 20+Math.random()*(innerWidth-B.W-60));
-  }
-  bearEl.style.left=B.x+"px"; bearEl.style.bottom=(46+B.y)+"px";
-  bearEl.style.transform=`scaleX(${B.dir>0?-1:1})`;
-  bearEl.classList.toggle("walking", moving && !paused);
-  bearEl.classList.toggle("running", B.state==="run");
-  bearEl.classList.toggle("held", B.state==="drag");
-  if(bubble.style.display==="block"){ if(Date.now()>B.said) bubble.style.display="none"; else placeBubble(); }
-  requestAnimationFrame(bearTick);
-}
-requestAnimationFrame(bearTick);
-bearEl.addEventListener("pointerenter",()=>{ B.hover=true; });
-bearEl.addEventListener("pointerleave",()=>{ B.hover=false; });
-
-/* click vs drag */
-const ANNOY={3:"hey.",5:"stop poking me.",7:"I'm warning you…",9:"ONE. more. time."};
-let dragInfo=null;
-bearEl.addEventListener("pointerdown",e=>{ if(bearGone||bearRun) return; e.preventDefault(); try{ bearEl.setPointerCapture(e.pointerId); }catch(_){} dragInfo={sx:e.clientX,sy:e.clientY,moved:false}; });
-bearEl.addEventListener("pointermove",e=>{
-  if(!dragInfo) return; const scr=$("#screen").getBoundingClientRect();
-  if(!dragInfo.moved && Math.hypot(e.clientX-dragInfo.sx,e.clientY-dragInfo.sy)>6){ dragInfo.moved=true; B.state="drag"; bearSay(["whoa!","hey, put me down!","wheee!"][Math.random()*3|0],1200); }
-  if(dragInfo.moved){ B.x=e.clientX-scr.left-B.W/2; B.y=Math.max(0,scr.bottom-46-e.clientY-B.H*.3); }
-});
-bearEl.addEventListener("pointerup",()=>{
-  if(!dragInfo) return; const d=dragInfo; dragInfo=null;
-  if(d.moved){ B.state="fall"; B.vy=0; return; }
-  bearClicks++; if(is8()) Sound.tone(220+bearClicks*40,.08);
-  if(bearClicks>=10){ bearSay("THAT'S IT. I'M OUT.",1600); Sound.seq([392,330,262,196],.12); bearRun=true; bearGoTo(innerWidth+60,true); return; }
-  bearSay(ANNOY[bearClicks]||quips[Math.random()*quips.length|0]);
-});
-bearEl.addEventListener("keydown",e=>{ if(e.key==="Enter") bearSay("rawr!"); });
-
-/* click empty desktop → paw print + bear walks there */
-function stampPaw(x,y){ const scr=$("#screen").getBoundingClientRect(); const p=el("div",{class:"paw"},PAW_SVG); p.style.left=(x-scr.left)+"px"; p.style.top=(y-scr.top)+"px"; $("#screen").appendChild(p); setTimeout(()=>p.remove(),1700); }
-$("#desktop").addEventListener("click",e=>{
-  if(e.target.closest(".icon,h1,button,a")) return;
-  stampPaw(e.clientX,e.clientY); if(bearGone) return;
-  const scr=$("#screen").getBoundingClientRect(), tx=Math.max(0,Math.min(scr.width-B.W,e.clientX-scr.left-B.W/2));
-  if(B.state==="off") B.x = tx<scr.width/2 ? -160 : scr.width+20;
-  if(B.state!=="drag"&&B.state!=="fall"&&B.state!=="run"){ B.called=true; bearGoTo(tx); }
-});
-
-function addHoney(){
-  if(document.querySelector('[data-app="honey"]')) return;
-  const b=el("button",{class:"icon","data-app":"honey","aria-label":"Open honey.txt"},`${ICONS.honey}<span>honey.txt</span>`);
-  b.onclick=()=>openWin("honey"); $("#icons").appendChild(b);
-  b.animate([{transform:"scale(0)"},{transform:"scale(1.3)"},{transform:"scale(1)"}],{duration:400,easing:"steps(4)"});
-}
-setInterval(()=>{ if(B.state==="off" && !bearGone && Math.random()<.5) walkBear(); },20000);
-
 /* ---------- desktop / taskbar ---------- */
 function showDesktop(){
   $("#desktop").style.display="block"; $("#taskbar").style.display="flex";
   if(desktopReady){
     if(!mobile()) setTimeout(()=>openWin("terminal",{x:Math.max(140,innerWidth*.5-420),y:Math.max(40,innerHeight*.38)}),300);
-    setTimeout(()=>walkBear(),1500);
-    if(pendingOpen){ const o=pendingOpen; pendingOpen=null; setTimeout(()=>openFromDisk(o),700); }
+      if(pendingOpen){ const o=pendingOpen; pendingOpen=null; setTimeout(()=>openFromDisk(o),700); }
     return;
   }
   const ic=$("#icons");
@@ -596,7 +449,6 @@ function showDesktop(){
   $("#start").onclick=e=>{ e.stopPropagation(); sm.style.display = sm.style.display==="block"?"none":"block"; };
   document.addEventListener("click",e=>{ if(!sm.contains(e.target)) sm.style.display="none"; });
   if(!mobile()) setTimeout(()=>openWin("terminal",{x:Math.max(140,innerWidth*.5-420),y:Math.max(40,innerHeight*.38)}),300);
-  setTimeout(()=>walkBear(),1500);
   loadHits(); loadNowPlaying();
   desktopReady=true; if(pendingOpen){ const o=pendingOpen; pendingOpen=null; setTimeout(()=>openFromDisk(o),700); }
 }
@@ -604,7 +456,6 @@ let replayBoot=false;
 function reboot(){
   try{ sessionStorage.removeItem("booted"); }catch(e){}
   if(is8()) toggle8bit();
-  if(bearGone){ bearGone=false; bearClicks=0; }
   replayBoot=true;
   if(Intro.available()) return Intro.powerOff({reboot:true});
   // phones (no computer intro): close everything and replay the boot screen
@@ -645,22 +496,21 @@ function toggle8bit(){
   clearTimeout(toggle8bit.t); toggle8bit.t=setTimeout(()=>ov.style.display="none",1500);
 }
 
-/* ---------- idle screensaver (DVD-style bear) ---------- */
+/* ---------- idle screensaver (DVD-style DANIEL_OS logo) ---------- */
 let lastAct=Date.now(), saverOn=false, sb={x:80,y:80,vx:2.4,vy:1.9,c:0};
 const SAVER_COLORS=["#FDB515","#3B7EA1","#E9E4D4","#7be08a","#ff7a6b","#FF77A8"];
-const sBear=$("#saverBear"); sBear.innerHTML=OUTLINE_BEAR();
+const sBear=$("#saverBear"); sBear.textContent="DANIEL_OS";
 function startSaver(){ const ir=$("#intro"); if(ir && document.body.contains(ir) && ir.style.display!=="none") return; if(saverOn||!$("#desktop")||$("#desktop").style.display!=="block") return; saverOn=true; document.body.classList.add("saver"); rain.boost(2.2);
   const scr=$("#screen"); sb.x=Math.random()*(scr.clientWidth-160); sb.y=Math.random()*(scr.clientHeight-100); sBear.style.color=SAVER_COLORS[0]; requestAnimationFrame(saverTick); }
 function stopSaver(){ if(!saverOn) return; saverOn=false; document.body.classList.remove("saver"); rain.boost(1); }
 let sFrame=0;
 function saverTick(){
-  if(!saverOn) return; const scr=$("#screen"), W=scr.clientWidth-150, H=scr.clientHeight-90; let hx=false, hy=false;
+  if(!saverOn) return; const scr=$("#screen"), W=scr.clientWidth-sBear.offsetWidth, H=scr.clientHeight-sBear.offsetHeight; let hx=false, hy=false;
   sb.x+=sb.vx; sb.y+=sb.vy;
   if(sb.x<=0||sb.x>=W){ sb.vx*=-1; sb.x=Math.max(0,Math.min(W,sb.x)); hx=true; }
   if(sb.y<=0||sb.y>=H){ sb.vy*=-1; sb.y=Math.max(0,Math.min(H,sb.y)); hy=true; }
   if(hx||hy){ sb.c=(sb.c+1)%SAVER_COLORS.length; sBear.style.color=SAVER_COLORS[sb.c]; Sound.tone(hx&&hy?1047:392,.06,"square",.03); }
   if(hx&&hy){ const ov=$("#saverHint"); ov.textContent="* CORNER HIT *"; setTimeout(()=>ov.textContent="move the mouse or press any key to wake",2000); }
-  sBear.style.transform=`scaleX(${sb.vx<0?1:-1})`;
   sBear.style.left=sb.x+"px"; sBear.style.top=sb.y+"px"; requestAnimationFrame(saverTick);
 }
 ["mousemove","pointerdown","keydown","wheel","touchstart"].forEach(ev=>addEventListener(ev,()=>{ lastAct=Date.now(); stopSaver(); },{passive:true}));
@@ -715,7 +565,6 @@ function busy(ms=150){ const b=$("#busy"); if(!b) return; b.classList.add("on");
 /* ================= INTRO: DB-1 computer ================= */
 let pendingOpen=null, desktopReady=false;
 function openFromDisk(o){
-  if(o==="bear"){ if(bearGone){ bearGone=false; bearClicks=0; } B.called=true; if(B.state==="off") B.x=-160; bearGoTo(innerWidth/2-60); setTimeout(()=>bearSay("you found my disk!",2600),1600); return; }
   openWin(o);
 }
 function sfx(fn){ const w=Sound.on; Sound.on=true; try{ fn(); }finally{ Sound.on=w; } }
@@ -801,22 +650,13 @@ const PC=(()=>{
     else { const h=[...key].reduce((n,ch)=>n+ch.charCodeAt(0),0), [r,c]=KM[key]||[h%3,h%14]; place(f,[1+c*3,53.5+r*3.2,3],2,2); }
     $("#kb").appendChild(f); setTimeout(()=>f.remove(),300);
   }
-  /* sleeping / awake pixel bear on top of the monitor */
-  function napDraw(sleeping){
-    const rows=sleeping? BEAR_A.slice(1,9).map(r=>r.replace(/k/g,"g")).concat(["..gggg..gggg..gggg.gggg..".slice(0,24)]) : BEAR_A.slice(0,13);
-    const cell=6, w=rows[0].length*cell, h=rows.length*cell, nap=$("#nap");
-    nap.setAttribute("viewBox",`0 0 ${rows[0].length} ${rows.length}`); nap.style.width=w+"px"; nap.style.height=h+"px";
-    nap.innerHTML=bearSVG(rows).replace(/fill="#001428"/g,'fill="#16161a"');
-    const [cx,cy]=px(27,23,55); nap.style.left=(cx-w/2)+"px"; nap.style.top=(cy-h+8)+"px";
-    const zz=$(".zz"); zz.style.left=(cx-w/2-10)+"px"; zz.style.top=(cy-h-20)+"px";
-  }
-  return {build,flashKey,napDraw,S};
+  return {build,flashKey,S};
 })();
-PC.build(); PC.napDraw(true);
+PC.build();
 
 const Intro=(()=>{
   const root=$("#intro"), zoom=$("#introZoom"), stage=$("#stage"), scr=$("#introScreen"), out=$("#ibash"), cur=$("#icur"),
-        pled=$("#pled"), dled=$("#dled"), slot=$("#slot"), kb=$("#kb"), mouse=$("#mouse"), nap=$("#nap");
+        pled=$("#pled"), dled=$("#dled"), slot=$("#slot"), kb=$("#kb"), mouse=$("#mouse");
   let active=false, ready=false, skipScript=false, buf="", powering=false, k=1;
   const PROMPT=`<span class="p">daniel@db-1</span>:<span class="c">~</span>$ `;
   const available=()=>true;
@@ -836,7 +676,7 @@ const Intro=(()=>{
     ready=false; skipScript=false; out.querySelectorAll("div:not(#icur)").forEach(d=>d.remove());
     line(`Last login: ${new Date().toString().slice(0,24)} on ttys001`,"m");
     const steps=[["whoami",[["daniel bantay · cs @ uc berkeley",""]]],
-                 ["ls ~/disks",[["<span class='c'>PROJECTS.DSK</span>  <span class='c'>RESUME.DSK</span>  <span class='c'>BEAR.DSK</span>",""]]],
+                 ["ls ~/disks",[["<span class='c'>PROJECTS.DSK</span>  <span class='c'>RESUME.DSK</span>  <span class='c'>ABOUT.DSK</span>",""]]],
                  ["cat README",[["insert a disk, press POWER, or run <span class='p'>./power_on.sh</span>","ok"]]]];
     for(const [c,outs] of steps){ await sleep(skipScript?0:450); await typeCmd(c); outs.forEach(([h,cl])=>line(h,cl)); }
     ready=true; buf=""; drawCur();
@@ -845,7 +685,7 @@ const Intro=(()=>{
     line(PROMPT+esc(cmd)); const c=cmd.trim(); if(!c) return;
     const [n,...a]=c.split(/\s+/);
     if(/^(\.\/power_on\.sh|power_on\.sh|power|start|boot|startx|login|sudo)$/i.test(n)) return powerOn();
-    if(n==="ls") return line("<span class='c'>PROJECTS.DSK</span>  <span class='c'>RESUME.DSK</span>  <span class='c'>BEAR.DSK</span>  power_on.sh");
+    if(n==="ls") return line("<span class='c'>PROJECTS.DSK</span>  <span class='c'>RESUME.DSK</span>  <span class='c'>ABOUT.DSK</span>  power_on.sh");
     if(n==="whoami") return line("daniel bantay · cs @ uc berkeley");
     if(n==="clear"){ out.querySelectorAll("div:not(#icur)").forEach(d=>d.remove()); return; }
     if(n==="help") return line("commands: ./power_on.sh · ls · whoami · clear · mount DISK");
@@ -908,7 +748,6 @@ const Intro=(()=>{
     $("#powerBtn").classList.add("down"); setTimeout(()=>$("#powerBtn").classList.remove("down"),150);
     sfx(()=>{ Sound.tone(90,.18,"square",.08); Sound.tone(55,1.2,"sawtooth",.025,.05); Sound.tone(7800,.9,"sine",.006,.1); });
     pled.classList.add("on"); line(PROMPT+"./power_on.sh"); line("starting DANIEL_OS …","ok"); cur.innerHTML="";
-    PC.napDraw(false); $(".zz").style.display="none"; nap.animate([{transform:"translateY(0)"},{transform:"translateY(-18px)"},{transform:"translateY(0)"}],{duration:300,easing:"steps(3)"});
     scr.classList.remove("flash"); void scr.offsetWidth; scr.classList.add("flash");
     await sleep(650);
     const r=scr.getBoundingClientRect(), s=Math.max(innerWidth/r.width,innerHeight/r.height)*1.06;
@@ -925,7 +764,7 @@ const Intro=(()=>{
     Object.keys(wins).forEach(id=>closeWin(id));
     root.style.display="block"; root.style.opacity="1"; active=true; fit();
     out.querySelectorAll("div:not(#icur)").forEach(d=>d.remove());
-    if(opts.reboot){ line("Broadcast message from daniel@db-1:","m"); line("The system is going down for reboot NOW!","e"); line("[  OK  ] Stopped bear.service","ok"); line("[  OK  ] Unmounted /Volumes/*","ok"); line("press <span class='p'>POWER</span> or run <span class='p'>./power_on.sh</span> to start again","m"); }
+    if(opts.reboot){ line("Broadcast message from daniel@db-1:","m"); line("The system is going down for reboot NOW!","e"); line("[  OK  ] Stopped daniel-os.service","ok"); line("[  OK  ] Unmounted /Volumes/*","ok"); line("press <span class='p'>POWER</span> or run <span class='p'>./power_on.sh</span> to start again","m"); }
     else { line("Broadcast message from daniel@db-1:","m"); line("The system is going down for power-off NOW!","e"); line("logout","m"); line("Connection closed. Thanks for visiting.","ok"); }
     cur.innerHTML="";
     zoom.classList.remove("zooming"); zoom.style.transform="";
@@ -933,7 +772,7 @@ const Intro=(()=>{
     zoom.style.transform=`translate(${innerWidth/2-(r.left+r.width/2)*s}px,${innerHeight/2-(r.top+r.height/2)*s}px) scale(${s})`;
     void zoom.offsetWidth; zoom.classList.add("zooming"); zoom.style.transform="";
     await sleep(1300); zoom.classList.remove("zooming");
-    pled.classList.remove("on"); PC.napDraw(true); $(".zz").style.display="";
+    pled.classList.remove("on");
     disks.forEach(d=>{ d.style.transition="none"; d.style.opacity="1"; d.style.transform=d.dataset.rest; void d.offsetWidth; d.style.transition=""; });
     await sleep(500); line("");
     ready=true; buf=""; drawCur();

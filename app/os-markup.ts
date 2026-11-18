@@ -6,7 +6,7 @@ export const OS_MARKUP = `
     <div id="diskHint">drag a disk<br>into the drive ↘</div>
     <div class="disk" data-open="projects" tabindex="0" role="button" aria-label="Insert PROJECTS disk" style="top:120px;--dc:#123a66;transform:rotate(-6deg)"><div class="body"></div><div class="sh"></div><div class="lb">PROJECTS<small>.DSK · 3 items</small></div></div>
     <div class="disk" data-open="resume" tabindex="0" role="button" aria-label="Insert RESUME disk" style="top:285px;left:58px;--dc:#8a5a0c;--lc:#003262;transform:rotate(4deg)"><div class="body"></div><div class="sh"></div><div class="lb">RESUME<small>.DSK · 1 page</small></div></div>
-    <div class="disk" data-open="bear" tabindex="0" role="button" aria-label="Insert BEAR disk" style="top:450px;left:40px;--dc:#1a1d24;transform:rotate(-3deg)"><div class="body"></div><div class="sh"></div><div class="lb">BEAR<small>.DSK · ???</small></div></div>
+    <div class="disk" data-open="about" tabindex="0" role="button" aria-label="Insert ABOUT disk" style="top:450px;left:40px;--dc:#1a1d24;transform:rotate(-3deg)"><div class="body"></div><div class="sh"></div><div class="lb">ABOUT<small>.DSK · about me</small></div></div>
     <div id="pc">
       <canvas id="pcMain"></canvas>
       <div id="kb"></div>
@@ -17,8 +17,6 @@ export const OS_MARKUP = `
       <div class="iso isoR" id="slot" aria-label="floppy drive"></div>
       <div class="iso isoR pix" id="dled"></div>
       <button class="iso isoR" id="powerBtn" aria-label="Power"></button>
-      <div class="zz"><span>z</span><span>Z</span><span>z</span></div>
-      <svg id="nap" aria-hidden="true"></svg>
     </div>
   </div></div>
   <div id="ihint">click the screen · press <b>POWER</b> · drag a disk into the drive · or type <b>./power_on.sh</b></div>
@@ -38,8 +36,6 @@ export const OS_MARKUP = `
     <nav id="icons" aria-label="Desktop"></nav>
   </main>
 
-  <div id="bubble"></div>
-  <svg id="bear" viewBox="0 0 200 120" aria-label="Bear: click, drag, or call him by clicking the desktop" role="button" tabindex="0"></svg>
 
   <div id="startmenu" role="menu">
     <div class="side">DANIEL_OS</div>
@@ -52,7 +48,7 @@ export const OS_MARKUP = `
   </footer>
 
   <div id="overlay" aria-live="assertive"></div>
-  <svg id="saverBear" class="walking" viewBox="0 0 200 120" aria-hidden="true"></svg>
+  <div id="saverBear" aria-hidden="true"></div>
   <div id="saverHint">move the mouse or press any key to wake</div>
 </div></div>
 `;

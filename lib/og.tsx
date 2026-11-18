@@ -4,29 +4,11 @@ import { ImageResponse } from "next/og";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
-// same pixel bear as the site (24×13), "g" = gold, "k" = eye
-const BEAR = [
-  "..................gg....",
-  "......gggggggg...gggg...",
-  "....gggggggggggggggggg..",
-  "...gggggggggggggggggkggg",
-  "..gggggggggggggggggggggg",
-  "..ggggggggggggggggggg...",
-  "..gggggggggggggggggg....",
-  "..ggggggggggggggggg.....",
-  "...gggggggggggggggg.....",
-  "...ggg..ggg...ggg..gg...",
-  "...ggg..gg....ggg..gg...",
-  "...gg...gg....gg...gg...",
-  "..ggg..ggg...ggg..ggg...",
-];
-
 const toBin = (s: string) => [...s].map((c) => c.charCodeAt(0).toString(2).padStart(8, "0")).join(" ");
 
 /** Retro link-preview card used for the home page and every project page. */
 export async function retroCard(opts: { kicker: string; title: string; subtitle: string; footer: string; tags?: string[] }) {
   const font = await fs.readFile(path.join(process.cwd(), "assets/VT323.woff"));
-  const cell = 14;
   const titleSize = opts.title.length > 16 ? 96 : 128;
 
   return new ImageResponse(
@@ -60,16 +42,6 @@ export async function retroCard(opts: { kicker: string; title: string; subtitle:
         <div style={{ position: "absolute", left: 70, bottom: 60, fontSize: 36, color: "#FDB515", display: "flex" }}>
           {opts.footer}
           <span style={{ background: "#FDB515", width: 18, height: 34, marginLeft: 8 }} />
-        </div>
-        {/* pixel bear */}
-        <div style={{ position: "absolute", right: 70, bottom: 74, width: 24 * cell, height: 13 * cell, display: "flex" }}>
-          {BEAR.flatMap((row, y) =>
-            [...row].map((ch, x) =>
-              ch === "." ? null : (
-                <div key={`${x}-${y}`} style={{ position: "absolute", left: x * cell, top: y * cell, width: cell + 1, height: cell + 1, background: ch === "k" ? "#001428" : "#FDB515" }} />
-              ),
-            ),
-          )}
         </div>
       </div>
     ),
