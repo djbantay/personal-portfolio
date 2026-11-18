@@ -11,7 +11,7 @@
       [...s].forEach((ch, i) => { if (P[ch]) R(c, x + i, y + j, 1, 1, P[ch]); }); });
   }
   /* 3x5 pixel font so labels stay crisp at 64px */
-  const GL = {A:"010101111101101",B:"110101110101110",C:"011100100100011",D:"110101101101110",E:"111100110100111",F:"111100110100100",G:"011100101101011",H:"101101111101101",I:"111010010010111",K:"101101110101101",L:"100100100100111",N:"110101101101101",P:"110101110100100",R:"110101110101101",T:"111010010010010",X:"101101010101101",O:"111101101101111",S:"011100010001110","!":"010010010000010",
+  const GL = {A:"010101111101101",B:"110101110101110",C:"011100100100011",D:"110101101101110",E:"111100110100111",F:"111100110100100",G:"011100101101011",H:"101101111101101",I:"111010010010111",K:"101101110101101",L:"100100100100111",N:"110101101101101",P:"110101110100100",R:"110101110101101",T:"111010010010010",X:"101101010101101",O:"111101101101111",S:"011100010001110",M:"101111111101101",W:"101101111111101",Y:"101101010010010",U:"101101101101111",V:"101101101101010",",":"000000000010100","?":"110001010000010",".":"000000000000010","'":"010010000000000","!":"010010010000010",
     0:"111101101101111",1:"010110010010111",2:"110001010100111",3:"110001010001110",4:"101101111001001",5:"111100110001110",6:"011100111101111",7:"111001010010010",8:"111101111101111",9:"111101111001110"};
   const txt = (c, s, x, y, col) => { y -= 5; [...String(s).toUpperCase()].forEach((ch, n) => { const g = GL[ch]; if (!g) return;
     for (let i = 0; i < 15; i++) if (g[i] === "1") { const px = x + n*4 + i % 3, py = y + (i / 3 | 0); R(c, px + 1, py + 1, 1, 1, "rgba(0,0,0,.55)"); R(c, px, py, 1, 1, col); } }); };
@@ -230,5 +230,80 @@
     else if ((Math.floor(lap / 90)) % 2 === 0 && (lap % 90) < 30) txt(c, "box box", 2, 6, "#1d3a63");
   }
 
-  window.HOBBY_SCENES = { climb, gym, golf, volley, fashion, cafe, car, W, H };
+  /* ---- desk: Daniel at his desk, late night in Berkeley. The hero illustration. ---- */
+  const DP = { h:"#15171d", H:"#2e3240", s:"#be9880", S:"#9e7c69", e:"#a8846f", g:"#0b0b0f", G:"#36b571", m:"#7a5446" };
+  const HEAD = ["...hhhhh....","..hhhHhhhh..",".hhhhhhhhhh.","hhhhhhhhhhhh","hhhhhhhsssh.","hhhhhssgggg.","hhhehssgGGg.","hhheesssssss",".hhSssssss..","..Sssssmms..","...Sssssss..","....SSss...."];
+  const BLINK = HEAD.map((r, i) => i === 6 ? r.replace(/G/g, "g") : r);
+  const sprP = (c, rows, x, y, pal) => rows.forEach((r, j) => [...r].forEach((ch, i) => { if (pal[ch]) R(c, x + i, y + j, 1, 1, pal[ch]); }));
+  const CODE = ["#FDB515","#6FB7F0","#7BE08A","#C9A2FF","#e9e4d4","#FF8FB8"];
+  function desk(c, f, hov) {
+    const DW = 112;
+    // wall + floor
+    R(c, 0, 0, DW, 66, "#0f2340"); for (let x = 0; x < DW; x += 14) R(c, x, 0, 1, 66, "#13294a");
+    R(c, 0, 66, DW, 6, "#16243c"); R(c, 0, 66, DW, 1, "#2c4a73");
+    // window: night sky, stars, the Campanile
+    R(c, 4, 5, 28, 26, "#3a2a1c"); R(c, 5, 6, 26, 24, "#0b1b33"); R(c, 5, 22, 26, 8, "#13294a");
+    [[8,9],[14,7],[26,10],[22,14],[10,15]].forEach(([x, y], k) => { if ((f >> 4) % 5 !== k) R(c, x, y, 1, 1, "#e9e4d4"); });
+    R(c, 25, 8, 3, 3, "#f6e9b0"); R(c, 26, 8, 2, 1, "#0b1b33");
+    R(c, 15, 12, 4, 18, "#06111f"); R(c, 16, 9, 2, 3, "#06111f"); R(c, 16, 7, 1, 2, "#06111f"); R(c, 16, 14, 2, 2, "#FDB515");
+    [[6,6],[10,9],[22,5],[26,7]].forEach(([x, w]) => R(c, x, 30 - w, 4, w, "#081628"));
+    R(c, 18, 6, 1, 24, "#3a2a1c"); R(c, 5, 18, 26, 1, "#3a2a1c"); R(c, 3, 31, 30, 2, "#4a3624");
+    // shelf with tiny hobby trophies: F1 car, volleyball, golf ball, plant, books
+    R(c, 58, 12, 44, 2, "#5a3a24"); R(c, 58, 12, 44, 1, "#7a5232");
+    R(c, 60, 10, 8, 2, "#d40000"); R(c, 62, 9, 3, 1, "#d40000"); R(c, 60, 11, 2, 1, "#111"); R(c, 66, 11, 2, 1, "#111"); R(c, 59, 9, 1, 2, "#111");
+    R(c, 71, 8, 4, 4, "#f2efe6"); R(c, 72, 8, 1, 4, "#FDB515"); R(c, 71, 10, 4, 1, "#3b7dd8");
+    R(c, 78, 10, 2, 2, "#ffffff"); R(c, 78, 12, 2, 0, "#fff");
+    [[83,"#3b7dd8"],[85,"#FDB515"],[87,"#7a1e2c"],[89,"#e9e4d4"]].forEach(([x, col]) => R(c, x, 6, 2, 6, col));
+    R(c, 94, 9, 5, 3, "#8a5a3c"); R(c, 93, 5, 2, 4, "#4f8a52"); R(c, 96, 4, 2, 5, "#7ab07c"); R(c, 98, 6, 2, 3, "#4f8a52");
+    // monitor glow washing over the scene
+    c.fillStyle = "rgba(90,220,150,.07)"; c.beginPath(); c.moveTo(76, 22); c.lineTo(40, 18); c.lineTo(40, 48); c.lineTo(76, 42); c.fill();
+    // chair (racing red, naturally)
+    R(c, 28, 26, 7, 25, "#5a1e28"); R(c, 28, 26, 2, 25, "#7a2a36"); R(c, 29, 24, 5, 2, "#5a1e28");
+    R(c, 30, 50, 24, 3, "#3a1218"); R(c, 30, 50, 24, 1, "#5a1e28"); R(c, 40, 53, 3, 10, "#2c2c34"); R(c, 33, 63, 17, 1, "#2c2c34");
+    [[33],[41],[49]].forEach(([x]) => R(c, x, 64, 2, 2, "#111"));
+    // desk
+    R(c, 56, 49, 56, 3, "#7a4e2e"); R(c, 56, 49, 56, 1, "#9a6a40"); R(c, 58, 52, 3, 14, "#5e3a20"); R(c, 106, 52, 3, 14, "#5e3a20");
+    // monitor with scrolling code
+    R(c, 74, 18, 32, 26, "#1b1d25"); R(c, 74, 18, 32, 1, "#2e3240"); R(c, 76, 20, 28, 21, "#06111f");
+    const pass = (f % 160) > 136, scroll = Math.floor(f / 5);
+    for (let i = 0; i < 9; i++) { const n = scroll + i, h = (n * 2654435761) >>> 0;
+      const ind = (h >> 3) % 3 * 2, len = 6 + (h >> 7) % 16; R(c, 78 + ind, 21 + i * 2, Math.min(len, 24 - ind), 1, CODE[(h >> 11) % CODE.length]);
+      if ((h >> 15) % 3 === 0) R(c, 78 + ind + len + 2, 21 + i * 2, Math.min(5, 20 - ind - len), 1, "#4a5578"); }
+    if ((f >> 3) % 2) R(c, 78, 39, 2, 1, "#e9e4d4");
+    if (pass) { R(c, 80, 26, 20, 9, "#0d3a22"); R(c, 80, 26, 20, 1, "#7BE08A"); txt(c, "PASS", 84, 33, "#7BE08A"); }
+    R(c, 88, 44, 4, 5, "#1b1d25"); R(c, 83, 48, 14, 1, "#2e3240");
+    // keyboard + a key lighting up as he types
+    R(c, 60, 47, 14, 2, "#3a3d48"); R(c, 60, 47, 14, 1, "#4a4f6a");
+    if (!hov) R(c, 61 + ((f * 7) % 12), 47, 1, 1, "#FDB515");
+    // Mind Coffee mug + steam
+    R(c, 100, 42, 6, 7, "#f2efe6"); R(c, 100, 42, 6, 1, "#d8d2c4"); R(c, 101, 43, 4, 1, "#6b3e26"); R(c, 106, 44, 2, 1, "#e6e0d2"); R(c, 107, 45, 1, 2, "#e6e0d2"); R(c, 106, 47, 2, 1, "#e6e0d2");
+    R(c, 102, 45, 2, 2, "#FDB515");
+    for (let k = 0; k < 5; k++) { const t = (f / 3 + k * 3) % 12; R(c, 102 + Math.round(Math.sin(t / 2 + k) * 1.2), 40 - t, 1, 1, `rgba(230,230,240,${(.55 - t / 24).toFixed(2)})`); }
+    // Daniel: breathing bob, hoodie, pants, sneakers
+    const by = (f >> 4) % 3 === 0 ? 1 : 0;
+    R(c, 44, 30 + by, 4, 3, "#9e7c69");                                    // neck
+    R(c, 35, 32 + by, 15, 16 - by, "#1b1d25"); R(c, 35, 32 + by, 2, 16 - by, "#262a35");   // torso
+    R(c, 36, 30 + by, 7, 4, "#15171d");                                    // hood bunched behind neck
+    R(c, 49, 34 + by, 1, 12, "#24493a");                                   // monitor light on the hoodie
+    R(c, 47, 35 + by, 1, 4, "#787a80"); R(c, 48, 35 + by, 1, 3, "#787a80"); // drawstrings
+    R(c, 38, 47, 20, 4, "#2b2b3a"); R(c, 38, 47, 20, 1, "#3a3a4c");        // thighs under the desk
+    R(c, 54, 50, 4, 14, "#2b2b3a"); R(c, 54, 63, 7, 3, "#f2efe6"); R(c, 54, 65, 7, 1, "#bdb7a6"); // shin + sneaker
+    sprP(c, (f % 70) < 2 ? BLINK : HEAD, 38, 19 + by, DP);
+    if (hov) {
+      // wave at the viewer
+      const w = (f >> 1) % 2;
+      R(c, 46, 33 + by, 4, 3, "#1b1d25"); R(c, 50, 25 + by, 3, 10, "#1b1d25"); R(c, 52, 25 + by, 1, 10, "#24493a");
+      R(c, 50 + w, 20 + by, 3, 5, "#be9880"); R(c, 50 + w, 19 + by, 1, 2, "#be9880"); R(c, 52 + w, 19 + by, 1, 1, "#be9880"); R(c, 53 + w, 21 + by, 1, 2, "#be9880");
+      R(c, 54, 6, 38, 10, "#f2efe6"); R(c, 54, 6, 38, 1, "#ffffff"); R(c, 55, 16, 3, 1, "#f2efe6"); R(c, 55, 17, 1, 1, "#f2efe6");
+      txt(c, "HI THERE!", 57, 13, "#003262");
+    } else {
+      // typing: forearm to the keyboard, hand tapping
+      const t = (f >> 1) % 2;
+      R(c, 45, 34 + by, 4, 7, "#1b1d25"); R(c, 47, 40, 4, 4, "#1b1d25"); R(c, 50, 43, 9, 3, "#1b1d25"); R(c, 50, 43, 9, 1, "#262a35");
+      R(c, 59, 44 + t, 3, 2, "#be9880"); R(c, 61, 45 - t, 2, 1, "#9e7c69");
+    }
+  }
+  desk.size = [112, 72];
+
+  window.HOBBY_SCENES = { climb, gym, golf, volley, fashion, cafe, car, desk, W, H };
 })();

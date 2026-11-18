@@ -40,6 +40,7 @@ export default function RecruiterPage() {
             <p className="rx-prompt"><span>guest@db-1</span>:~$ <b data-type="whoami --short">whoami --short</b><i className="rx-caret" /></p>
             <h1 data-scramble>{P.name}.</h1>
             <p className="rx-tag">I turn messy data and fuzzy problems into things people can actually use.</p>
+            <p className="rx-open"><b>Open to:</b> {P.recruiter.openTo}</p>
             <ul className="rx-aff">
               {P.affiliations.map((a) => (
                 <li key={a.at}>
@@ -58,21 +59,15 @@ export default function RecruiterPage() {
             </div>
           </div>
 
-          <aside className="rx-badge" data-tilt aria-label="Access badge">
-            <div className="rx-badge-top"><span>ACCESS BADGE</span><span className="rx-live"><i />online</span></div>
-            <div className="rx-badge-id">
-              {P.avatar && <img src={P.avatar} alt="Daniel's pixel portrait" width={88} height={88} />}
-              <div>
-                <p className="rx-k">holder</p><p className="rx-v">{P.name}</p>
-                <p className="rx-k">clearance</p><p className="rx-v rx-gold">RECRUITER</p>
-                <p className="rx-k">local time</p><p className="rx-v" data-clock>--:--</p>
-              </div>
-            </div>
-            <p className="rx-k">open to</p><p className="rx-v">{P.recruiter.openTo}</p>
-            <p className="rx-k">based in</p><p className="rx-v">{P.location}</p>
-            <div className="rx-barcode" aria-hidden="true">{[...P.handle].map((c) => c.charCodeAt(0).toString(2).padStart(8, "0")).join(" ")}</div>
-            <div className="rx-sheen" aria-hidden="true" />
-          </aside>
+          <figure className="rx-desk" data-tilt>
+            <canvas className="scene" data-scene="desk" width={112} height={72} role="img"
+              aria-label="Pixel art of Daniel typing at his desk at night, a Mind Coffee mug steaming and the Campanile in the window" />
+            <figcaption>
+              <span className="rx-live"><i />online</span>
+              <span data-clock>--:--</span><span>in {P.location}</span>
+              <span className="rx-hint">hover to say hi</span>
+            </figcaption>
+          </figure>
         </section>
 
         {/* ---------- numbers ---------- */}

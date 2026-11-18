@@ -51,7 +51,7 @@ export default function RecruiterFx() {
 
     // tilt + holographic sheen toward the pointer
     if (!calm) document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((el) => {
-      const max = el.classList.contains("rx-badge") ? 10 : 5;
+      const max = el.classList.contains("rx-desk") ? 6 : 5;
       on(el, "pointermove", (ev) => { const e = ev as PointerEvent, r = el.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
         el.style.transform = `perspective(800px) rotateY(${(x - .5) * max}deg) rotateX(${(.5 - y) * max}deg) translateY(-2px)`;
@@ -93,7 +93,7 @@ export default function RecruiterFx() {
     const startScenes = () => {
       const S = (window as unknown as { HOBBY_SCENES?: Record<string, Scene> & { W: number; H: number } }).HOBBY_SCENES;
       if (!S) { if (alive) setTimeout(startScenes, 150); return; }
-      const items = [...document.querySelectorAll<HTMLCanvasElement>(".rx-scene canvas")].map((cv) => {
+      const items = [...document.querySelectorAll<HTMLCanvasElement>("canvas.scene")].map((cv) => {
         const fn = S[cv.dataset.scene || ""] as Scene | undefined; const fig = cv.closest("figure")!;
         if (fn?.size) { cv.width = fn.size[0]; cv.height = fn.size[1]; }
         const it = { c: cv.getContext("2d")!, fn, hov: false, w: cv.width, h: cv.height };

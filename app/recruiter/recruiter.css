@@ -24,7 +24,7 @@
 .rx-page{max-width:1080px;margin:0 auto;padding:0 clamp(16px,4vw,44px) 60px}
 
 /* hero */
-.rx-hero{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:40px;align-items:center;padding:56px 0 34px}
+.rx-hero{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:40px;align-items:center;padding:56px 0 34px}
 .rx-prompt{color:var(--dim);font-size:13px;margin-bottom:10px}
 .rx-prompt span{color:var(--ok)}.rx-prompt b{color:var(--ink);font-weight:500}
 .rx-caret{display:inline-block;width:8px;height:15px;background:var(--gold);margin-left:4px;vertical-align:-2px;animation:rxBlink 1s steps(1) infinite}
@@ -156,3 +156,15 @@
   .rx-cards{grid-template-columns:1fr}.rx-chips span,.rx-chips button{color:#333;background:none}
   .rx-job ul,.rx-card details,.rx-lbl,.rx-when span,.rx-role,.rx-k{color:#333}
 }
+
+/* hero illustration: Daniel at his desk */
+.rx-desk{margin:0;transition:transform .2s ease-out}
+.rx-desk canvas{display:block;width:100%;aspect-ratio:112/72;image-rendering:pixelated;border:2px solid var(--gold);border-radius:6px;background:#0f2340;
+  box-shadow:8px 8px 0 rgba(0,0,0,.45),0 0 50px rgba(54,181,113,.12)}
+.rx-desk figcaption{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-top:10px;font:12px 'IBM Plex Mono',monospace;color:var(--dim)}
+.rx-desk .rx-hint{margin-left:auto;color:var(--rock)}
+.rx-live{display:flex;align-items:center;gap:6px;color:var(--ok)}
+.rx-live i{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:rxPulse 1.6s infinite}
+.rx-open{color:var(--dim);margin:-8px 0 16px;font-size:14px}.rx-open b{color:var(--ok);font-weight:600}
+@media print{.rx-desk{display:none}}
+@media (max-width:860px){.rx-desk{max-width:520px}}
