@@ -19,7 +19,7 @@ Boot an isometric pixel-art computer, drag floppy disks into the drive, and expl
 Most portfolios are a page you scroll. This one is a small operating system you *use*:
 
 - **Boot sequence.** An isometric pixel-art computer (the "DB-1") sits on a desk. Click the screen, press POWER, type `./power_on.sh`, or drag a floppy into the drive, and the camera zooms into the CRT and boots DANIEL_OS.
-- **Desktop.** Projects, experience, skills and contact each open in their own draggable, minimizable window, with a taskbar, a Start menu and an idle screensaver.
+- **Desktop.** Projects, experience, skills and contact each open in their own draggable, minimizable window (each with its own accent color), with a taskbar, a Start menu and an idle screensaver. Icons lift on hover and can be dragged anywhere (positions are remembered), windows tilt as you fling them, and project cards tilt toward the cursor. An `fx` toggle (or `clean`) switches to a plain, high-contrast reading mode, which is also the default for visitors with reduced-motion turned on.
 - **A working terminal.** `help`, `projects`, `ask`, `mail`, `git log`, `ssh`… plus a few hidden commands.
 - **Live data.** A visitor counter, a guestbook, my latest GitHub commits, what I'm listening to on Spotify, and an AI that answers questions about my experience.
 

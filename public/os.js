@@ -60,7 +60,7 @@ const ICONS = {
 /* ---------- digital rain (binary) ---------- */
 const rain = (() => {
   const cv = $("#rain"), cx = cv.getContext("2d");
-  let cols=[], fs=18, on=true, speed=1; let RC={head:"#FDB515",t1:"#3B7EA1",t2:"#2a5f80",fade:"rgba(0,20,40,.16)"};
+  let cols=[], fs=18, on=true, speed=1; let RC={head:"#C9921A",t1:"#24506d",t2:"#1a3a52",fade:"rgba(3,8,15,.2)"};
   const glyphs = "0101010110";
   function size(){ cv.width=cv.offsetWidth; cv.height=cv.offsetHeight; fs = mobile()?14:18;
     cols = Array.from({length:Math.ceil(cv.width/fs)},()=>({y:Math.random()*cv.height/fs - 20, v:.25+Math.random()*.55, trail:[] })); }
@@ -82,7 +82,7 @@ const rain = (() => {
     requestAnimationFrame(frame);
   }
   addEventListener("resize",size); size(); frame();
-  return { setColors(c){ RC={...RC,...c}; }, toggle(){ on=!on; cv.style.opacity = on? ".55":"0"; return on; }, boost(v){ speed=v; }, el:cv };
+  return { setColors(c){ RC={...RC,...c}; }, toggle(){ on=!on; cv.style.opacity = on? "":"0"; return on; }, boost(v){ speed=v; }, el:cv };
 })();
 
 /* ---------- boot sequence ---------- */
@@ -113,6 +113,13 @@ async function boot(){
 }
 
 /* ---------- window manager ---------- */
+/* each window type gets its own accent so overlapping windows are easy to tell apart */
+const ACCENTS={about:"#FDB515",projects:"#FDB515",experience:"#6FB7F0",skills:"#7BE08A",terminal:"#E9E4D4",contact:"#FF8FB8",resume:"#E9E4D4",guestbook:"#FFB65C",secret:"#FF7A6B"};
+
+/* clean mode: no scanlines, rain or flicker (auto-on for prefers-reduced-motion) */
+function setClean(v){ document.body.classList.toggle("clean",v); const b=$("#fx"); if(b){ b.textContent=v?"fx off":"fx on"; b.setAttribute("aria-pressed",String(!v)); } try{ localStorage.setItem("clean",v?"1":"0"); }catch(e){} }
+(()=>{ let v=null; try{ const s=localStorage.getItem("clean"); if(s!==null) v=s==="1"; }catch(e){} if(v===null) v=matchMedia("(prefers-reduced-motion: reduce)").matches; setClean(v); })();
+
 let Z=100; const wins={};
 const APPS = {
   about:      {title:"about.txt",       icon:"about",  w:540,h:560, render:renderAbout},
@@ -134,7 +141,8 @@ function openWin(id, opts={}){
   const n = Object.keys(wins).length;
   const W = Math.min(app.w, innerWidth-60), H = Math.min(app.h, innerHeight-140);
   const left = opts.x ?? Math.max(20, (innerWidth-W)/2 - 120 + n*28), top = opts.y ?? Math.max(20, 60 + n*24);
-  const w = el("section",{class:"win",role:"dialog","aria-label":app.title,style:`left:${left}px;top:${top}px;width:${W}px;height:${H}px`});
+  const acc = app.acc || ACCENTS[id] || (String(id).startsWith("proj")?ACCENTS.projects:"#FDB515");
+  const w = el("section",{class:"win",role:"dialog","aria-label":app.title,style:`left:${left}px;top:${top}px;width:${W}px;height:${H}px;--acc:${acc}`});
   w.innerHTML = `<div class="bar"><span class="t">${esc(app.title)}</span><button aria-label="Minimize" data-a="min">_</button><button aria-label="Maximize" data-a="max">□</button><button aria-label="Close" data-a="close">×</button></div><div class="body"></div>`;
   $("#screen").appendChild(w); wins[id]=w;
   app.render(w.querySelector(".body"), opts);
@@ -149,12 +157,51 @@ function focusWin(id){ if(Z>600){ Z=100; Object.values(wins).sort((a,b)=>a.style
 function closeWin(id){ const w=wins[id]; if(!w) return; if(is8()) Sound.seq([988,494],.05); w.classList.add("closing"); delete wins[id]; setTimeout(()=>w.remove(),150); renderTasks(); }
 function minimize(id){ wins[id].style.display="none"; wins[id].dataset.min="1"; renderTasks(); }
 function restore(id){ wins[id].style.display=""; wins[id].dataset.min="0"; focusWin(id); }
+const fx = () => !document.body.classList.contains("clean") && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+/* window drag: lifts, and tilts toward the direction you fling it (like the floppies on the intro) */
 function drag(w){
-  const bar=w.querySelector(".bar"); let sx,sy,ox,oy,on=false;
-  bar.addEventListener("pointerdown",e=>{ if(e.target.dataset.a||w.classList.contains("max")||mobile()) return; on=true; sx=e.clientX; sy=e.clientY; ox=w.offsetLeft; oy=w.offsetTop; bar.setPointerCapture(e.pointerId); });
-  bar.addEventListener("pointermove",e=>{ if(!on) return; w.style.left=Math.max(-w.offsetWidth+80,Math.min(innerWidth-80,ox+e.clientX-sx))+"px"; w.style.top=Math.max(0,Math.min(innerHeight-90,oy+e.clientY-sy))+"px"; });
-  bar.addEventListener("pointerup",()=>on=false);
+  const bar=w.querySelector(".bar"); let sx,sy,ox,oy,on=false,lastX=0,tilt=0,raf=0;
+  const settle=()=>{ w.classList.remove("dragging"); w.style.rotate=""; };
+  bar.addEventListener("pointerdown",e=>{ if(e.target.dataset.a||w.classList.contains("max")||mobile()) return; on=true; sx=lastX=e.clientX; sy=e.clientY; ox=w.offsetLeft; oy=w.offsetTop; tilt=0; bar.setPointerCapture(e.pointerId); if(fx()) w.classList.add("dragging"); });
+  bar.addEventListener("pointermove",e=>{ if(!on) return;
+    w.style.left=Math.max(-w.offsetWidth+80,Math.min(innerWidth-80,ox+e.clientX-sx))+"px"; w.style.top=Math.max(0,Math.min(innerHeight-90,oy+e.clientY-sy))+"px";
+    if(fx()){ tilt=Math.max(-5,Math.min(5,tilt*.7+(e.clientX-lastX)*.35)); lastX=e.clientX; w.style.rotate=tilt.toFixed(2)+"deg";
+      cancelAnimationFrame(raf); raf=requestAnimationFrame(()=>setTimeout(()=>{ if(on){ tilt*=.5; w.style.rotate=tilt.toFixed(2)+"deg"; } },60)); } });
+  bar.addEventListener("pointerup",()=>{ on=false; settle(); });
+  bar.addEventListener("pointercancel",()=>{ on=false; settle(); });
 }
+/* desktop icons: hover lift, drag anywhere (positions remembered per visitor) */
+const ICON_POS_KEY="iconPos";
+function loadIconPos(){ try{ return JSON.parse(localStorage.getItem(ICON_POS_KEY)||"{}"); }catch(e){ return {}; } }
+function saveIconPos(p){ try{ localStorage.setItem(ICON_POS_KEY,JSON.stringify(p)); }catch(e){} }
+function makeIconDraggable(b,id){
+  const pos=loadIconPos(); if(pos[id]) b.style.translate=`${pos[id][0]}px ${pos[id][1]}px`;
+  let st=null;
+  b.addEventListener("pointerdown",e=>{ if(mobile()||e.button!==0) return; const t=(b.style.translate||"0px 0px").split(" ").map(parseFloat);
+    st={sx:e.clientX,sy:e.clientY,bx:t[0]||0,by:t[1]||0,moved:false,lastX:e.clientX,tilt:0}; try{ b.setPointerCapture(e.pointerId); }catch(_){} });
+  b.addEventListener("pointermove",e=>{ if(!st) return; const dx=e.clientX-st.sx, dy=e.clientY-st.sy;
+    if(!st.moved && Math.hypot(dx,dy)>6){ st.moved=true; b.classList.add("lift"); }
+    if(!st.moved) return;
+    const r=$("#screen").getBoundingClientRect(), home=b.getBoundingClientRect();
+    let nx=st.bx+dx, ny=st.by+dy;
+    // keep the icon on the desktop
+    const cur=(b.style.translate||"0px 0px").split(" ").map(parseFloat), cx=home.left-(cur[0]||0), cy=home.top-(cur[1]||0);
+    nx=Math.max(r.left-cx+4, Math.min(r.right-cx-home.width-4, nx)); ny=Math.max(r.top-cy+4, Math.min(r.bottom-50-cy-home.height, ny));
+    b.style.translate=`${nx}px ${ny}px`;
+    st.tilt=Math.max(-14,Math.min(14,st.tilt*.6+(e.clientX-st.lastX)*.9)); st.lastX=e.clientX; b.style.rotate=fx()?st.tilt.toFixed(1)+"deg":""; });
+  const end=()=>{ if(!st) return; const moved=st.moved; st=null; b.classList.remove("lift"); b.style.rotate="";
+    if(moved){ b.dataset.dragged="1"; setTimeout(()=>delete b.dataset.dragged,0);
+      const p=loadIconPos(); p[id]=(b.style.translate||"0px 0px").split(" ").map(parseFloat); saveIconPos(p);
+      if(fx()) b.animate([{transform:"scale(1.12)"},{transform:"scale(.94)"},{transform:"scale(1.03)"},{transform:"scale(1)"}],{duration:380,easing:"ease-out"}); } };
+  b.addEventListener("pointerup",end); b.addEventListener("pointercancel",end);
+  b.addEventListener("click",e=>{ if(b.dataset.dragged){ e.stopImmediatePropagation(); e.preventDefault(); } },true);
+}
+/* project cards: 3D tilt toward the cursor */
+document.addEventListener("pointermove",e=>{ const c=e.target.closest&&e.target.closest(".card"); 
+  document.querySelectorAll(".card.tilt").forEach(x=>{ if(x!==c){ x.classList.remove("tilt"); x.style.transform=""; } });
+  if(c&&!fx()){ c.classList.remove("tilt"); c.style.transform=""; }
+  if(!c||!fx()) return; const r=c.getBoundingClientRect(), px=(e.clientX-r.left)/r.width-.5, py=(e.clientY-r.top)/r.height-.5;
+  c.classList.add("tilt"); c.style.transform=`perspective(700px) rotateX(${(-py*10).toFixed(2)}deg) rotateY(${(px*12).toFixed(2)}deg) translateY(-4px)`; },{passive:true});
 function renderTasks(active){
   const t=$("#tasks"); t.innerHTML="";
   Object.entries(wins).forEach(([id,w])=>{
@@ -270,7 +317,7 @@ function renderTerminal(b){
 <span class="p">system</span>
   ls · cat FILE · cd DIR · whoami · clear
   history · date · echo TEXT · ping
-  reboot · shutdown
+  reboot · shutdown · clean · tidy
 <span class="p">online</span>
   ask QUESTION   ask an AI about Daniel
   mail           send Daniel a message
@@ -388,6 +435,8 @@ function renderTerminal(b){
   CMDS.restart=CMDS.reboot;
   CMDS.shutdown=()=>{ print("Broadcast message: the system is going down for power-off NOW!","e"); setTimeout(shutdown,700); };
   CMDS.poweroff=CMDS.shutdown; CMDS.halt=CMDS.shutdown; CMDS.logout=CMDS.exit;
+  CMDS.tidy=()=>{ try{ localStorage.removeItem(ICON_POS_KEY); }catch(e){} document.querySelectorAll("#icons .icon").forEach(i=>{ i.style.translate=""; }); print("desktop icons tidied.","ok"); };
+  CMDS.clean=()=>{ const v=!document.body.classList.contains("clean"); setClean(v); print(v?"clean mode on: effects off, easier reading.":"clean mode off: effects back on.","ok"); };
   CMDS.screensaver=()=>{ print("starting screensaver…","m"); setTimeout(startSaver,300); };
   CMDS.chime=()=>{ if(!Sound.on) return print("sound is off. turn it on with the ♪ button in the taskbar.","m"); campanile(new Date().getHours()%12||12); print("the Campanile chimes.","ok"); };
   inp.addEventListener("keydown",async e=>{
@@ -444,7 +493,7 @@ function showDesktop(){
     return;
   }
   const ic=$("#icons");
-  ICON_ORDER.forEach(id=>{ const b=el("button",{class:"icon","aria-label":"Open "+LABELS[id]},`${ICONS[APPS[id].icon]}<span>${LABELS[id]}</span>`); b.onclick=()=>openWin(id); ic.appendChild(b); });
+  ICON_ORDER.forEach(id=>{ const b=el("button",{class:"icon","aria-label":"Open "+LABELS[id]},`${ICONS[APPS[id].icon]}<span>${LABELS[id]}</span>`); b.onclick=()=>openWin(id); makeIconDraggable(b,id); ic.appendChild(b); });
   const sm=$("#startmenu");
   if(DATA.avatar){ const side=sm.querySelector(".side"); side.classList.add("me");
     side.innerHTML=`<img class="avatar" src="${esc(DATA.avatar)}" alt="" width="56" height="56" style="border:2px solid var(--navy)"><div class="who">${esc(DATA.handle==="djbantay"?"daniel":DATA.handle)}<small>CS @ Berkeley</small></div>`; }
@@ -523,6 +572,7 @@ setInterval(()=>{ if(!saverOn && Date.now()-lastAct>60000) startSaver(); },1000)
 
 /* ---------- sound toggle + Campanile chimes ---------- */
 $("#pwr").onclick=()=>reboot();
+$("#fx").onclick=()=>setClean(!document.body.classList.contains("clean"));
 $("#snd").onclick=()=>{ setSound(!Sound.on); if(Sound.on) Sound.bell(784); };
 try{ if(localStorage.getItem("snd")==="1") setSound(true); }catch(e){}
 function campanile(hour){

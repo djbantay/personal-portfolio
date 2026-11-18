@@ -275,3 +275,51 @@ body.eightbit #start{background:#FF004D;color:#FFF1E8}
 #startmenu .side.me .who small{display:block;font-size:16px;opacity:.75}
 .idcard{display:flex;gap:16px;align-items:flex-start;border:1px dashed var(--rock);padding:10px;margin:6px 0;flex-wrap:wrap}
 .idcard .fields{white-space:pre;line-height:1.35}
+
+/* ================= contrast pass ================= */
+:root{--dim:#A6B6C8;--ink:#EEEAE0;--winbg:#10284a;--termbg:#081425;--rock:#4F92B8}
+#screen{background:radial-gradient(ellipse at 50% 40%,#0a1626 0%,#050c16 60%,#020509 100%)}
+#rain{opacity:.32}
+#screen::after{background:repeating-linear-gradient(to bottom,rgba(255,255,255,.022) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.5) 100%)}
+.win{--acc:#FDB515;background:linear-gradient(180deg,#132f55 0%,var(--winbg) 140px);border:2px solid var(--acc);
+  box-shadow:0 0 0 1px rgba(0,0,0,.6),8px 8px 0 rgba(0,0,0,.55),0 22px 60px rgba(0,0,0,.7),0 0 28px -8px var(--acc)}
+.bar{background:var(--acc);color:#04101e}
+.bar button:hover{background:#04101e;color:var(--acc)}
+.win.inactive{border-color:#33557a;box-shadow:0 0 0 1px rgba(0,0,0,.6),6px 6px 0 rgba(0,0,0,.5),0 14px 40px rgba(0,0,0,.6)}
+.win.inactive .bar{background:#1d3a5e;color:#d2deea}
+.win.inactive .body{opacity:.9}
+.h{color:var(--acc)}
+.term{background:var(--termbg)}
+.card{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)}
+.tag{border-color:#4F92B8;color:#cfe6f5}
+#hero .bin{color:#4F92B8}
+.icon span{text-shadow:0 1px 2px #000,0 0 6px #000}
+#fx{background:none;border:1px solid var(--rock);color:var(--ink);font:inherit;font-size:16px;padding:0 8px;cursor:pointer}
+#fx:hover{border-color:var(--gold);color:var(--gold)}
+/* clean mode: plain, high-contrast reading */
+body.clean #screen::after,body.clean #screen::before{display:none}
+body.clean #rain{opacity:0!important}
+body.clean #screen{background:#060c14}
+body.clean .glow{text-shadow:none}
+body.clean .win{animation:none}
+@media (prefers-reduced-motion:reduce){.win,.win.closing{animation:none}}
+@media (max-width:720px){#fx{display:none}}
+
+/* ================= interaction pass: hover + drag physics ================= */
+.icon{transition:transform .25s cubic-bezier(.3,1.6,.5,1),filter .2s;touch-action:none}
+.icon svg{transition:filter .2s,transform .25s cubic-bezier(.3,1.6,.5,1)}
+.icon:hover{transform:translateY(-5px) rotate(-3deg) scale(1.07)}
+.icon:hover svg{filter:drop-shadow(0 10px 8px rgba(0,0,0,.6)) drop-shadow(0 0 10px rgba(253,181,21,.45))}
+.icon:active{transform:scale(.95)}
+.icon.lift{z-index:50;transition:none;transform:scale(1.12);cursor:grabbing}
+.icon.lift svg{filter:drop-shadow(0 22px 14px rgba(0,0,0,.7)) drop-shadow(0 0 14px rgba(253,181,21,.55))}
+.icon.lift span{background:var(--gold);color:var(--navy)}
+.win{transition:box-shadow .2s,rotate .35s cubic-bezier(.3,1.5,.5,1),scale .2s}
+.win.dragging{transition:box-shadow .2s,scale .2s;scale:1.012;box-shadow:0 0 0 1px rgba(0,0,0,.6),14px 18px 0 rgba(0,0,0,.45),0 40px 80px rgba(0,0,0,.75),0 0 36px -6px var(--acc)}
+.card{transition:transform .2s cubic-bezier(.3,1.4,.5,1),box-shadow .2s,border-color .2s;transform-style:preserve-3d;will-change:transform}
+.card.tilt{border-color:var(--acc,var(--gold));box-shadow:0 18px 30px -10px rgba(0,0,0,.7),0 0 0 1px var(--acc,var(--gold))}
+.btn,.tag,.task,#start{transition:transform .15s cubic-bezier(.3,1.6,.5,1),background .15s,color .15s}
+.btn:hover,.task:hover,#start:hover{transform:translateY(-2px)}
+.tag:hover{transform:translateY(-1px) scale(1.05);border-color:var(--acc,var(--gold))}
+body.clean .icon,body.clean .icon:hover,body.clean .card.tilt,body.clean .btn:hover,body.clean .tag:hover{transform:none!important;transition:none}
+@media (prefers-reduced-motion:reduce){.icon:hover,.card.tilt,.btn:hover,.tag:hover{transform:none!important}}
