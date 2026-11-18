@@ -114,13 +114,13 @@ export const PROFILE = {
   "personal": {
     "intro": "Off the clock I'm usually on a bouldering wall, in the gym, on a golf course, or hunting for the next great cafe.",
     "hobbies": [
-      { "name": "rock climbing", "detail": "bouldering", "quip": "falling off walls, recreationally" },
-      { "name": "the gym", "detail": "", "quip": "git commit -m \"gains\"" },
-      { "name": "golf", "detail": "favorite course: Franklin Canyon (Hercules)", "quip": "ctrl+z does not work on the course" },
-      { "name": "volleyball", "detail": "", "quip": "bump, set, ship it" },
-      { "name": "fashion & shopping", "detail": "favorite brands: Diesel, Buck Mason", "quip": "fit check before every git push" },
-      { "name": "cafes & food", "detail": "top Berkeley spot: Mind Coffee", "quip": "will review your favorite spot, honestly" },
-      { "name": "cars & F1", "detail": "dream car: BMW M4 Competition", "quip": "box box, it's boba o'clock" }
+      { "name": "rock climbing", "scene": "climb", "detail": "bouldering", "quip": "falling off walls, recreationally" },
+      { "name": "the gym", "scene": "gym", "detail": "", "quip": "git commit -m \"gains\"" },
+      { "name": "golf", "scene": "golf", "detail": "favorite course: Franklin Canyon (Hercules)", "quip": "ctrl+z does not work on the course" },
+      { "name": "volleyball", "scene": "volley", "detail": "", "quip": "bump, set, ship it" },
+      { "name": "fashion & shopping", "scene": "fashion", "detail": "favorite brands: Diesel, Buck Mason", "quip": "fit check before every git push" },
+      { "name": "cafes & food", "scene": "cafe", "detail": "top Berkeley spot: Mind Coffee", "quip": "will review your favorite spot, honestly" },
+      { "name": "cars & F1", "scene": "car", "detail": "dream car: BMW M4 Competition", "quip": "box box, it's boba o'clock" }
     ],
     "cafes": [
       { "name": "Mind Coffee", "city": "Berkeley", "note": "current #1" }
@@ -187,7 +187,7 @@ export const PROFILE = {
   projects: Project[]; experience: Job[];
   education: { school: string; degree: string; when: string; courses: string[] };
   skills: Record<string, string[]>;
-  personal: { intro: string; hobbies: { name: string; detail: string; quip: string }[]; cafes: { name: string; city: string; note: string }[];
+  personal: { intro: string; hobbies: { name: string; scene?: string; detail: string; quip: string }[]; cafes: { name: string; city: string; note: string }[];
     dessertSpot: string; dreamCar: string; learning: string; learningWhy: string; photos: { src: string; caption: string }[]; funFacts: string[] };
 };
 

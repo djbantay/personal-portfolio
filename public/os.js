@@ -289,7 +289,7 @@ function renderVault(b){
 function renderHobbies(b){
   const P=DATA.personal;
   b.innerHTML=`<div class="h">hobbies/</div><div class="sub">off the clock · ${P.hobbies.length} entries</div>
-  <div class="grid hgrid">${P.hobbies.map((h,i)=>`<div class="card hcard"><div class="hex">${toHex(0x2000+i*0x10)}</div><div class="n">${esc(h.name)}</div>${h.detail?`<div class="d" style="color:var(--ink)">${esc(h.detail)}</div>`:""}<div class="d" style="color:var(--dim)"># ${esc(h.quip)}</div></div>`).join("")}</div>
+  <div class="grid hgrid">${P.hobbies.map((h,i)=>`<div class="card hcard">${h.scene?`<canvas class="scene" data-scene="${esc(h.scene)}" width="64" height="40" aria-hidden="true"></canvas>`:""}<div class="hex">${toHex(0x2000+i*0x10)}</div><div class="n">${esc(h.name)}</div>${h.detail?`<div class="d" style="color:var(--ink)">${esc(h.detail)}</div>`:""}<div class="d" style="color:var(--dim)"># ${esc(h.quip)}</div></div>`).join("")}</div>
   <p class="sub" style="margin-top:18px">cafe.log</p>
   <div class="cafelog">${P.cafes.map((c,i)=>`<div><span class="rank">#${i+1}</span><b>${esc(c.name)}</b> <span style="color:var(--dim)">· ${esc(c.city)} · ${esc(c.note)}</span></div>`).join("")}
   <div style="color:var(--dim);font-size:12px;margin-top:6px">dessert: ${esc(P.dessertSpot)} · know a better cafe? type <span style="color:var(--gold)">mail</span> in the terminal</div></div>
@@ -298,6 +298,16 @@ function renderHobbies(b){
   <p style="margin-top:6px">${esc(P.learningWhy)}</p>
   ${P.photos&&P.photos.length?`<p class="sub" style="margin-top:18px">photo strip</p>
   <div class="pstrip">${P.photos.map((ph,i)=>`<figure class="polaroid" style="--r:${i%2?2.5:-3}deg"><img src="${esc(ph.src)}" alt="${esc(ph.caption)}" loading="lazy"><figcaption>${esc(ph.caption)}</figcaption></figure>`).join("")}</div>`:""}`;
+  runScenes(b);
+}
+function runScenes(b){
+  const S=window.HOBBY_SCENES; if(!S) return;
+  const items=[...b.querySelectorAll("canvas.scene")].map(cv=>{ const card=cv.closest(".hcard"); const it={c:cv.getContext("2d"),fn:S[cv.dataset.scene],hov:false};
+    card.addEventListener("pointerenter",()=>it.hov=true); card.addEventListener("pointerleave",()=>it.hov=false); return it; }).filter(i=>i.fn);
+  let f=40; const draw=()=>items.forEach(i=>{ i.c.clearRect(0,0,S.W,S.H); i.fn(i.c,f,i.hov); });
+  draw();
+  const tick=()=>{ if(!b.isConnected) return; if(fx()&&!document.hidden){ f++; draw(); } setTimeout(tick,75); };
+  setTimeout(tick,75);
 }
 function renderGuestbook(b){
   b.innerHTML=`<div class="h">guestbook.txt</div><div class="sub">people who ssh'd in and said hi</div><div class="gbl" style="margin-top:10px;color:var(--dim)">loading…</div>

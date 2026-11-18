@@ -338,3 +338,7 @@ body.clean .icon,body.clean .icon:hover,body.clean .card.tilt,body.clean .btn:ho
 .polaroid figcaption{font-family:var(--pixel);font-size:20px;color:#2b2b2b;text-align:center;padding-top:4px}
 body.clean .polaroid{rotate:0deg;transition:none}
 body.clean .polaroid:hover{transform:none}
+
+/* hobby scenes */
+.hcard canvas.scene{display:block;width:calc(100% + 24px);margin:-12px -12px 10px;image-rendering:pixelated;aspect-ratio:64/40;background:#0b1b33;border-bottom:1px solid var(--line,#2c4a73)}
+.hcard:hover canvas.scene{filter:saturate(1.15) brightness(1.05)}
