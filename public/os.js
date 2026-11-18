@@ -302,9 +302,9 @@ function renderHobbies(b){
 }
 function runScenes(b){
   const S=window.HOBBY_SCENES; if(!S) return;
-  const items=[...b.querySelectorAll("canvas.scene")].map(cv=>{ const card=cv.closest(".hcard"); const it={c:cv.getContext("2d"),fn:S[cv.dataset.scene],hov:false};
+  const items=[...b.querySelectorAll("canvas.scene")].map(cv=>{ const card=cv.closest(".hcard"), fn=S[cv.dataset.scene]; if(fn&&fn.size){ cv.width=fn.size[0]; cv.height=fn.size[1]; } const it={c:cv.getContext("2d"),fn,hov:false,w:cv.width,h:cv.height};
     card.addEventListener("pointerenter",()=>it.hov=true); card.addEventListener("pointerleave",()=>it.hov=false); return it; }).filter(i=>i.fn);
-  let f=40; const draw=()=>items.forEach(i=>{ i.c.clearRect(0,0,S.W,S.H); i.fn(i.c,f,i.hov); });
+  let f=40; const draw=()=>items.forEach(i=>{ i.c.clearRect(0,0,i.w,i.h); i.fn(i.c,f,i.hov); });
   draw();
   const tick=()=>{ if(!b.isConnected) return; if(fx()&&!document.hidden){ f++; draw(); } setTimeout(tick,75); };
   setTimeout(tick,75);

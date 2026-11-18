@@ -150,57 +150,27 @@
   }
 
   /* ---- dream car: burgundy performance coupe at sunset ---- */
-  const BODY = { hi:"#a8344a", base:"#6e1423", sh:"#4a0d18", under:"#24060c" };
-  function coupe(c, x, y, t, boost) {
-    R(c, x + 4, y + 16, 34, 1, "rgba(0,0,0,.45)");
-    // fastback cabin: long sloping rear, raked windshield
-    [[14,21],[12,24],[10,26],[7,28],[5,29]].forEach(([a, b], i) => {
-      R(c, x + a, y + i, b - a + 1, 1, i ? BODY.base : BODY.hi);
-      if (i) { R(c, x + a + 2, y + i, b - a - 3, 1, i < 2 ? "#cfe6ff" : "#86aed6"); }
-    });
-    R(c, x + 18, y + 1, 1, 4, BODY.base); R(c, x + 8, y + 3, 4, 2, "#5a7ea6");
-    R(c, x + 27, y + 4, 2, 1, BODY.sh);
-    // ducktail spoiler lip
-    R(c, x + 1, y + 4, 5, 1, BODY.hi); R(c, x + 1, y + 5, 2, 1, BODY.base);
-    // body: shoulder highlight, flanks, shadowed rocker
-    R(c, x + 2, y + 5, 36, 1, BODY.hi);
-    R(c, x + 1, y + 6, 39, 3, BODY.base);
-    R(c, x + 1, y + 9, 39, 2, BODY.sh);
-    R(c, x + 3, y + 11, 35, 1, BODY.under);
-    R(c, x + 36, y + 11, 5, 1, "#111"); // front splitter
-    R(c, x + 2, y + 6, 36, 1, "rgba(255,255,255,.12)");
-    R(c, x + 19, y + 6, 1, 4, BODY.sh); R(c, x + 21, y + 7, 2, 1, BODY.hi);
-    R(c, x + 30, y + 5, 7, 1, "rgba(255,255,255,.2)"); /* long hood crease */
-    R(c, x + 13, y + 10, 14, 1, "#1a0408");
-    // lights
-    R(c, x + 1, y + 6, 2, 1, "#ff3a3a"); R(c, x + 1, y + 7, 1, 1, "#a01818");
-    R(c, x + 37, y + 6, 3, 1, "#fff2c0"); R(c, x + 40, y + 6, 1, 1, "#ffffff");
-    R(c, x + 1, y + 10, 2, 1, "#5a606c"); // exhaust
-    if (boost) for (let i = 0; i < 4; i++) R(c, x - 1 - i, y + 10 + ((t + i) % 2 ? 0 : -1 * 0), 1, 1, ["#fff2a8","#FDB515","#ff8a3d","#ff4a3d"][i]);
-    // wheels: tire, dark arch, multi-spoke gunmetal rim, gold cap
-    [[10, 11], [31, 11]].forEach(([wx, wy]) => {
-      const cx = x + wx, cy = y + wy;
-      R(c, cx - 5, cy - 4, 11, 2, BODY.under);
-      [3,5,7,9,9,9,7,5,3].forEach((w, i) => R(c, cx - (w >> 1), cy - 4 + i, w, 1, "#121212"));
-      [3,5,5,5,3].forEach((w, i) => R(c, cx - (w >> 1), cy - 2 + i, w, 1, "#8a8f99"));
-      const sp = [[[-2,0],[2,0]],[[-1,-2],[1,2]],[[0,-2],[0,2]],[[1,-2],[-1,2]]][t % 4];
-      sp.forEach(([dx, dy]) => R(c, cx + dx, cy + dy, 1, 1, "#3a3e46"));
-      R(c, cx - 1, cy - 2, 1, 1, "#c0c6d0"); R(c, cx, cy, 1, 1, "#FDB515");
-    });
-  }
+  /* dream car: Daniel's own pixel car (public/me/car.png, 106x36) on a 2x-scaled sunset */
+  const CAR = new Image(); CAR.src = "/me/car.png";
   let carPos = 0;
   function car(c, f, hov) {
     const sp = hov ? 3 : 1; carPos += sp;
+    c.save(); c.setTransform(2, 0, 0, 2, 0, 0);
     [["#1a1440",8],["#3a1f5c",6],["#7a3a6a",5],["#d9714e",4],["#f0a040",2],["#FDB515",5]].reduce((y, [col, h]) => { R(c, 0, y, W, h, col); return y + h; }, 0);
-    for (let dy = -5; dy <= 5; dy++) { const w = Math.round(Math.sqrt(25 - dy*dy)); R(c, 48 - w, 22 + dy, w*2, 1, "#ffd36a"); }
+    for (let dy = -5; dy <= 5; dy++) { const w = Math.round(Math.sqrt(25 - dy*dy)); R(c, 50 - w, 20 + dy, w*2, 1, "#ffd36a"); }
     for (let x = 0; x < W; x++) { const h1 = Math.round(6 + Math.sin((x + carPos*.15)/7) * 3 + Math.sin((x + carPos*.15)/3)); R(c, x, 30 - h1, 1, h1, "#2a1f4a");
       const h2 = Math.round(3 + Math.sin((x + carPos*.5)/5) * 2); R(c, x, 30 - h2, 1, h2, "#1a1838"); }
     if (f % 40 < 20) R(c, 6, 3, 1, 1, "#fff"); R(c, 22, 5, 1, 1, "#cfd8ff");
     R(c, 0, 30, W, 10, "#22253a"); R(c, 0, 30, W, 1, "#4a4f6a");
     for (let i = 0; i < 6; i++) R(c, ((i*14 - carPos*2) % 84 + 84) % 84 - 10, 36, 6, 1, "#FDB515");
-    for (let i = 0; i < 3; i++) R(c, ((30 - carPos*3 + i*21) % 64 + 64) % 64, 18 + i*3, 4 + sp*2, 1, "rgba(255,255,255,.3)");
-    coupe(c, 10, 15 + (Math.floor(carPos / 6) % 2 && !hov ? 1 : 0), Math.floor(carPos / 3), hov);
+    c.restore();
+    const bob = (!hov && Math.floor(carPos / 6) % 2) ? 1 : 0, x = 11, y = 25 + bob;
+    for (let i = 0; i < 4; i++) R(c, ((60 - carPos*6 + i*37) % 128 + 128) % 128, 30 + i*7, 8 + sp*4, 1, "rgba(255,255,255,.3)");
+    R(c, x + 6, 60, 96, 2, "rgba(0,0,0,.4)");
+    if (CAR.complete && CAR.naturalWidth) c.drawImage(CAR, x, y);
+    if (hov) for (let i = 0; i < 5; i++) R(c, x - 2 - i*2, y + 30 + ((f + i) % 2), 2, 1, ["#fff2a8","#FDB515","#ff8a3d","#ff4a3d","#a8344a"][i]);
   }
+  car.size = [128, 80];
 
   window.HOBBY_SCENES = { climb, gym, golf, volley, fashion, cafe, car, W, H };
 })();
