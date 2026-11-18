@@ -1,6 +1,6 @@
 // Static markup for the DB-1 desktop. Behaviour lives in /public/os.js.
 export const OS_MARKUP = `
-<a id="fastlane" href="/recruiter" title="Everything on one plain, printable page">Recruiter? <b>recruiter mode</b> →</a>
+<a id="fastlane" href="/recruiter?recruiter=true" title="Everything on one plain, printable page">Recruiter? <b>recruiter mode</b> →</a>
 <div id="intro" aria-label="DB-1 computer intro">
   <button id="skipIntro">skip intro →</button>
   <div id="introZoom"><div id="stage">
@@ -45,7 +45,7 @@ export const OS_MARKUP = `
   <footer id="taskbar">
     <button id="start" aria-haspopup="true">▣ START</button>
     <div id="tasks"></div>
-    <div id="tray"><a id="tldr" href="/recruiter" title="Switch to recruiter mode">recruiter mode</a><button id="fx" title="Visual effects (scanlines, rain, flicker)" aria-pressed="true">fx on</button><button id="pwr" title="Restart (back to the computer)" aria-label="Restart">⏻</button><button id="snd" aria-pressed="false" title="Sound (enables Campanile chimes)">♪ off</button><span class="bits" id="trayBits">0000</span><a id="np" target="_blank" rel="noopener" hidden></a><span id="hits" title="visitor counter" aria-label="visitor counter"></span><span id="clock">--:--</span></div>
+    <div id="tray"><a id="tldr" href="/recruiter?recruiter=true" title="Switch to recruiter mode">recruiter mode</a><button id="fx" title="Visual effects (scanlines, rain, flicker)" aria-pressed="true">fx on</button><button id="pwr" title="Restart (back to the computer)" aria-label="Restart">⏻</button><button id="snd" aria-pressed="false" title="Sound (enables Campanile chimes)">♪ off</button><span class="bits" id="trayBits">0000</span><a id="np" target="_blank" rel="noopener" hidden></a><span id="hits" title="visitor counter" aria-label="visitor counter"></span><span id="clock">--:--</span></div>
   </footer>
 
   <div id="overlay" aria-live="assertive"></div>

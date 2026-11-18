@@ -80,3 +80,13 @@ content/projects/            MDX write-ups
 ```
 
 Tip: `https://your-domain.com/#desktop` skips the computer intro and goes straight to the desktop.
+
+## Project screenshots and demo clips
+
+Drop one file per project into `public/projects/<slug>/` (slugs: `wallflower`, `campusflow`, `mentor-matcher`, `daniel-os`):
+
+- `thumb.mp4` or `thumb.webm`: a 5–10 second muted loop, about 1280×800, under 4 MB. Plays on hover.
+- or `thumb.webp` / `thumb.png` / `thumb.gif`: a still (or animated gif).
+- optional `poster.png`: the frame shown before a clip plays.
+
+It shows up automatically in recruiter mode (cards and rows) and in the desktop's project windows. Media is detected at build time, so commit and redeploy after adding files. Until then each project shows a "no signal" test card (DANIEL_OS shows the coding bear).

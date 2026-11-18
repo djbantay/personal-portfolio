@@ -77,6 +77,20 @@ export const PROFILE = {
       "repo": "",
       "demo": "",
       "slug": "mentor-matcher"
+    },
+    {
+      "name": "DANIEL_OS",
+      "award": "this site · how I built it",
+      "blurb": "A retro desktop portfolio with a real terminal, live git log, guestbook over ssh, an AI ask command, and a pixel bear who codes.",
+      "tech": ["Next.js", "TypeScript", "Canvas", "Upstash Redis", "Claude API", "Vercel"],
+      "details": [
+        "Vanilla-JS window manager and terminal on top of Next.js App Router; every surface reads one typed profile file.",
+        "Pixel art drawn in code: 9 animated canvas scenes and a bear built from spans with an automatic outline pass, all at 12fps on requestAnimationFrame.",
+        "Edge-friendly APIs for hits, guestbook, mail and ask, rate-limited with Upstash and tested end to end with Playwright."
+      ],
+      "repo": "https://github.com/djbantay/personal-portfolio",
+      "demo": "",
+      "slug": "daniel-os"
     }
   ],
   "experience": [

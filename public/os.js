@@ -235,21 +235,35 @@ function renderAbout(b){
   <p style="margin-top:14px"><button class="btn" data-open="projects">view projects →</button>${DATA.personal?`<button class="btn" data-open="hobbies">hobbies →</button>`:""}<button class="btn" data-open="terminal">open terminal</button></p>`;
   wireOpeners(b);
 }
+/* project media: real clip/screenshot if one was dropped in public/projects/<slug>/, the coding bear for this site, else a test card */
+function mediaHTML(p, big){
+  const m=p.media;
+  if(m&&m.type==="video") return `<div class="pthumb${big?" big":""}"><video src="${esc(m.src)}" ${m.poster?`poster="${esc(m.poster)}"`:""} muted loop playsinline preload="metadata" ${big?"autoplay":"data-hoverplay"}></video></div>`;
+  if(m&&m.type==="image") return `<div class="pthumb${big?" big":""}"><img src="${esc(m.src)}" alt="${esc(p.name)} screenshot" loading="lazy"></div>`;
+  if(p.slug==="daniel-os") return `<div class="pthumb${big?" big":""}"><canvas class="scene" data-scene="bear" width="112" height="72" aria-hidden="true"></canvas></div>`;
+  return `<div class="pthumb nosig${big?" big":""}"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><span>NO SIGNAL${big?"<small>demo uploading…</small>":""}</span></div>`;
+}
+function wireMedia(b){
+  b.querySelectorAll("video[data-hoverplay]").forEach(v=>{ const h=v.closest(".card")||v; h.addEventListener("pointerenter",()=>{ if(fx()) v.play().catch(()=>{}); }); h.addEventListener("pointerleave",()=>v.pause()); });
+  if(b.querySelector("canvas.scene")) runScenes(b);
+}
 function renderProjects(b){
   b.innerHTML = `<div class="h">projects/</div><div class="sub">${DATA.projects.length} items · double-click or tap to open</div><div class="grid"></div>`;
   const g=b.querySelector(".grid");
   DATA.projects.forEach((p,i)=>{
     const c=el("button",{class:"card"},`<div class="hex">${toHex(0x1000+i*0x100)}</div><div class="n">${esc(p.name)}</div>${p.award?`<div style="color:#7be08a;font-size:11px">* ${esc(p.award)}</div>`:""}<div class="d">${esc(p.blurb)}</div>${p.tech.slice(0,4).map(t=>`<span class="tag">${esc(t)}</span>`).join("")}`);
+    c.insertAdjacentHTML("afterbegin", mediaHTML(p,false));
     c.onclick=()=>openProject(i); g.appendChild(c);
   });
+  wireMedia(b);
 }
 function openProject(i){
   const p=DATA.projects[i]; if(!p) return false;
-  openWin("proj"+i,{app:{title:p.name.toLowerCase().replace(/\s+/g,"_")+".md",w:520,h:420,render(b){
-    b.innerHTML=`<div class="sub">project ${String(i+1).padStart(2,"0")} · ${toHex(0x1000+i*0x100)}</div><div class="h" style="margin:4px 0 4px">${esc(p.name)}</div>${p.award?`<div style="color:#7be08a;font-size:12px;margin-bottom:8px">* ${esc(p.award)}</div>`:""}
+  openWin("proj"+i,{app:{title:p.name.toLowerCase().replace(/\s+/g,"_")+".md",w:540,h:620,render(b){
+    b.innerHTML=`${mediaHTML(p,true)}<div class="sub">project ${String(i+1).padStart(2,"0")} · ${toHex(0x1000+i*0x100)}</div><div class="h" style="margin:4px 0 4px">${esc(p.name)}</div>${p.award?`<div style="color:#7be08a;font-size:12px;margin-bottom:8px">* ${esc(p.award)}</div>`:""}
     <p>${esc(p.blurb)}</p><ul style="margin:12px 0 12px 18px">${p.details.map(d=>`<li>${esc(d)}</li>`).join("")}</ul>
     <p>${p.tech.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</p>
-    <p style="margin-top:12px"><a class="btn" href="/projects/${esc(p.slug)}">read write-up →</a><a class="btn" href="${esc(p.repo||DATA.links.github)}" target="_blank" rel="noopener">${p.repo?"source":"github"} ↗</a>${p.demo?`<a class="btn" href="${esc(p.demo)}" target="_blank" rel="noopener">live demo ↗</a>`:""}</p>`; }}});
+    <p style="margin-top:12px"><a class="btn" href="/projects/${esc(p.slug)}">read write-up →</a><a class="btn" href="${esc(p.repo||DATA.links.github)}" target="_blank" rel="noopener">${p.repo?"source":"github"} ↗</a>${p.demo?`<a class="btn" href="${esc(p.demo)}" target="_blank" rel="noopener">live demo ↗</a>`:""}</p>`; wireMedia(b); }}});
   return true;
 }
 function renderExperience(b){
@@ -303,7 +317,7 @@ function renderHobbies(b){
 }
 function runScenes(b){
   const S=window.HOBBY_SCENES; if(!S) return;
-  const items=[...b.querySelectorAll("canvas.scene")].map(cv=>{ const card=cv.closest(".hcard"), fn=S[cv.dataset.scene]; if(fn&&fn.size){ cv.width=fn.size[0]; cv.height=fn.size[1]; } const it={c:cv.getContext("2d"),fn,hov:false,w:cv.width,h:cv.height};
+  const items=[...b.querySelectorAll("canvas.scene")].map(cv=>{ const card=cv.closest(".hcard, .card, .pthumb")||cv, fn=S[cv.dataset.scene]; if(fn&&fn.size){ cv.width=fn.size[0]; cv.height=fn.size[1]; } const it={c:cv.getContext("2d"),fn,hov:false,w:cv.width,h:cv.height};
     card.addEventListener("pointerenter",()=>it.hov=true); card.addEventListener("pointerleave",()=>it.hov=false); return it; }).filter(i=>i.fn);
   let f=40; const draw=()=>items.forEach(i=>{ i.c.clearRect(0,0,i.w,i.h); i.fn(i.c,f,i.hov); });
   draw();
@@ -444,7 +458,7 @@ function renderTerminal(b){
     skills:()=>{ Object.entries(DATA.skills).forEach(([c,l])=>print(`  <span class="p">${esc(c)}</span>\n    ${l.map(esc).join(" · ")}`)); openWin("skills"); },
     contact:()=>{ const L=DATA.links; print(`  email    <a href="mailto:${esc(L.email)}">${esc(L.email)}</a>\n  linkedin <a href="${esc(L.linkedin)}" target="_blank" rel="noopener">${esc(L.linkedin)}</a>\n  github   <a href="${esc(L.github)}" target="_blank" rel="noopener">${esc(L.github)}</a>`); },
     resume:()=>{ openWin("resume"); print("opening resume.pdf…","ok"); },
-    tldr:()=>{ print("switching to recruiter mode…","ok"); setTimeout(()=>location.href="/recruiter",350); },
+    tldr:()=>{ print("switching to recruiter mode…","ok"); setTimeout(()=>location.href="/recruiter?recruiter=true",350); },
     recruiter:()=>CMDS.tldr(),
     open:a=>{ const k=(a[0]||"").replace(/\..*$/,"").replace(/\/$/,""); const m={vault:"secret"}[k]||k; if(APPS[m]) { openWin(m); print(`opening ${m}…`,"ok"); } else print(`open: no such app '${esc(a[0]||"")}'. try: ${Object.keys(APPS).join(", ")}`,"e"); },
     ls:()=>print(`<span class="c">projects/  experience/</span>  about.txt  hobbies.txt  contact.txt  resume.pdf  vault.enc`),
