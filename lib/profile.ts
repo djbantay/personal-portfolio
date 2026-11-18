@@ -158,7 +158,7 @@ export const PROFILE = {
     "cafes": [
       { "name": "Mind Coffee", "city": "Berkeley", "note": "current #1" }
     ],
-    "nowListening": { "title": "Superpowers", "artist": "" },
+    "nowListening": { "title": "Superpowers", "artist": "Daniel Caesar" },
     "dessertSpot": "Hui Lau Shan",
     "dreamCar": "BMW M4 Competition",
     "f1Team": "Ferrari",
