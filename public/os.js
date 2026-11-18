@@ -306,8 +306,12 @@ function runScenes(b){
     card.addEventListener("pointerenter",()=>it.hov=true); card.addEventListener("pointerleave",()=>it.hov=false); return it; }).filter(i=>i.fn);
   let f=40; const draw=()=>items.forEach(i=>{ i.c.clearRect(0,0,i.w,i.h); i.fn(i.c,f,i.hov); });
   draw();
-  const tick=()=>{ if(!b.isConnected) return; if(fx()&&!document.hidden){ f++; draw(); } setTimeout(tick,75); };
-  setTimeout(tick,75);
+  /* fixed 12fps step on requestAnimationFrame: steady timing, pauses with the tab */
+  let last=performance.now(), acc=0;
+  const tick=now=>{ if(!b.isConnected) return; acc+=Math.min(250,now-last); last=now;
+    if(fx()){ let n=0; while(acc>=83&&n<3){ f++; acc-=83; n++; } if(n) draw(); } else acc=0;
+    requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
 }
 function renderGuestbook(b){
   b.innerHTML=`<div class="h">guestbook.txt</div><div class="sub">people who ssh'd in and said hi</div><div class="gbl" style="margin-top:10px;color:var(--dim)">loading…</div>

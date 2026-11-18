@@ -30,11 +30,11 @@
     R(c, 0, 36, W, 4, "#2b4f86"); R(c, 0, 36, W, 1, "#4a7bc0"); R(c, 0, 39, W, 1, "#1d3a63");
     const L = 170, p = f % L; let x, y, fl = 0;
     if (p < 120) { y = 24 - p / 120 * 23; x = 26 + Math.sin(p / 18) * 3; fl = Math.floor(p / 14) % 2; }
-    else if (p < 132) { y = 1 + (p - 120) * 2; x = 26; } else { y = 25; x = 26; }
-    if (p >= 132 && p < 140) R(c, x - 2, y + 11, 14, 1, "rgba(242,239,230,.5)");
+    else if (p < 130) { const t = (p - 120) / 10; y = 1 + 24 * t * t; x = 26; } else { y = p < 134 ? 26 : 25; x = 26; }
+    if (p >= 130 && p < 138) { const k = p - 130; R(c, x - 1 - k, 35, 3, 1, "rgba(242,239,230,.55)"); R(c, x + 8 + k, 35, 3, 1, "rgba(242,239,230,.55)"); }
     spr(c, CLIMBER, x, y, fl);
     if (p < 120 && (p % 14 < 4 || hov)) for (let i = 0; i < (hov ? 6 : 3); i++) R(c, x + (fl ? 1 : 7) + Math.sin(f + i*2) * 2, y - 1 - i*.7, 1, 1, "rgba(255,255,255,.75)");
-    if (p >= 132 && p < 165) txt(c, "again", 24, 8, "#FDB515");
+    if (p >= 136 && p < 165) txt(c, "again", 22, 9, "#FDB515");
   }
 
   /* ---- the gym: bench press with a rep counter ---- */
@@ -46,7 +46,7 @@
     [14, 44].forEach(x => { R(c, x, 6, 2, 25, "#4a4f6a"); R(c, x, 6, 1, 25, "#6a7090"); R(c, x - 1, 30, 4, 1, "#33364a"); R(c, x + 2, 11, 2, 1, "#8a8fa6"); });
     // bench
     R(c, 18, 25, 26, 2, "#3a1218"); R(c, 18, 25, 26, 1, "#5a1e28"); R(c, 22, 27, 2, 4, "#555a6e"); R(c, 38, 27, 2, 4, "#555a6e");
-    const speed = hov ? 2 : 1, cyc = 36, t = (f * speed) % cyc, k = t < cyc/2 ? t/(cyc/2) : 1 - (t - cyc/2)/(cyc/2);
+    const speed = hov ? 2 : 1, cyc = 36, t = (f * speed) % cyc, k = (1 - Math.cos(t / cyc * Math.PI * 2)) / 2;
     const barY = Math.round(11 + k * 8); // 11 = locked out, 19 = chest
     // lifter lying on the bench, head at left
     R(c, 18, 21, 4, 4, "#e8b48a"); R(c, 18, 21, 4, 1, "#2a1a12"); R(c, 18, 22, 1, 2, "#2a1a12"); R(c, 21, 23, 1, 1, "#c98d63");
@@ -64,6 +64,7 @@
 
   /* ---- golf: Franklin Canyon, tee shot to the green ---- */
   function golf(c, f, hov) {
+    R(c, 0, 0, W, 30, "#bfe0ff");
     [["#9fd0ff",10],["#bfe0ff",8]].reduce((y, [col, h]) => { R(c, 0, y, W, h, col); return y + h; }, 0);
     R(c, 50, 4, 5, 5, "#fff6c8"); R(c, 51, 3, 3, 1, "#fff6c8"); R(c, 51, 9, 3, 1, "#fff6c8");
     for (let x = 0; x < W; x++) { const h = Math.round(9 + Math.sin(x/9) * 3 + Math.sin(x/4) * 1); R(c, x, 26 - h, 1, h, "#5c8a4a"); R(c, x, 26 - h, 1, 1, "#78a862"); }
@@ -73,19 +74,22 @@
     R(c, 38, 30, 22, 4, "#6cc25c"); R(c, 40, 29, 18, 1, "#6cc25c");
     R(c, 52, 31, 2, 1, "#14240f"); R(c, 52, 18, 1, 13, "#e9e4d4");
     const wave = Math.floor(f / 6) % 2; R(c, 53, 18, 5, 2, "#C4132A"); R(c, 53 + 5, 18 + wave, 1, 1, "#C4132A"); R(c, 53, 20, 4, 1, "#8a0e1e");
-    // golfer + swing
-    const L = 110, p = (f * (hov ? 2 : 1)) % L, swung = p > 14;
+    // golfer: address -> backswing -> strike -> follow-through, ball into the cup
+    const L = 120, p = (f * (hov ? 2 : 1)) % L, ease = t => t < 0 ? 0 : t > 1 ? 1 : t * t * (3 - 2 * t);
     spr(c, STAND, 8, 23, false, { j: "#f2efe6", k: "#1d3a63" });
-    if (p < 10) { R(c, 13, 20, 1, 1, "#9aa3b2"); R(c, 14, 19, 1, 1, "#9aa3b2"); R(c, 15, 18, 1, 1, "#c0c6d0"); }
-    else if (!swung) { R(c, 14, 31, 1, 4, "#9aa3b2"); R(c, 15, 35, 2, 1, "#c0c6d0"); }
-    else { R(c, 6, 21, 1, 1, "#9aa3b2"); R(c, 5, 20, 1, 1, "#9aa3b2"); R(c, 4, 19, 1, 1, "#c0c6d0"); }
-    let bx, by;
-    if (!swung) { bx = 17; by = 35; }
-    else if (p < 60) { const t = (p - 14) / 46; bx = 17 + t * 30; by = 35 - Math.sin(t * Math.PI) * 26 - t * 4; }
-    else if (p < 80) { const t = (p - 60) / 20; bx = 47 + t * 5; by = 31; }
-    else { bx = -9; by = 0; }
-    if (bx > 0) { R(c, bx, by + 1, 2, 1, "rgba(0,0,0,.25)"); R(c, bx, by, 2, 1, "#ffffff"); }
-    if (p >= 80 && p < 108) txt(c, "birdie", 28, 10, "#C4132A");
+    let th = 0;
+    if (p < 20) th = 0; else if (p < 34) th = 2.5 * ease((p - 20) / 14);
+    else if (p < 38) th = 2.5 - 2.7 * ((p - 34) / 4); else if (p < 46) th = -0.2 - 2.2 * ease((p - 38) / 8);
+    else if (p < 108) th = -2.4; else th = -2.4 * (1 - ease((p - 108) / 12));
+    const hx = 12, hy = 30;
+    for (let r = 1; r <= 7; r++) R(c, hx - Math.sin(th) * r, hy + Math.cos(th) * r, 1, 1, r === 7 ? "#e9e4d4" : "#9aa3b2");
+    R(c, 17, 36, 1, 1, "#e9e4d4"); // tee
+    let bx = 17, by = 35, show = true;
+    if (p >= 37 && p < 72) { const t = (p - 37) / 35; bx = 17 + 31 * t; by = 35 + (31 - 35) * t - Math.sin(Math.PI * t) * 24; R(c, bx, 35 - 4 * t, 2, 1, "rgba(0,0,0,.2)"); }
+    else if (p >= 72 && p < 90) { bx = 48 + 4 * ease((p - 72) / 18); by = 30; }
+    else if (p >= 90) show = false;
+    if (show) R(c, bx, by, 2, 1, "#ffffff");
+    if (p >= 90 && p < 116) txt(c, "birdie", 20, 9, "#C4132A");
   }
 
   /* ---- volleyball: approach, jump, spike over the net ---- */
@@ -96,18 +100,21 @@
     R(c, 40, 12, 1, 22, "#9aa3b2"); R(c, 40, 12, 1, 1, "#e9e4d4");
     for (let y = 13; y < 21; y += 2) R(c, 41, y, 16, 1, "rgba(233,228,212,.45)");
     for (let x = 41; x < 57; x += 2) R(c, x, 13, 1, 8, "rgba(233,228,212,.35)"); R(c, 41, 12, 16, 1, "#e9e4d4");
-    const L = 80, p = (f * (hov ? 2 : 1)) % L;
-    let px = 16, py = 21, jump = false;
-    if (p > 20 && p < 46) { const t = (p - 20) / 26; py = 21 - Math.sin(t * Math.PI) * 9; px = 18 + t * 8; jump = t > .25 && t < .8; }
-    else if (p >= 46) px = 26 - (p - 46) * .3;
-    R(c, px + 1, 35, 7, 1, "rgba(0,0,0,.25)");
-    spr(c, jump ? REACH : STAND, px, py, false, { j: "#3b7dd8" });
-    let bx, by;
-    if (p <= 34) { const t = p / 34; bx = 4 + t * 26; by = 26 - Math.sin(t * Math.PI) * 24 + t * -2; }
-    else { const t = (p - 34) / 14; bx = 31 + t * 22; by = 9 + t * 25; if (t > 1) { bx = 53 + (p - 48) * .4; by = 34 - Math.abs(Math.sin((p - 48) / 4)) * 3; } }
-    R(c, bx, by, 3, 3, "#f2efe6"); R(c, bx + 1, by, 1, 3, "#FDB515"); R(c, bx, by + 1, 3, 1, "#3b7dd8");
-    if (p >= 34 && p < 40) for (let i = 0; i < 3; i++) R(c, bx - 2 - i*2, by - 2 - i, 2, 1, "rgba(255,255,255,.6)");
-    if (p > 48 && p < 72) txt(c, "kill", 46, 9, "#FDB515");
+    const L = 96, p = (f * (hov ? 2 : 1)) % L;
+    let px = 14, py = 21, reach = false;
+    if (p < 22) px = 14 + Math.max(0, p - 10) / 12 * 8;
+    else if (p < 40) { const t = (p - 22) / 18; py = 21 - Math.sin(Math.PI * t) * 10; px = 22 + 4 * t; reach = p >= 25 && p < 36; }
+    else px = 26 - Math.min(1, (p - 40) / 50) * 12;
+    R(c, Math.round(px) + 1, 35, 7, 1, "rgba(0,0,0,.25)");
+    spr(c, reach ? REACH : STAND, px, py, false, { j: "#3b7dd8" });
+    let bx, by, show = true;
+    if (p < 30) { const t = p / 30; bx = 4 + 25 * t; by = 24 + (8 - 24) * t - Math.sin(Math.PI * t) * 10; }
+    else if (p < 42) { const t = (p - 30) / 12; bx = 29 + 24 * t; by = 8 + 26 * t; }
+    else if (p < 62) { const t = (p - 42) / 20; bx = 53 + t * 8; by = 34 - Math.abs(Math.sin(t * Math.PI * 2)) * 5 * (1 - t); }
+    else show = false;
+    if (show) { R(c, bx, by, 3, 3, "#f2efe6"); R(c, bx + 1, by, 1, 3, "#FDB515"); R(c, bx, by + 1, 3, 1, "#3b7dd8"); }
+    if (p >= 30 && p < 36) for (let i = 1; i <= 3; i++) R(c, bx - i * 2, by - i, 2, 1, `rgba(255,255,255,${.7 - i * .18})`);
+    if (p >= 44 && p < 72) txt(c, "kill", 44, 9, "#FDB515");
   }
 
   /* ---- fashion: fit check in the mirror, rack swaying ---- */
@@ -150,27 +157,75 @@
   }
 
   /* ---- dream car: burgundy performance coupe at sunset ---- */
-  /* dream car: Daniel's own pixel car (public/me/car.png, 106x36) on a 2x-scaled sunset */
-  const CAR = new Image(); CAR.src = "/me/car.png";
+  /* dream car: a 1:1 pixel redraw of Daniel's yellow car (same pixel size as every
+     other scene), built from spans so the outline is automatic and the wheels spin. */
+  const CARPAL = { o:"#0b0b0f", L:"#fcf6aa", y:"#f0e46e", m:"#d6c64a", d:"#a8962e", g:"#2c2f3a", G:"#5c6070", w:"#ffffff", k:"#1c1c22", r:"#e0453a" };
+  const CW = 56, CH = 19, WHEELS = [[12, 15], [43, 15]];
+  const carSprite = (() => {
+    const grid = Array.from({ length: CH }, () => Array(CW).fill(""));
+    const span = (y, a, b, ch) => { for (let x = Math.max(0, a); x <= Math.min(CW - 1, b); x++) grid[y][x] = ch; };
+    const spans = (list, ch) => list.forEach(([y, a, b]) => span(y, a, b, ch));
+    // rear wing on a tall stand
+    spans([[0,0,9],[1,0,10],[2,1,9]], "y"); spans([[3,6,7],[4,6,7]], "y");
+    // cabin: rounded roof, long raked windshield
+    spans([[1,17,33],[2,15,37],[3,13,40],[4,12,43]], "y");
+    // rear haunch + body + long hood sloping to the nose
+    spans([[4,2,8],[5,1,46],[6,1,50],[7,0,53],[8,0,55],[9,0,55],[10,0,55],[11,0,55],[12,0,55],[13,0,55],[14,0,55],[15,1,55],[16,2,54],[17,4,52]], "y");
+    WHEELS.forEach(([cx, cy]) => { for (let y = 8; y < CH; y++) for (let x = cx - 7; x <= cx + 7; x++) if (x >= 0 && x < CW && grid[y][x] && (x - cx) ** 2 + (y - cy) ** 2 <= 42) grid[y][x] = "k"; });
+    // light from the top-left: highlights on top surfaces, mid + shadow lower down
+    for (let y = 0; y < CH; y++) for (let x = 0; x < CW; x++) if (grid[y][x] && grid[y][x] !== "k") {
+      if (y === 1 || (y === 0) || (y === 5 && x < 16) || ((y === 6 || y === 7) && x > 38)) grid[y][x] = "L";
+      else if (y >= 15) grid[y][x] = "d"; else if (y >= 13) grid[y][x] = "m"; }
+    span(2, 1, 9, "m");
+    // D-shaped side window + big windshield, with reflection streaks
+    spans([[3,18,27],[4,16,28],[5,16,27]], "g");
+    spans([[3,31,38],[4,31,41],[5,32,44]], "g");
+    [[4,19],[5,18],[3,21],[4,20],[3,34],[4,33],[5,34],[4,36]].forEach(([y, x]) => grid[y][x] = "G");
+    // front plane of the 3/4 view
+    for (let y = 9; y <= 15; y++) span(y, 49 + (y > 12 ? 0 : 1), 55, y > 12 ? "d" : "m");
+    // door + body lines, side skirt
+    for (let y = 6; y <= 14; y++) grid[y][29] = "d";
+    for (let y = 7; y <= 13; y++) grid[y][15] = "d"; span(14, 16, 28, "d"); span(7, 16, 28, "m");
+    grid[9][24] = "d"; grid[9][25] = "d";
+    span(16, 20, 35, "k");
+    // lights, vents, splitter
+    span(8, 48, 52, "w"); span(9, 50, 54, "G"); grid[9][49] = "w";
+    span(12, 44, 50, "k"); span(13, 45, 50, "k"); grid[12][53] = "w"; grid[12][54] = "G";
+    span(17, 46, 52, "k");
+    span(7, 1, 2, "r"); grid[8][1] = "r";
+    // automatic 1px outline
+    const out = grid.map(r => r.slice());
+    for (let y = 0; y < CH; y++) for (let x = 0; x < CW; x++) if (grid[y][x] && grid[y][x] !== "k")
+      if ([[1,0],[-1,0],[0,1],[0,-1]].some(([dx, dy]) => !(grid[y + dy] || [])[x + dx])) out[y][x] = "o";
+    const cv = document.createElement("canvas"); cv.width = CW; cv.height = CH; const c = cv.getContext("2d");
+    out.forEach((r, y) => r.forEach((ch, x) => { if (ch) R(c, x, y, 1, 1, CARPAL[ch]); }));
+    return cv;
+  })();
+  function wheel(c, cx, cy, ang) {
+    for (let y = -5; y <= 5; y++) for (let x = -5; x <= 5; x++) { const d = x*x + y*y;
+      if (d <= 28) R(c, cx + x, cy + y, 1, 1, d <= 12 ? "#c8ccd4" : d <= 16 ? "#8a8f99" : "#111114"); }
+    R(c, cx - 2, cy - 3, 2, 1, "#eef0f4"); R(c, cx - 3, cy - 2, 1, 1, "#eef0f4");
+    for (let k = 0; k < 5; k++) { const a = ang + k * Math.PI * 2 / 5;
+      for (let r = 1; r <= 3.2; r += .7) R(c, cx + Math.round(Math.cos(a) * r), cy + Math.round(Math.sin(a) * r), 1, 1, "#5a5e68"); }
+    R(c, cx, cy, 1, 1, "#FDB515");
+  }
   let carPos = 0;
   function car(c, f, hov) {
-    const sp = hov ? 3 : 1; carPos += sp;
-    c.save(); c.setTransform(2, 0, 0, 2, 0, 0);
+    const sp = hov ? 2 : 1; carPos += sp;
     [["#1a1440",8],["#3a1f5c",6],["#7a3a6a",5],["#d9714e",4],["#f0a040",2],["#FDB515",5]].reduce((y, [col, h]) => { R(c, 0, y, W, h, col); return y + h; }, 0);
-    for (let dy = -5; dy <= 5; dy++) { const w = Math.round(Math.sqrt(25 - dy*dy)); R(c, 50 - w, 20 + dy, w*2, 1, "#ffd36a"); }
-    for (let x = 0; x < W; x++) { const h1 = Math.round(6 + Math.sin((x + carPos*.15)/7) * 3 + Math.sin((x + carPos*.15)/3)); R(c, x, 30 - h1, 1, h1, "#2a1f4a");
-      const h2 = Math.round(3 + Math.sin((x + carPos*.5)/5) * 2); R(c, x, 30 - h2, 1, h2, "#1a1838"); }
+    for (let dy = -5; dy <= 5; dy++) { const w = Math.round(Math.sqrt(25 - dy*dy)); R(c, 52 - w, 20 + dy, w*2, 1, "#ffd36a"); }
+    for (let x = 0; x < W; x++) { const h1 = Math.round(6 + Math.sin((x + carPos*.1)/7) * 3 + Math.sin((x + carPos*.1)/3)); R(c, x, 30 - h1, 1, h1, "#2a1f4a");
+      const h2 = Math.round(3 + Math.sin((x + carPos*.3)/5) * 2); R(c, x, 30 - h2, 1, h2, "#1a1838"); }
     if (f % 40 < 20) R(c, 6, 3, 1, 1, "#fff"); R(c, 22, 5, 1, 1, "#cfd8ff");
     R(c, 0, 30, W, 10, "#22253a"); R(c, 0, 30, W, 1, "#4a4f6a");
     for (let i = 0; i < 6; i++) R(c, ((i*14 - carPos*2) % 84 + 84) % 84 - 10, 36, 6, 1, "#FDB515");
-    c.restore();
-    const bob = (!hov && Math.floor(carPos / 6) % 2) ? 1 : 0, x = 11, y = 25 + bob;
-    for (let i = 0; i < 4; i++) R(c, ((60 - carPos*6 + i*37) % 128 + 128) % 128, 30 + i*7, 8 + sp*4, 1, "rgba(255,255,255,.3)");
-    R(c, x + 6, 60, 96, 2, "rgba(0,0,0,.4)");
-    if (CAR.complete && CAR.naturalWidth) c.drawImage(CAR, x, y);
-    if (hov) for (let i = 0; i < 5; i++) R(c, x - 2 - i*2, y + 30 + ((f + i) % 2), 2, 1, ["#fff2a8","#FDB515","#ff8a3d","#ff4a3d","#a8344a"][i]);
+    for (let i = 0; i < 3; i++) R(c, ((40 - carPos*3 + i*23) % 70 + 70) % 70 - 6, 14 + i*4, 3 + sp*2, 1, "rgba(255,255,255,.28)");
+    const x = 4, y = 10 + ((!hov && (carPos >> 3) % 2) ? 1 : 0);
+    R(c, x + 3, 30, CW - 6, 1, "rgba(0,0,0,.45)");
+    c.drawImage(carSprite, x, y);
+    WHEELS.forEach(([wx, wy]) => wheel(c, x + wx, 25, carPos * .35));
+    if (hov) [["#fff2a8",0],["#FDB515",1],["#ff8a3d",2],["#ff4a3d",3]].forEach(([col, i]) => R(c, x - 1 - i - (f % 2), y + 15, 1, 1, col));
   }
-  car.size = [128, 80];
 
   window.HOBBY_SCENES = { climb, gym, golf, volley, fashion, cafe, car, W, H };
 })();
