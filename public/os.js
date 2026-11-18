@@ -167,6 +167,7 @@ function renderTasks(active){
 /* ---------- window contents ---------- */
 function renderAbout(b){
   b.innerHTML = `
+  ${DATA.avatar?`<img class="avatar" src="${esc(DATA.avatar)}" alt="Daniel's pixel portrait" width="120" height="120" style="float:right;border:2px solid var(--gold);margin:0 0 6px 12px">`:""}
   <pre class="ascii glow">
  ____    ____
 |  _ \\  | __ )   ${esc(DATA.name.toUpperCase())}
@@ -356,7 +357,9 @@ function renderTerminal(b){
       print(`Authenticating with public key "guest@daniel-os" ... <span class="ok">ok</span>`); await sleep(500);
       print("One more thing. What's your name?","c"); mode="ssh-name"; setPrompt(`<span class="c">name:</span>`);
       inp.disabled=false; inp.focus(); },
-    whoami:()=>remote? print(`<span class="p">${esc(visitor)}</span>, logged in to daniel@berkeley.edu from ${esc(from)}`) : print(`<span class="p">${esc(DATA.name)}</span> — ${esc(DATA.title)}\n${esc(DATA.bio)}`),
+    whoami:()=>{ if(remote) return print(`<span class="p">${esc(visitor)}</span>, logged in to daniel@berkeley.edu from ${esc(from)}`);
+      const f=[["name",DATA.name],["role",DATA.title.replace("Computer Science","CS")],["clearance","root (allegedly)"],["location",DATA.location],["status","<span class=\"ok\">online</span>"],["contact",DATA.links.email]];
+      print(`<div class="idcard">${DATA.avatar?`<img class="avatar" src="${esc(DATA.avatar)}" alt="Daniel's pixel portrait" width="144" height="144" style="border:2px solid #7be08a">`:""}<div class="fields"><span class="p">ID CARD // DANIEL_OS</span>\n${f.map(([k,v])=>`<span class="m">${k.padEnd(11)}</span>${k==="status"?v:esc(v)}`).join("\n")}</div></div>`); },
     about:()=>{ CMDS.whoami(); openWin("about"); },
     projects:()=>{ DATA.projects.forEach((p,i)=>print(`  [${i+1}] <span class="p">${esc(p.name)}</span> — ${esc(p.blurb)}  <span class="m">(${p.tech.map(esc).join(", ")})</span>`)); print(`type <span class="p">project 1</span> to open one.`,"m"); openWin("projects"); },
     project:a=>{ const i=parseInt(a[0])-1; if(!openProject(i)) print(`usage: project 1-${DATA.projects.length}`,"e"); else print(`opening ${esc(DATA.projects[i].name)}…`,"ok"); },
@@ -429,7 +432,7 @@ async function hack(print){
   for(let i=0;i<=20;i++){ bar="█".repeat(i)+"░".repeat(20-i); line.textContent=`[${bar}] ${i*5}%`; await sleep(60); }
   rain.boost(1);
   print(`<span class="ok">ACCESS GRANTED.</span> Just kidding — this is a portfolio, not an exploit.\nBut if you liked that, type <span class="p">contact</span>.`);
-  const ov=$("#overlay"); ov.innerHTML=`<div class="big glow">ACCESS GRANTED</div><div>${toBin("HIRE DANIEL")}</div>`; ov.style.display="flex"; setTimeout(()=>ov.style.display="none",1600);
+  const ov=$("#overlay"); ov.innerHTML=`${DATA.avatar?`<img class="avatar" src="${esc(DATA.avatar)}" alt="" width="260" height="260" style="border:3px solid #7be08a;box-shadow:0 0 40px rgba(123,224,138,.4)">`:""}<div class="big glow">ACCESS GRANTED</div><div style="color:#7be08a">operator identified: daniel</div><div style="color:var(--dim);font-size:18px">${toBin("HIRE DANIEL")}</div>`; ov.style.display="flex"; setTimeout(()=>ov.style.display="none",2800);
 }
 
 /* ---------- desktop / taskbar ---------- */
@@ -443,6 +446,8 @@ function showDesktop(){
   const ic=$("#icons");
   ICON_ORDER.forEach(id=>{ const b=el("button",{class:"icon","aria-label":"Open "+LABELS[id]},`${ICONS[APPS[id].icon]}<span>${LABELS[id]}</span>`); b.onclick=()=>openWin(id); ic.appendChild(b); });
   const sm=$("#startmenu");
+  if(DATA.avatar){ const side=sm.querySelector(".side"); side.classList.add("me");
+    side.innerHTML=`<img class="avatar" src="${esc(DATA.avatar)}" alt="" width="56" height="56" style="border:2px solid var(--navy)"><div class="who">${esc(DATA.handle==="djbantay"?"daniel":DATA.handle)}<small>CS @ Berkeley</small></div>`; }
   ICON_ORDER.forEach(id=>{ const b=el("button",{role:"menuitem"},"› "+LABELS[id]); b.onclick=()=>{openWin(id); sm.style.display="none";}; sm.appendChild(b); });
   const rb=el("button",{role:"menuitem"},"› restart"); rb.onclick=()=>{ sm.style.display="none"; reboot(); }; sm.appendChild(rb);
   const sd=el("button",{role:"menuitem"},"› shut down"); sd.onclick=()=>{ sm.style.display="none"; shutdown(); }; sm.appendChild(sd);

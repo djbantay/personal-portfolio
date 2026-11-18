@@ -267,3 +267,11 @@ body.eightbit #start{background:#FF004D;color:#FFF1E8}
 /* screensaver logo */
 #saverBear{width:auto!important;height:auto!important;background:none!important;filter:none;font-family:var(--pixel);font-size:72px;line-height:1;padding:6px 14px;
   border:3px solid currentColor;text-shadow:0 0 18px currentColor;box-shadow:0 0 24px -6px currentColor;color:var(--gold)}
+
+/* ---------- portrait (animated 48x48 pixel GIF, scaled crisp) ---------- */
+.avatar{image-rendering:pixelated;display:block;flex:none}
+#startmenu .side.me{display:flex;gap:10px;align-items:center;padding:8px 10px}
+#startmenu .side.me .who{line-height:1}
+#startmenu .side.me .who small{display:block;font-size:16px;opacity:.75}
+.idcard{display:flex;gap:16px;align-items:flex-start;border:1px dashed var(--rock);padding:10px;margin:6px 0;flex-wrap:wrap}
+.idcard .fields{white-space:pre;line-height:1.35}

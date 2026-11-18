@@ -8,6 +8,7 @@ export const PROFILE = {
   "name": "Daniel Bantay",
   "handle": "djbantay",
   "title": "Computer Science @ UC Berkeley",
+  "avatar": "/me/avatar.gif",
   "location": "Berkeley, CA",
   "bio": "I'm a CS student at UC Berkeley working across ML, data engineering, and full-stack development. I've built ETL pipelines over 1B+ retail transactions, a real-time AI spotter for event photographers, and accessible web interfaces. I like turning messy data and fuzzy problems into things people can actually use.",
   "links": {
@@ -172,7 +173,7 @@ export const PROFILE = {
     ]
   }
 } as {
-  name: string; handle: string; title: string; location: string; bio: string;
+  name: string; handle: string; title: string; avatar?: string; location: string; bio: string;
   links: { email: string; linkedin: string; github: string; resume: string };
   projects: Project[]; experience: Job[];
   education: { school: string; degree: string; when: string; courses: string[] };
