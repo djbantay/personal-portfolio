@@ -44,7 +44,7 @@ Most portfolios are a page you scroll. This one is a small operating system you 
 <details>
 <summary>Spoilers: easter eggs</summary>
 
-The Konami code (8-bit mode with chiptunes), clicking my name 5 times, the Campanile chimes on the hour if sound is on, `weather`, `hack`, `sudo`, `vault.enc` (password hint in the window), and a DVD-style bouncing-logo screensaver after 60 seconds idle.
+The Konami code (8-bit mode with chiptunes), clicking my name 5 times, the `powers` command (superpowers.exe), `weather`, `hack`, `sudo`, `vault.enc` (password hint in the window), and a DVD-style bouncing-logo screensaver after 60 seconds idle.
 
 </details>
 
