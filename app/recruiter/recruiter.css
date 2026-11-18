@@ -1,0 +1,82 @@
+/* Recruiter mode: light paper, Berkeley blue + gold, fast to scan, prints to one or two pages */
+.rc{--paper:#f7f4ec;--card:#fffdf8;--ink:#1b2433;--muted:#5a6475;--blue:#003262;--gold:#FDB515;--goldInk:#7a5600;--rule:#e3ddcf;
+  min-height:100vh;background:var(--paper);color:var(--ink);
+  font:15px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.rc a{color:var(--blue);text-underline-offset:2px}
+.rc a:hover{color:#0b4f9c}
+.rc :focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:2px}
+
+.rc-top{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:10px clamp(16px,4vw,40px);background:var(--blue);color:#fff;font:13px/1.4 'IBM Plex Mono',ui-monospace,monospace}
+.rc-top a{color:#fff;text-decoration:none}
+.rc-top a:hover{color:var(--gold)}
+.rc-boot{opacity:.9}
+.rc-actions{display:flex;gap:16px;align-items:center}
+.rc-top .rc-cta{background:var(--gold);color:var(--blue);padding:5px 12px;font-weight:600;border-radius:3px}
+.rc-top .rc-cta:hover{color:var(--blue);filter:brightness(1.05)}
+
+.rc-page{max-width:980px;margin:0 auto;padding:28px clamp(16px,4vw,40px) 48px}
+.rc h2{font:600 12px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);
+  margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid var(--gold)}
+.rc h3{font-size:15px;font-weight:600;margin:0;line-height:1.4}
+.rc ul{margin:6px 0 0 18px;padding:0}
+.rc li{margin:3px 0}
+.rc p{margin:0}
+
+.rc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:22px}
+.rc-id{display:flex;gap:16px;align-items:center}
+.rc-avatar{image-rendering:pixelated;border:2px solid var(--blue);background:var(--blue);border-radius:4px}
+.rc-head h1{font:400 48px/1 'VT323',ui-monospace,monospace;color:var(--blue);margin:0;letter-spacing:.01em}
+.rc-title{color:var(--muted);margin-top:4px}
+.rc-open{margin-top:6px;font-size:14px}
+.rc-open b{color:var(--goldInk)}
+.rc-links{list-style:none;margin:0;padding:0;font:13px/1.5 'IBM Plex Mono',ui-monospace,monospace}
+.rc-links li{display:flex;gap:10px;margin:0}
+.rc-links span{color:var(--muted);min-width:66px}
+
+.rc-tldr{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--gold);padding:16px 18px;margin-bottom:26px}
+.rc-tldr ul{margin-top:2px}
+.rc-tldr li{margin:5px 0}
+
+.rc-cols{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:32px}
+.rc-main section+section{margin-top:26px}
+.rc-side section+section{margin-top:24px}
+.rc-item{padding:0 0 16px;margin-bottom:16px;border-bottom:1px solid var(--rule)}
+.rc-item:last-child{border-bottom:0;margin-bottom:0}
+.rc-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.rc-row h3 span{color:var(--blue)}
+.rc-row h3 a{text-decoration:none}
+.rc-row h3 a:hover{text-decoration:underline}
+.rc-when{font:12px 'IBM Plex Mono',ui-monospace,monospace;color:var(--muted);white-space:nowrap}
+.rc-where{color:var(--muted);font-size:13px}
+.rc-award{font:12px 'IBM Plex Mono',ui-monospace,monospace;color:var(--goldInk);background:#fff3cf;padding:1px 8px;border-radius:3px}
+.rc-blurb{margin-top:2px}
+.rc-tech{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.rc-tech span{font:12px/1.5 'IBM Plex Mono',ui-monospace,monospace;background:#e9eef6;color:var(--blue);padding:1px 7px;border-radius:3px}
+.rc-more{display:flex;gap:16px;margin-top:8px;font-size:13px}
+.rc-skill+.rc-skill{margin-top:12px}
+.rc-skill h3{font-size:13px;color:var(--muted);font-weight:600}
+.rc-skill .rc-tech{margin-top:4px}
+.rc-human p+p{margin-top:4px}
+
+.rc-foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--rule);color:var(--muted);font-size:14px}
+
+@media (max-width:760px){
+  .rc-cols{grid-template-columns:1fr;gap:26px}
+  .rc-head h1{font-size:40px}
+  .rc-boot{font-size:12px}
+}
+
+@media print{
+  .rc{background:#fff;font-size:11.5px;line-height:1.45}
+  .rc-top,.rc-foot,.rc-more,.rc-avatar{display:none}
+  .rc-page{padding:0;max-width:none}
+  .rc-head{margin-bottom:12px}
+  .rc-head h1{font-size:36px}
+  .rc-tldr{padding:8px 12px;margin-bottom:14px;border-color:#ddd}
+  .rc-cols{grid-template-columns:minmax(0,1fr) 210px;gap:20px}
+  .rc-item{padding-bottom:8px;margin-bottom:8px;break-inside:avoid}
+  .rc-tech span{background:none;border:1px solid #cdd5e2;padding:0 5px}
+  .rc a{color:var(--ink);text-decoration:none}
+  @page{margin:12mm}
+}

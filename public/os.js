@@ -104,7 +104,7 @@ const BOOT = [
 async function boot(){
   if(!$("#boot")) $("#screen").insertAdjacentHTML("beforeend",'<div id="boot" role="status" aria-live="polite"></div>');
   const b=$("#boot"); let skip=false;
-  const finish=()=>{ if(skip) return; skip=true; b.style.transition="opacity .4s"; b.style.opacity=0; setTimeout(()=>{b.remove(); showDesktop();},400); };
+  const finish=()=>{ if(skip) return; skip=true; b.style.transition="opacity .4s"; b.style.opacity=0; setTimeout(()=>{b.remove(); document.body.classList.add("booted"); showDesktop();},400); };
   b.addEventListener("click",finish); addEventListener("keydown",finish,{once:true});
   try{ if(sessionStorage.getItem("booted")) return finish(); sessionStorage.setItem("booted","1"); }catch(e){}
   for(const [line,delay] of BOOT){ if(skip) return; await sleep(delay); b.insertAdjacentHTML("beforeend",`<div>${line||"&nbsp;"}</div>`); }
@@ -341,6 +341,7 @@ function renderTerminal(b){
   about · projects · project N · experience
   neofetch · hobbies · cafe · funfact
   skills · contact · resume · open NAME
+  tldr        recruiter mode: everything on one page
 <span class="p">system</span>
   ls · cat FILE · cd DIR · whoami · clear
   history · date · echo TEXT · ping
@@ -442,6 +443,8 @@ function renderTerminal(b){
     skills:()=>{ Object.entries(DATA.skills).forEach(([c,l])=>print(`  <span class="p">${esc(c)}</span>\n    ${l.map(esc).join(" · ")}`)); openWin("skills"); },
     contact:()=>{ const L=DATA.links; print(`  email    <a href="mailto:${esc(L.email)}">${esc(L.email)}</a>\n  linkedin <a href="${esc(L.linkedin)}" target="_blank" rel="noopener">${esc(L.linkedin)}</a>\n  github   <a href="${esc(L.github)}" target="_blank" rel="noopener">${esc(L.github)}</a>`); },
     resume:()=>{ openWin("resume"); print("opening resume.pdf…","ok"); },
+    tldr:()=>{ print("switching to recruiter mode…","ok"); setTimeout(()=>location.href="/recruiter",350); },
+    recruiter:()=>CMDS.tldr(),
     open:a=>{ const k=(a[0]||"").replace(/\..*$/,"").replace(/\/$/,""); const m={vault:"secret"}[k]||k; if(APPS[m]) { openWin(m); print(`opening ${m}…`,"ok"); } else print(`open: no such app '${esc(a[0]||"")}'. try: ${Object.keys(APPS).join(", ")}`,"e"); },
     ls:()=>print(`<span class="c">projects/  experience/</span>  about.txt  hobbies.txt  contact.txt  resume.pdf  vault.enc`),
     cat:a=>{ const f=a[0]; if(files[f]) print(esc(files[f]())); else if(f==="resume.pdf") CMDS.resume(); else if(f==="vault.enc") print("binary file — try: open vault","e"); else print(`cat: ${esc(f||"")}: no such file`,"e"); },
@@ -536,7 +539,7 @@ function showDesktop(){
 }
 let replayBoot=false;
 function reboot(){
-  try{ sessionStorage.removeItem("booted"); }catch(e){}
+  try{ sessionStorage.removeItem("booted"); }catch(e){} document.body.classList.remove("booted");
   if(is8()) toggle8bit();
   replayBoot=true;
   if(Intro.available()) return Intro.powerOff({reboot:true});

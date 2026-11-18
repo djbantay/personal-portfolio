@@ -105,6 +105,14 @@ export const PROFILE = {
       ]
     }
   ],
+  "recruiter": {
+    "openTo": "Software, ML, and data engineering roles",
+    "highlights": [
+      "Built Python/SQL ETL pipelines over 1B+ retail transactions and 21.6M customers (Databricks, Redshift, AWS).",
+      "Hackathon finalist with Wallflower, a real-time AI spotter (FastAPI, Gemini vision, React, WebSockets).",
+      "Ships accessible, tested software: WCAG 2.1 AA screens, 37-test alert engine, usability tests with 10 students."
+    ]
+  },
   "education": {
     "school": "University of California, Berkeley",
     "degree": "B.A. Computer Science",
@@ -187,6 +195,7 @@ export const PROFILE = {
   name: string; handle: string; title: string; avatar?: string; location: string; bio: string;
   links: { email: string; linkedin: string; github: string; resume: string };
   projects: Project[]; experience: Job[];
+  recruiter: { openTo: string; highlights: string[] };
   education: { school: string; degree: string; when: string; courses: string[] };
   skills: Record<string, string[]>;
   personal: { intro: string; hobbies: { name: string; scene?: string; detail: string; quip: string }[]; cafes: { name: string; city: string; note: string }[];
