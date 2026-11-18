@@ -53,6 +53,7 @@ const ICONS = {
   term:  P(["gggggggggggg","gkkkkkkkkkkg","gkgkkkkkkkkg","gkkgkkkkkkkg","gkkkgkkkkkkg","gkkgkkkkkkkg","gkgkkwwwwkkg","gkkkkkkkkkkg","gkkkkkkkkkkg","gggggggggggg","...gggggg...","..gggggggg.."],C),
   mail:  P(["............","gggggggggggg","ggwwwwwwwwgg","gwgwwwwwwgwg","gwwgwwwwgwwg","gwwwggggwwwg","gwwwwwwwwwwg","gwwwwwwwwwwg","gwwwwwwwwwwg","gggggggggggg","............","............"],C),
   lock:  P(["....gggg....","...g....g...","..g......g..","..g......g..","gggggggggggg","gmmmmmmmmmmg","gmmmmkkmmmmg","gmmmmkkmmmmg","gmmmmmkmmmmg","gmmmmmmmmmmg","gggggggggggg","............"],C),
+  star:  P(["............",".....gg.....",".....gg.....","....gmmg....","gggggmmggggg",".gmmmmmmmmg.","..gmmmmmmg..","..gmmmmmmg..",".gmmmggmmmg.",".gmgg..ggmg.",".gg......gg.","............"],C),
   book:  P(["............",".gggggggggg.",".gbbbbbbbbg.",".gbwwwwwwbg.",".gbbbbbbbbg.",".gbwwwwwbbg.",".gbbbbbbbbg.",".gbwwwwwwbg.",".gbbbbbbbbg.",".gggggggggg.",".mmmmmmmmmm.","............"],C),
   doc:   P(["gggggggg....","gwwwwwwgg...","gwwwwwwgwg..","gwwwwwwggggg","gwnnnnnwwwwg","gwwwwwwwwwwg","gwnnnnnnnnwg","gwwwwwwwwwwg","gwnnnnnnwwwg","gwwwwwwwwwwg","gggggggggggg","............"],C),
 };
@@ -114,7 +115,7 @@ async function boot(){
 
 /* ---------- window manager ---------- */
 /* each window type gets its own accent so overlapping windows are easy to tell apart */
-const ACCENTS={about:"#FDB515",projects:"#FDB515",experience:"#6FB7F0",skills:"#7BE08A",terminal:"#E9E4D4",contact:"#FF8FB8",resume:"#E9E4D4",guestbook:"#FFB65C",secret:"#FF7A6B"};
+const ACCENTS={hobbies:"#C9A2FF",about:"#FDB515",projects:"#FDB515",experience:"#6FB7F0",skills:"#7BE08A",terminal:"#E9E4D4",contact:"#FF8FB8",resume:"#E9E4D4",guestbook:"#FFB65C",secret:"#FF7A6B"};
 
 /* clean mode: no scanlines, rain or flicker (auto-on for prefers-reduced-motion) */
 function setClean(v){ document.body.classList.toggle("clean",v); const b=$("#fx"); if(b){ b.textContent=v?"fx off":"fx on"; b.setAttribute("aria-pressed",String(!v)); } try{ localStorage.setItem("clean",v?"1":"0"); }catch(e){} }
@@ -129,11 +130,12 @@ const APPS = {
   terminal:   {title:"terminal — guest@daniel-os", icon:"term", w:640,h:420, render:renderTerminal},
   contact:    {title:"contact.lnk",     icon:"mail",   w:440,h:360, render:renderContact},
   resume:     {title:"resume.pdf",      icon:"doc",    w:420,h:260, render:renderResume},
+  hobbies:    {title:"hobbies/",        icon:"star",   w:640,h:640, render:renderHobbies},
   guestbook:  {title:"guestbook.txt",   icon:"book",   w:480,h:440, render:renderGuestbook},
   secret:     {title:"vault.enc",       icon:"lock",   w:440,h:330, render:renderVault},
 };
-const ICON_ORDER = ["about","projects","experience","skills","terminal","contact","resume","guestbook","secret"];
-const LABELS = {guestbook:"guestbook",about:"about.txt",projects:"projects",experience:"experience",skills:"skills.exe",terminal:"terminal",contact:"contact",resume:"resume.pdf",secret:"vault.enc"};
+const ICON_ORDER = ["about","hobbies","projects","experience","skills","terminal","contact","resume","guestbook","secret"];
+const LABELS = {hobbies:"hobbies",guestbook:"guestbook",about:"about.txt",projects:"projects",experience:"experience",skills:"skills.exe",terminal:"terminal",contact:"contact",resume:"resume.pdf",secret:"vault.enc"};
 
 function openWin(id, opts={}){
   if(wins[id]){ focusWin(id); if(wins[id].dataset.min==="1") restore(id); return wins[id]; }
@@ -227,11 +229,9 @@ function renderAbout(b){
   <p style="margin-top:6px">${(DATA.education.courses||[]).map(c=>`<span class="tag">${esc(c)}</span>`).join("")}</p>
   ${DATA.personal ? `<p class="sub" style="margin-top:18px">off the clock</p>
   <p>${esc(DATA.personal.intro)}</p>
-  <div style="display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin-top:8px;font-size:13px">${DATA.personal.hobbies.map(h=>`<span style="color:var(--gold)">${esc(h.name)}</span><span style="color:var(--dim)">${esc(h.quip)}</span>`).join("")}</div>
-  <p style="margin-top:10px;font-size:13px"><span style="color:var(--gold)">dessert spot:</span> ${esc(DATA.personal.dessertSpot)} &nbsp;·&nbsp; <span style="color:var(--gold)">learning:</span> ${esc(DATA.personal.learning)}</p>
-  <p style="margin-top:6px;font-size:13px"><span style="color:var(--gold)">fun fact:</span> ${esc(DATA.personal.funFacts[0])}</p>
-  <p style="margin-top:6px;font-size:12px;color:var(--dim)">more in the terminal: <span style="color:var(--gold)">neofetch</span>, <span style="color:var(--gold)">hobbies</span>, <span style="color:var(--gold)">funfact</span></p>` : ""}
-  <p style="margin-top:14px"><button class="btn" data-open="projects">view projects →</button><button class="btn" data-open="terminal">open terminal</button></p>`;
+  <p style="margin-top:8px">${DATA.personal.hobbies.map(h=>`<span class="tag">${esc(h.name)}</span>`).join("")}</p>
+  <p style="margin-top:8px;font-size:13px"><span style="color:var(--gold)">fun fact:</span> ${esc(DATA.personal.funFacts[0])}</p>` : ""}
+  <p style="margin-top:14px"><button class="btn" data-open="projects">view projects →</button>${DATA.personal?`<button class="btn" data-open="hobbies">hobbies →</button>`:""}<button class="btn" data-open="terminal">open terminal</button></p>`;
   wireOpeners(b);
 }
 function renderProjects(b){
@@ -286,6 +286,19 @@ function renderVault(b){
     if(v==="gobears"){ o.innerHTML=`<span style="color:#7be08a">DECRYPTED [OK]</span><br>You found the vault. Thanks for exploring — let's talk: <a href="mailto:${esc(DATA.links.email)}">${esc(DATA.links.email)}</a>`; }
     else { o.innerHTML=`<span style="color:#ff7a6b">ACCESS DENIED</span> — sha256 mismatch`; f.querySelector("input").value=""; } };
 }
+function renderHobbies(b){
+  const P=DATA.personal;
+  b.innerHTML=`<div class="h">hobbies/</div><div class="sub">off the clock · ${P.hobbies.length} entries</div>
+  <div class="grid hgrid">${P.hobbies.map((h,i)=>`<div class="card hcard"><div class="hex">${toHex(0x2000+i*0x10)}</div><div class="n">${esc(h.name)}</div>${h.detail?`<div class="d" style="color:var(--ink)">${esc(h.detail)}</div>`:""}<div class="d" style="color:var(--dim)"># ${esc(h.quip)}</div></div>`).join("")}</div>
+  <p class="sub" style="margin-top:18px">cafe.log</p>
+  <div class="cafelog">${P.cafes.map((c,i)=>`<div><span class="rank">#${i+1}</span><b>${esc(c.name)}</b> <span style="color:var(--dim)">· ${esc(c.city)} · ${esc(c.note)}</span></div>`).join("")}
+  <div style="color:var(--dim);font-size:12px;margin-top:6px">dessert: ${esc(P.dessertSpot)} · know a better cafe? type <span style="color:var(--gold)">mail</span> in the terminal</div></div>
+  <p class="sub" style="margin-top:18px">learning ${esc(P.learning.toLowerCase())}</p>
+  <p><span class="zh">你好，我在学中文。</span><br><span style="color:var(--dim);font-size:12px">nǐ hǎo, wǒ zài xué zhōngwén · hello, I'm learning Chinese</span></p>
+  <p style="margin-top:6px">${esc(P.learningWhy)}</p>
+  ${P.photos&&P.photos.length?`<p class="sub" style="margin-top:18px">photo strip</p>
+  <div class="pstrip">${P.photos.map((ph,i)=>`<figure class="polaroid" style="--r:${i%2?2.5:-3}deg"><img src="${esc(ph.src)}" alt="${esc(ph.caption)}" loading="lazy"><figcaption>${esc(ph.caption)}</figcaption></figure>`).join("")}</div>`:""}`;
+}
 function renderGuestbook(b){
   b.innerHTML=`<div class="h">guestbook.txt</div><div class="sub">people who ssh'd in and said hi</div><div class="gbl" style="margin-top:10px;color:var(--dim)">loading…</div>
   <p style="margin-top:14px;color:var(--dim);font-size:12px">want to sign? open the terminal → <span style="color:var(--gold)">ssh daniel@berkeley.edu</span> → <span style="color:var(--gold)">sign your message</span></p>`;
@@ -307,12 +320,12 @@ function renderTerminal(b){
   b.addEventListener("click",()=>inp.focus());
   print(`DANIEL_OS terminal [v1.0] — type <span class="p">help</span> to see commands. (some are hidden.)`,"m");
   print(`<span class="c">tip:</span> try <span class="p">whoami</span>, <span class="p">projects</span>, or <span class="p">hack</span>`,"m");
-  const files = {"hobbies.txt":()=>DATA.personal.hobbies.map(h=>`${h.name.padEnd(20)} # ${h.quip}`).join("\n"), "about.txt":()=>DATA.bio, "contact.txt":()=>`email: ${DATA.links.email}\nlinkedin: ${DATA.links.linkedin}\ngithub: ${DATA.links.github}`, ".secret":()=>"01100111 01101111 01100010 01100101 01100001 01110010 01110011  (decode me)"};
+  const files = {"hobbies.txt":()=>DATA.personal.hobbies.map(h=>`${h.name.padEnd(20)} ${h.detail?h.detail+"  ":""}# ${h.quip}`).join("\n"), "about.txt":()=>DATA.bio, "contact.txt":()=>`email: ${DATA.links.email}\nlinkedin: ${DATA.links.linkedin}\ngithub: ${DATA.links.github}`, ".secret":()=>"01100111 01101111 01100010 01100101 01100001 01110010 01110011  (decode me)"};
   const CMDS = {
     help:()=>print(
 `<span class="p">navigation</span>
   about · projects · project N · experience
-  neofetch · hobbies · funfact
+  neofetch · hobbies · cafe · funfact
   skills · contact · resume · open NAME
 <span class="p">system</span>
   ls · cat FILE · cd DIR · whoami · clear
@@ -343,11 +356,12 @@ function renderTerminal(b){
         ["OS","DANIEL_OS v1.0 (hacker edition)"],["Host","UC Berkeley, Computer Science"],["Shell","bash, ssh-friendly"],
         ["Uptime","since the last cafe run"],["Stack",Object.values(DATA.skills)[0].join(", ")],
         ["Hobbies",P.hobbies.slice(0,4).map(h=>h.name).join(", ")],["Also",P.hobbies.slice(4).map(h=>h.name).join(", ")],
-        ["Learning",`${P.learning} (tones: WIP)`],["Dessert",P.dessertSpot],["Twin","yes. he's the other one"],["User",who]];
+        ["Learning",`${P.learning} (tones: WIP)`],["Cafe",P.cafes[0].name],["Dessert",P.dessertSpot],["Dream car",P.dreamCar],["Twin","yes. he's the other one"],["User",who]];
       const right=rows.map(([k,v])=>v===""?k:`<span class="p">${esc(k)}</span>: ${esc(v)}`).join("\n");
       const blocks=["#001428","#003262","#3B7EA1","#FDB515","#C4820E","#E9E4D4","#7be08a","#ff7a6b"].map(c=>`<span style="background:${c}">   </span>`).join("");
       print(`<div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start"><pre style="margin:0;color:var(--gold);font:inherit">${esc(art.join("\n"))}</pre><div style="white-space:pre-wrap">${right}\n\n${blocks}</div></div>`); },
-    hobbies:()=>{ print(`<span class="p">~/hobbies.txt</span>`); DATA.personal.hobbies.forEach(h=>print(`  ${esc(h.name.padEnd(20))}<span class="m"># ${esc(h.quip)}</span>`)); print(`  <span class="p">dessert spot</span>        ${esc(DATA.personal.dessertSpot)}`); },
+    hobbies:()=>{ print(`<span class="p">~/hobbies.txt</span>`); DATA.personal.hobbies.forEach(h=>print(`  ${esc(h.name.padEnd(20))}${h.detail?esc(h.detail)+"  ":""}<span class="m"># ${esc(h.quip)}</span>`)); print(`<span class="m">opening the hobbies window…</span>`); openWin("hobbies"); },
+    cafe:()=>{ print(`<span class="p">~/cafe.log</span>`); DATA.personal.cafes.forEach((c,i)=>print(`  #${i+1}  ${esc(c.name)}  <span class="m">${esc(c.city)} · ${esc(c.note)}</span>`)); print(`  <span class="m">dessert: ${esc(DATA.personal.dessertSpot)} · got a rec? type</span> <span class="p">mail</span>`); },
     funfact:()=>{ const f=DATA.personal.funFacts; print(`<span class="p">fun fact:</span> ${esc(f[Math.random()*f.length|0])}`); },
     np:async()=>{ const j=await api("/api/now-playing");
       if(j.error||!j.configured) return print("♪ the jukebox is unplugged right now.","m");

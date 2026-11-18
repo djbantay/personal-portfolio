@@ -323,3 +323,18 @@ body.clean .win{animation:none}
 .tag:hover{transform:translateY(-1px) scale(1.05);border-color:var(--acc,var(--gold))}
 body.clean .icon,body.clean .icon:hover,body.clean .card.tilt,body.clean .btn:hover,body.clean .tag:hover{transform:none!important;transition:none}
 @media (prefers-reduced-motion:reduce){.icon:hover,.card.tilt,.btn:hover,.tag:hover{transform:none!important}}
+
+/* ---------- hobbies window ---------- */
+.hgrid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.hcard .n{font-size:21px}
+.cafelog{border:1px dashed var(--rock);padding:10px 12px;margin-top:6px;font-size:14px}
+.cafelog .rank{display:inline-block;min-width:34px;color:var(--acc,var(--gold));font-family:var(--pixel);font-size:20px}
+.zh{font-size:20px;color:var(--acc,var(--gold));letter-spacing:.06em}
+.pstrip{display:flex;gap:18px;flex-wrap:wrap;padding:10px 4px 6px}
+.polaroid{margin:0;background:#f4efe4;padding:8px 8px 6px;width:min(100%,420px);rotate:var(--r);box-shadow:0 14px 28px rgba(0,0,0,.6);
+  transition:rotate .35s cubic-bezier(.3,1.5,.5,1),transform .35s cubic-bezier(.3,1.5,.5,1),box-shadow .2s}
+.polaroid:hover{rotate:0deg;transform:scale(1.03) translateY(-4px);box-shadow:0 24px 40px rgba(0,0,0,.7)}
+.polaroid img{display:block;width:100%;height:auto}
+.polaroid figcaption{font-family:var(--pixel);font-size:20px;color:#2b2b2b;text-align:center;padding-top:4px}
+body.clean .polaroid{rotate:0deg;transition:none}
+body.clean .polaroid:hover{transform:none}

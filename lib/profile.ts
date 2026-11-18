@@ -112,22 +112,31 @@ export const PROFILE = {
     "courses": []
   },
   "personal": {
-    "intro": "Off the clock I'm usually on a climbing wall, in the gym, or hunting for the next great cafe.",
+    "intro": "Off the clock I'm usually on a bouldering wall, in the gym, on a golf course, or hunting for the next great cafe.",
     "hobbies": [
-      { "name": "rock climbing", "quip": "falling off walls, recreationally" },
-      { "name": "the gym", "quip": "git commit -m \"gains\"" },
-      { "name": "golf", "quip": "ctrl+z does not work on the course" },
-      { "name": "volleyball", "quip": "bump, set, ship it" },
-      { "name": "fashion & shopping", "quip": "fit check before every git push" },
-      { "name": "new cafes & food", "quip": "will review your favorite spot, honestly" },
-      { "name": "cars & F1", "quip": "box box, it's boba o'clock" }
+      { "name": "rock climbing", "detail": "bouldering", "quip": "falling off walls, recreationally" },
+      { "name": "the gym", "detail": "", "quip": "git commit -m \"gains\"" },
+      { "name": "golf", "detail": "favorite course: Franklin Canyon (Hercules)", "quip": "ctrl+z does not work on the course" },
+      { "name": "volleyball", "detail": "", "quip": "bump, set, ship it" },
+      { "name": "fashion & shopping", "detail": "favorite brands: Diesel, Buck Mason", "quip": "fit check before every git push" },
+      { "name": "cafes & food", "detail": "top Berkeley spot: Mind Coffee", "quip": "will review your favorite spot, honestly" },
+      { "name": "cars & F1", "detail": "dream car: BMW M4 Competition", "quip": "box box, it's boba o'clock" }
+    ],
+    "cafes": [
+      { "name": "Mind Coffee", "city": "Berkeley", "note": "current #1" }
     ],
     "dessertSpot": "Hui Lau Shan",
+    "dreamCar": "BMW M4 Competition",
     "learning": "Mandarin",
+    "learningWhy": "I'm learning Mandarin so I can travel in China someday, understand the culture firsthand, and talk with my friends in their language.",
+    "photos": [
+      { "src": "/me/photos/crew.webp", "caption": "the crew" }
+    ],
     "funFacts": [
       "I have a twin brother. Statistically, one of us is the better coder.",
       "I'm learning Mandarin: 你好 (nǐ hǎo) is locked in, the tones are still a work in progress.",
-      "My go-to dessert spot in Berkeley is Hui Lau Shan."
+      "My go-to dessert spot in Berkeley is Hui Lau Shan.",
+      "Dream car: BMW M4 Competition. Current car: a laptop."
     ]
   },
   "skills": {
@@ -178,7 +187,8 @@ export const PROFILE = {
   projects: Project[]; experience: Job[];
   education: { school: string; degree: string; when: string; courses: string[] };
   skills: Record<string, string[]>;
-  personal: { intro: string; hobbies: { name: string; quip: string }[]; dessertSpot: string; learning: string; funFacts: string[] };
+  personal: { intro: string; hobbies: { name: string; detail: string; quip: string }[]; cafes: { name: string; city: string; note: string }[];
+    dessertSpot: string; dreamCar: string; learning: string; learningWhy: string; photos: { src: string; caption: string }[]; funFacts: string[] };
 };
 
 export const SITE_URL =
