@@ -9,6 +9,7 @@ export default function Home() {
       <div id="os-root" dangerouslySetInnerHTML={{ __html: OS_MARKUP }} />
       <Script src="/scenes.js" strategy="afterInteractive" />
       <Script src="/os.js" strategy="afterInteractive" />
+      <Script src="/cursor.js" strategy="afterInteractive" />
     </>
   );
 }
