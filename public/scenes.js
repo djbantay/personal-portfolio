@@ -11,7 +11,7 @@
       [...s].forEach((ch, i) => { if (P[ch]) R(c, x + i, y + j, 1, 1, P[ch]); }); });
   }
   /* 3x5 pixel font so labels stay crisp at 64px */
-  const GL = {A:"010101111101101",B:"110101110101110",C:"011100100100011",D:"110101101101110",E:"111100110100111",F:"111100110100100",G:"011100101101011",H:"101101111101101",I:"111010010010111",K:"101101110101101",L:"100100100100111",N:"110101101101101",P:"110101110100100",R:"110101110101101",T:"111010010010010",X:"101101010101101",O:"111101101101111",S:"011100010001110",M:"101111111101101",W:"101101111111101",Y:"101101010010010",U:"101101101101111",V:"101101101101010",",":"000000000010100","?":"110001010000010",".":"000000000000010","'":"010010000000000","!":"010010010000010",
+  const GL = {A:"010101111101101",B:"110101110101110",C:"011100100100011",D:"110101101101110",E:"111100110100111",F:"111100110100100",G:"011100101101011",H:"101101111101101",I:"111010010010111",K:"101101110101101",L:"100100100100111",N:"110101101101101",P:"110101110100100",R:"110101110101101",T:"111010010010010",X:"101101010101101",O:"111101101101111",S:"011100010001110",Z:"111001010100111",M:"101111111101101",W:"101101111111101",Y:"101101010010010",U:"101101101101111",V:"101101101101010",",":"000000000010100","?":"110001010000010",".":"000000000000010","'":"010010000000000","!":"010010010000010",
     0:"111101101101111",1:"010110010010111",2:"110001010100111",3:"110001010001110",4:"101101111001001",5:"111100110001110",6:"011100111101111",7:"111001010010010",8:"111101111101111",9:"111101111001110"};
   const txt = (c, s, x, y, col) => { y -= 5; [...String(s).toUpperCase()].forEach((ch, n) => { const g = GL[ch]; if (!g) return;
     for (let i = 0; i < 15; i++) if (g[i] === "1") { const px = x + n*4 + i % 3, py = y + (i / 3 | 0); R(c, px + 1, py + 1, 1, 1, "rgba(0,0,0,.55)"); R(c, px, py, 1, 1, col); } }); };
@@ -305,5 +305,124 @@
   }
   desk.size = [112, 72];
 
-  window.HOBBY_SCENES = { climb, gym, golf, volley, fashion, cafe, car, desk, W, H };
+  /* ---- bear: an original pixel bear (gold headphones, navy hoodie) coding at the desk.
+     Hero of recruiter mode; walker + sleeper variants guide the page and close it out. ---- */
+  const BP = { k:"#24140a", B:"#8a5a34", L:"#b07c4e", D:"#66401f", i:"#c98a64", M:"#e6c7a0", m:"#c9a47a", n:"#1a0f08", e:"#0b0b0f", w:"#ffffff", p:"#e08f80", h:"#1b1d25", g:"#FDB515", o:"#1b2a45", O:"#24365a", d:"#9aa3b2", G:"#2f6a55" };
+  function gridSprite(W, H, draw, noOutline = "hg") {
+    const g = Array.from({ length: H }, () => Array(W).fill(""));
+    const set = (x, y, ch) => { x = Math.round(x); y = Math.round(y); if (x >= 0 && y >= 0 && x < W && y < H) g[y][x] = ch; };
+    const api = { g, set,
+      disc: (cx, cy, r, ch) => { for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) if (x*x + y*y <= r*r + r*.6) set(cx + x, cy + y, ch); },
+      ell: (cx, cy, rx, ry, ch) => { for (let y = -ry; y <= ry; y++) for (let x = -rx; x <= rx; x++) if ((x*x)/(rx*rx) + (y*y)/(ry*ry) <= 1.05) set(cx + x, cy + y, ch); },
+      rect: (x, y, w, h, ch) => { for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) set(x + i, y + j, ch); },
+      shade: (cx, cy, lo = -6, hi = 6) => { for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (g[y][x] === "B") { const d = (x - cx) + (y - cy); if (d < lo) g[y][x] = "L"; else if (d > hi) g[y][x] = "D"; } } };
+    draw(api);
+    const out = g.map(r => r.slice());
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (g[y][x] && !noOutline.includes(g[y][x]) && [[1,0],[-1,0],[0,1],[0,-1]].some(([a, b]) => !(g[y + b] || [])[x + a])) out[y][x] = "k";
+    const cv = document.createElement("canvas"); cv.width = W; cv.height = H; const c = cv.getContext("2d");
+    out.forEach((r, y) => r.forEach((ch, x) => { if (ch && BP[ch]) R(c, x, y, 1, 1, BP[ch]); }));
+    return cv;
+  }
+  const BEAR_SEATED = gridSprite(36, 34, ({ set, disc, ell, rect, shade }) => {
+    rect(6, 19, 19, 15, "o"); ell(15, 19, 9, 3, "o"); rect(7, 17, 8, 3, "O"); rect(18, 23, 13, 4, "o");
+    disc(9, 3, 3, "B"); disc(21, 3, 3, "B"); disc(9, 3, 1, "i"); disc(21, 3, 1, "i");
+    disc(15, 10, 8, "B"); shade(15, 10);
+    ell(18, 13, 4, 3, "M"); rect(16, 15, 5, 1, "m"); rect(19, 11, 2, 2, "n"); set(18, 15, "n"); set(19, 15, "n");
+    rect(12, 8, 2, 2, "e"); set(12, 8, "w"); rect(19, 7, 2, 2, "e"); set(19, 7, "w");
+    set(10, 12, "p"); set(11, 12, "p"); set(22, 12, "p");
+    for (let a = 200; a <= 340; a += 4) { const r = Math.PI * a / 180; set(15 + Math.cos(r) * 9, 10 + Math.sin(r) * 9, "h"); }
+    rect(5, 8, 3, 6, "h"); rect(6, 9, 1, 4, "g");
+    set(13, 20, "d"); set(13, 21, "d"); set(16, 20, "d"); set(16, 21, "d"); set(16, 22, "d");
+    for (let y = 18; y < 33; y++) set(24, y, "G");
+    rect(31, 23, 4, 4, "B"); set(34, 23, "L");
+  });
+  const walkerFrame = (step) => gridSprite(22, 16, ({ set, disc, ell, rect, shade }) => {
+    ell(9, 9, 7, 4, "o"); rect(4, 6, 6, 2, "O");
+    disc(15, 2, 1, "B"); disc(20, 2, 1, "B"); disc(17, 7, 5, "B"); set(15, 2, "i"); set(20, 2, "i"); shade(17, 7, -3, 3);
+    ell(20, 8, 2, 1, "M"); set(21, 7, "n"); set(18, 6, "e"); set(18, 5, "w");
+    for (let x = 13; x <= 20; x++) set(x, 2, "h"); rect(12, 5, 2, 4, "h"); set(12, 6, "g");
+    set(1, 8, "B");
+    const a = step ? 0 : 1;
+    rect(4 + a, 12, 2, 3, "D"); rect(8 - a, 12, 2, 3, "D"); rect(12 + a, 12, 2, 3, "D"); rect(15 - a, 12, 2, 3, "D");
+  });
+  const BEAR_WALK = [walkerFrame(0), walkerFrame(1)];
+  const BEAR_SIT = gridSprite(18, 16, ({ set, disc, ell, rect, shade }) => {
+    ell(9, 11, 6, 4, "o"); rect(6, 7, 6, 3, "O");
+    disc(9, 5, 4, "B"); disc(6, 1, 1, "B"); disc(12, 1, 1, "B"); set(6, 1, "i"); set(12, 1, "i"); shade(9, 5, -3, 3);
+    ell(11, 7, 2, 1, "M"); set(12, 6, "n"); set(8, 4, "e"); set(11, 4, "e");
+    for (let x = 6; x <= 12; x++) set(x, 0, "h"); rect(4, 3, 2, 3, "h"); set(4, 4, "g");
+    rect(10, 13, 3, 2, "B"); rect(3, 12, 3, 3, "B");
+  });
+  const BEAR_SLEEP = gridSprite(30, 16, ({ set, disc, ell, rect, shade }) => {
+    rect(2, 9, 26, 5, "o"); rect(2, 9, 26, 1, "O");
+    disc(15, 7, 6, "B"); disc(10, 2, 2, "B"); disc(20, 2, 2, "B"); set(10, 2, "i"); set(20, 2, "i"); shade(15, 7, -4, 4);
+    ell(15, 10, 3, 2, "M"); rect(14, 9, 2, 1, "n");
+    rect(11, 6, 2, 1, "n"); rect(17, 6, 2, 1, "n"); set(10, 8, "p"); set(20, 8, "p");
+    for (let x = 9; x <= 21; x++) set(x, 0, "h"); rect(7, 4, 2, 4, "h"); set(7, 5, "g");
+    rect(3, 11, 4, 3, "B"); rect(23, 11, 4, 3, "B");
+  });
+
+  function bearRoom(c, f) {
+    R(c, 0, 0, 112, 66, "#0f2340"); for (let x = 0; x < 112; x += 14) R(c, x, 0, 1, 66, "#13294a");
+    R(c, 0, 66, 112, 6, "#16243c"); R(c, 0, 66, 112, 1, "#2c4a73");
+    R(c, 4, 5, 28, 26, "#3a2a1c"); R(c, 5, 6, 26, 24, "#0b1b33"); R(c, 5, 22, 26, 8, "#13294a");
+    [[8,9],[14,7],[26,10],[22,14],[10,15]].forEach(([x, y], k) => { if ((f >> 4) % 5 !== k) R(c, x, y, 1, 1, "#e9e4d4"); });
+    R(c, 25, 8, 3, 3, "#f6e9b0"); R(c, 26, 8, 2, 1, "#0b1b33");
+    R(c, 15, 12, 4, 18, "#06111f"); R(c, 16, 9, 2, 3, "#06111f"); R(c, 16, 7, 1, 2, "#06111f"); R(c, 16, 14, 2, 2, "#FDB515");
+    [[6,6],[10,9],[22,5],[26,7]].forEach(([x, w]) => R(c, x, 30 - w, 4, w, "#081628"));
+    R(c, 18, 6, 1, 24, "#3a2a1c"); R(c, 5, 18, 26, 1, "#3a2a1c"); R(c, 3, 31, 30, 2, "#4a3624");
+    R(c, 58, 12, 44, 2, "#5a3a24"); R(c, 58, 12, 44, 1, "#7a5232");
+    R(c, 60, 10, 8, 2, "#d40000"); R(c, 62, 9, 3, 1, "#d40000"); R(c, 60, 11, 2, 1, "#111"); R(c, 66, 11, 2, 1, "#111");
+    R(c, 71, 8, 4, 4, "#f2efe6"); R(c, 72, 8, 1, 4, "#FDB515"); R(c, 71, 10, 4, 1, "#3b7dd8"); R(c, 78, 10, 2, 2, "#ffffff");
+    [[83,"#3b7dd8"],[85,"#FDB515"],[87,"#7a1e2c"],[89,"#e9e4d4"]].forEach(([x, col]) => R(c, x, 6, 2, 6, col));
+    R(c, 94, 9, 5, 3, "#8a5a3c"); R(c, 93, 5, 2, 4, "#4f8a52"); R(c, 96, 4, 2, 5, "#7ab07c"); R(c, 98, 6, 2, 3, "#4f8a52");
+    R(c, 26, 24, 7, 27, "#5a1e28"); R(c, 26, 24, 2, 27, "#7a2a36"); R(c, 28, 50, 26, 3, "#3a1218"); R(c, 28, 50, 26, 1, "#5a1e28");
+    R(c, 40, 53, 3, 10, "#2c2c34"); R(c, 33, 63, 17, 1, "#2c2c34"); [33, 41, 49].forEach(x => R(c, x, 64, 2, 2, "#111"));
+    R(c, 56, 49, 56, 3, "#7a4e2e"); R(c, 56, 49, 56, 1, "#9a6a40"); R(c, 58, 52, 3, 14, "#5e3a20"); R(c, 106, 52, 3, 14, "#5e3a20");
+  }
+  function bearMonitor(c, f, off) {
+    R(c, 74, 18, 32, 26, "#1b1d25"); R(c, 74, 18, 32, 1, "#2e3240"); R(c, 76, 20, 28, 21, "#06111f");
+    if (off) { R(c, 80 + (f >> 2) % 14, 28 + ((f >> 3) % 5), 10, 1, "#2c4a73"); }
+    else { const sc = Math.floor(f / 5);
+      for (let i = 0; i < 9; i++) { const h = ((sc + i) * 2654435761) >>> 0, ind = (h >> 3) % 3 * 2, len = 6 + (h >> 7) % 16;
+        R(c, 78 + ind, 21 + i * 2, Math.min(len, 24 - ind), 1, CODE[(h >> 11) % CODE.length]); }
+      if ((f >> 3) % 2) R(c, 78, 39, 2, 1, "#e9e4d4");
+      if ((f % 160) > 136) { R(c, 80, 26, 20, 9, "#0d3a22"); R(c, 80, 26, 20, 1, "#7BE08A"); txt(c, "PASS", 84, 33, "#7BE08A"); } }
+    R(c, 88, 44, 4, 5, "#1b1d25"); R(c, 83, 48, 14, 1, "#2e3240");
+  }
+  function bearMug(c, f) {
+    R(c, 100, 42, 6, 7, "#f2efe6"); R(c, 101, 43, 4, 1, "#6b3e26"); R(c, 106, 44, 2, 1, "#e6e0d2"); R(c, 107, 45, 1, 2, "#e6e0d2"); R(c, 106, 47, 2, 1, "#e6e0d2"); R(c, 102, 45, 2, 2, "#FDB515");
+    for (let k = 0; k < 5; k++) { const t = (f / 3 + k * 3) % 12; R(c, 102 + Math.round(Math.sin(t / 2 + k) * 1.2), 40 - t, 1, 1, `rgba(230,230,240,${(.55 - t / 24).toFixed(2)})`); }
+  }
+  function bear(c, f, hov) {
+    bearRoom(c, f);
+    c.fillStyle = "rgba(90,220,150,.07)"; c.beginPath(); c.moveTo(76, 22); c.lineTo(42, 14); c.lineTo(42, 50); c.lineTo(76, 42); c.fill();
+    bearMonitor(c, f, false);
+    R(c, 62, 47, 12, 2, "#3a3d48"); R(c, 62, 47, 12, 1, "#4a4f6a"); if (!hov) R(c, 63 + ((f * 7) % 10), 47, 1, 1, "#FDB515");
+    bearMug(c, f);
+    const by = (f >> 4) % 3 === 0 ? 1 : 0;
+    R(c, 36, 47, 22, 4, "#1b2a45"); R(c, 54, 50, 4, 13, "#1b2a45"); R(c, 53, 62, 7, 3, "#66401f"); R(c, 53, 62, 7, 1, "#8a5a34");
+    c.drawImage(BEAR_SEATED, 28, 15 + by);
+    if ((f % 70) < 2) { R(c, 40, 23 + by, 2, 2, "#8a5a34"); R(c, 47, 22 + by, 2, 2, "#8a5a34"); R(c, 40, 24 + by, 2, 1, "#24140a"); R(c, 47, 23 + by, 2, 1, "#24140a"); }
+    if (hov) { const w = (f >> 1) % 2;
+      R(c, 46, 37 + by, 18, 6, "#0f2340"); R(c, 58, 47, 6, 2, "#3a3d48");
+      R(c, 51, 32 + by, 5, 8, "#24140a"); R(c, 53, 24 + by, 5, 12, "#24140a"); R(c, 52, 33 + by, 3, 6, "#24365a"); R(c, 54, 25 + by, 3, 10, "#24365a"); R(c, 56, 25 + by, 1, 10, "#2f6a55");
+      R(c, 54 + w, 19 + by, 5, 6, "#24140a"); R(c, 55 + w, 20 + by, 3, 4, "#8a5a34"); R(c, 55 + w, 20 + by, 3, 1, "#b07c4e"); R(c, 56 + w, 22 + by, 1, 1, "#c98a64");
+      R(c, 58, 4, 42, 11, "#f2efe6"); R(c, 58, 4, 42, 1, "#ffffff"); R(c, 59, 15, 3, 2, "#f2efe6"); R(c, 59, 17, 1, 1, "#f2efe6");
+      txt(c, "HI THERE!", 61, 12, "#003262"); }
+    else { const t = (f >> 1) % 2; R(c, 59, 38 + t + by, 4, 3, "#8a5a34"); R(c, 59, 38 + t + by, 4, 1, "#b07c4e"); }
+  }
+  bear.size = [112, 72];
+  function bearSleep(c, f, awake) {
+    R(c, 0, 0, 48, 28, "rgba(0,0,0,0)"); c.clearRect(0, 0, 48, 28);
+    R(c, 0, 22, 48, 3, "#7a4e2e"); R(c, 0, 22, 48, 1, "#9a6a40");
+    R(c, 30, 6, 16, 14, "#1b1d25"); R(c, 31, 7, 14, 11, "#06111f"); R(c, 36, 20, 4, 2, "#1b1d25");
+    if (awake) txt(c, "HI", 34, 15, "#7BE08A"); else R(c, 32 + (f >> 2) % 10, 10 + ((f >> 3) % 5), 4, 1, "#2c4a73");
+    c.drawImage(BEAR_SLEEP, 1, awake ? 5 : 7);
+    if (awake) { R(c, 12, 10, 2, 2, "#0b0b0f"); R(c, 18, 10, 2, 2, "#0b0b0f"); R(c, 12, 10, 1, 1, "#fff"); R(c, 18, 10, 1, 1, "#fff"); txt(c, "!", 24, 6, "#FDB515"); }
+    else { const z = (f >> 3) % 4; for (let i = 0; i < z; i++) txt(c, "Z", 22 + i * 3, 6 - i * 2, "#FDB515"); }
+  }
+  window.BEAR = { walk: BEAR_WALK, sit: BEAR_SIT, sleep: bearSleep };
+
+  window.HOBBY_SCENES = { climb, gym, golf, volley, fashion, cafe, car, desk, bear, W, H };
 })();
