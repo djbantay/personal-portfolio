@@ -158,6 +158,7 @@ export const PROFILE = {
     "cafes": [
       { "name": "Mind Coffee", "city": "Berkeley", "note": "current #1" }
     ],
+    "nowListening": { "title": "Superpowers", "artist": "" },
     "dessertSpot": "Hui Lau Shan",
     "dreamCar": "BMW M4 Competition",
     "f1Team": "Ferrari",
@@ -174,14 +175,6 @@ export const PROFILE = {
       "F1 team: Ferrari. Yes, even through the strategy calls."
     ]
   },
-  "superpowers": [
-    { "name": "Data Wrangling", "power": "Turns messy, billion-row data into answers people can use.", "proof": "ETL pipelines over 1B+ retail transactions" },
-    { "name": "Ship Fast", "power": "Goes from idea to working demo in one hackathon weekend.", "proof": "Wallflower, hackathon finalist" },
-    { "name": "Accessibility Sense", "power": "Spots the screen that would lock someone out, before it ships.", "proof": "WCAG 2.1 AA screens, usability tests with 10 students" },
-    { "name": "Test Everything", "power": "Writes the tests that catch it at 2 a.m. so nobody has to.", "proof": "37-test alert engine" },
-    { "name": "Grip Strength", "power": "Reads a boulder problem like a bug report.", "proof": "bouldering, gym, a lot of chalk" },
-    { "name": "Mind Coffee Mode", "power": "Finds the good cafe in any city and codes there for hours.", "proof": "cafes.log" }
-  ],
   "skills": {
     "Languages": [
       "Python",
@@ -229,13 +222,12 @@ export const PROFILE = {
   links: { email: string; linkedin: string; github: string; resume: string };
   projects: Project[]; experience: Job[];
   recruiter: { openTo: string; highlights: string[] };
-  superpowers: { name: string; power: string; proof: string }[];
   affiliations: { at: string; href: string; role: string; prev: boolean }[];
   stats: { n: number; suffix: string; label: string }[];
   education: { school: string; degree: string; when: string; courses: string[] };
   skills: Record<string, string[]>;
   personal: { intro: string; hobbies: { name: string; scene?: string; detail: string; quip: string }[]; cafes: { name: string; city: string; note: string }[];
-    dessertSpot: string; dreamCar: string; f1Team: string; learning: string; learningWhy: string; photos: { src: string; caption: string }[]; funFacts: string[] };
+    nowListening: { title: string; artist: string; url?: string }; dessertSpot: string; dreamCar: string; f1Team: string; learning: string; learningWhy: string; photos: { src: string; caption: string }[]; funFacts: string[] };
 };
 
 export const SITE_URL =

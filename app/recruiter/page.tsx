@@ -189,7 +189,7 @@ export default function RecruiterPage() {
               <li>{P.recruiter.openTo.toLowerCase()}</li>
               <li>i turn messy data and fuzzy problems into things people can actually use</li>
               <li className="rx-dim">now: learning mandarin, chasing v-grades, drinking mind coffee</li>
-              <li className="rx-np-line" data-np-line hidden />
+              <li className="rx-np-line" data-np-line data-np-title={P.personal.nowListening.title} data-np-artist={P.personal.nowListening.artist} />
             </ul>
           </section>
 
@@ -248,7 +248,7 @@ export default function RecruiterPage() {
             <canvas width={48} height={28} aria-hidden="true" />
           </button>
           <div className="rx-foot-txt">
-            <p className="rx-np-line rx-np-foot" data-np-line hidden />
+            <p className="rx-np-line rx-np-foot" data-np-line data-np-title={P.personal.nowListening.title} data-np-artist={P.personal.nowListening.artist} />
             <p className="rx-eot">end of transmission.</p>
             <p className="rx-signoff"><span lang="zh">{SIGN_OFF}</span> hello, I&apos;m learning Chinese.</p>
             <p className="rx-small">© {new Date().getFullYear()} {P.name} · built with Next.js and too much Mind Coffee</p>

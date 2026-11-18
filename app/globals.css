@@ -145,8 +145,6 @@ pre.ascii{font-family:var(--mono);font-size:10px;line-height:1.1;color:var(--gol
 #overlay .big{font-size:clamp(40px,7vw,90px);color:var(--gold)}
 
 /* sound toggle */
-#pow{background:none;border:1px solid var(--rock);color:var(--ink);font:inherit;font-size:17px;padding:0 8px;cursor:pointer}
-#pow:hover{border-color:var(--gold);color:var(--gold)}
 #pwr{background:none;border:1px solid var(--rock);color:var(--ink);font:inherit;font-size:18px;line-height:1;padding:1px 8px 3px;cursor:pointer}
 #pwr:hover{border-color:var(--gold);color:var(--gold);box-shadow:0 0 10px rgba(253,181,21,.4)}
 #clock.ding{background:var(--gold);color:var(--navy)}

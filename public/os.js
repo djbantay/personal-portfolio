@@ -101,7 +101,7 @@ async function boot(){
 
 /* ---------- window manager ---------- */
 /* each window type gets its own accent so overlapping windows are easy to tell apart */
-const ACCENTS={powers:"#FDB515",hobbies:"#FDB515",about:"#FDB515",projects:"#FDB515",experience:"#FDB515",skills:"#FDB515",terminal:"#E9E4D4",contact:"#FDB515",resume:"#E9E4D4",guestbook:"#FDB515",secret:"#FDB515"};
+const ACCENTS={hobbies:"#FDB515",about:"#FDB515",projects:"#FDB515",experience:"#FDB515",skills:"#FDB515",terminal:"#E9E4D4",contact:"#FDB515",resume:"#E9E4D4",guestbook:"#FDB515",secret:"#FDB515"};
 
 /* clean mode: no scanlines, rain or flicker (auto-on for prefers-reduced-motion) */
 function setClean(v){ document.body.classList.toggle("clean",v); const b=$("#fx"); if(b){ b.textContent=v?"fx off":"fx on"; b.setAttribute("aria-pressed",String(!v)); } try{ localStorage.setItem("clean",v?"1":"0"); }catch(e){} }
@@ -112,7 +112,6 @@ const APPS = {
   about:      {title:"about.txt",       icon:"about",  w:540,h:560, render:renderAbout},
   projects:   {title:"C:\\projects\\",  icon:"folder", w:640,h:460, render:renderProjects},
   experience: {title:"experience.log",  icon:"exp",    w:640,h:520, render:renderExperience},
-  powers:     {title:"superpowers.exe", icon:"star", w:500,h:580, render:renderPowers},
   skills:     {title:"skills.exe",      icon:"skills", w:520,h:460, render:renderSkills},
   terminal:   {title:"terminal — guest@daniel-os", icon:"term", w:640,h:420, render:renderTerminal},
   contact:    {title:"contact.lnk",     icon:"mail",   w:440,h:360, render:renderContact},
@@ -263,13 +262,6 @@ function renderSkills(b){
     cats.map(([c,list],i)=>`<div class="skc" style="opacity:0;transition:opacity .3s ${i*0.18}s"><div class="sub" style="color:var(--gold);margin-top:12px">${toHex(0x10*(i+1))} · ${esc(c)}</div><div>${list.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div></div>`).join("");
   setTimeout(()=>{ b.querySelectorAll(".skc").forEach(x=>x.style.opacity=1); },60);
   setTimeout(()=>{ const s=b.querySelector(".scan"); if(s) s.textContent=`${cats.reduce((n,[,l])=>n+l.length,0)} modules loaded [OK]`; },60+cats.length*180);
-}
-function renderPowers(b){
-  const L=DATA.superpowers||[];
-  b.innerHTML = `<div class="h">superpowers.exe</div><div class="sub" style="margin-bottom:10px">scanning for abilities… <span class="scan" style="color:#7be08a"></span></div>` +
-    L.map((x,i)=>`<div class="skc" style="opacity:0;transform:translateY(6px);transition:opacity .3s ${i*0.15}s,transform .3s ${i*0.15}s"><div class="sub" style="color:var(--gold);margin-top:12px">⚡ ${esc(x.name)}</div><div>${esc(x.power)}</div><div class="m" style="color:var(--dim);font-size:12px">proof: ${esc(x.proof)}</div></div>`).join("");
-  setTimeout(()=>{ b.querySelectorAll(".skc").forEach(x=>{ x.style.opacity=1; x.style.transform="none"; }); },60);
-  setTimeout(()=>{ const s=b.querySelector(".scan"); if(s) s.textContent=`${L.length} powers unlocked [OK]`; },60+L.length*150);
 }
 function renderContact(b){
   const L=DATA.links;
@@ -478,7 +470,6 @@ function renderTerminal(b){
   CMDS.tidy=()=>{ try{ localStorage.removeItem(ICON_POS_KEY); }catch(e){} document.querySelectorAll("#icons .icon").forEach(i=>{ i.style.translate=""; }); print("desktop icons tidied.","ok"); };
   CMDS.clean=()=>{ const v=!document.body.classList.contains("clean"); setClean(v); print(v?"clean mode on: effects off, easier reading.":"clean mode off: effects back on.","ok"); };
   CMDS.screensaver=()=>{ print("starting screensaver…","m"); setTimeout(startSaver,300); };
-  CMDS.powers=()=>{ print("unlocking superpowers…","ok"); openWin("powers"); }; CMDS.superpowers=CMDS.powers;
   inp.addEventListener("keydown",async e=>{
     if(is8() && e.key.length===1) Sound.tone(1400,.02,"square",.02);
     if(e.key==="c" && e.ctrlKey && mode){ e.preventDefault(); print("^C","m"); mode=null; mail=null; setPrompt(); return; }
@@ -613,7 +604,6 @@ setInterval(()=>{ if(!saverOn && Date.now()-lastAct>60000) startSaver(); },1000)
 /* ---------- tray buttons ---------- */
 $("#pwr").onclick=()=>reboot();
 $("#fx").onclick=()=>setClean(!document.body.classList.contains("clean"));
-$("#pow").onclick=()=>openWin("powers");
 
 /* ================= approximate location (ssh "Last login from …") ================= */
 function placeName(w){
@@ -627,7 +617,11 @@ function regionName(code){ try{ return new Intl.DisplayNames(["en"],{type:"regio
 async function loadNowPlaying(){
   const a=$("#np"); if(!a) return;
   const j=await api("/api/now-playing");
-  if(j.error || !j.configured || !j.track){ a.hidden=true; return; }
+  const fb=DATA.personal&&DATA.personal.nowListening;
+  if(j.error || !j.configured || !j.track){
+    if(!fb||!fb.title){ a.hidden=true; return; }
+    a.hidden=false; a.classList.remove("playing"); a.removeAttribute("href"); a.title="On repeat: "+fb.title+(fb.artist?" — "+fb.artist:"");
+    a.innerHTML=`<span class="eq"><i></i><i></i><i></i></span><span class="lbl">on repeat:</span><span class="scroll"><span>${esc(fb.title+(fb.artist?" — "+fb.artist:""))}</span></span>`; return; }
   const t=j.track, txt=`${t.title} — ${t.artist}`;
   a.hidden=false; a.classList.toggle("playing",!!t.playing);
   a.href=t.url||"#"; a.title=(t.playing?"Daniel is listening to: ":"Daniel last played: ")+txt;

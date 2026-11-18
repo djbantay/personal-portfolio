@@ -57,13 +57,20 @@ export default function RecruiterFx() {
           const j = await fetch("/api/now-playing").then((r) => r.json());
           const t = j.configured && j.track;
           npLines.forEach((el) => {
-            if (!t) { el.hidden = true; return; }
+            if (!t) { // spotify off or idle: fall back to the song I have on repeat
+              const ft = el.dataset.npTitle, fa = el.dataset.npArtist;
+              if (!ft) { el.hidden = true; return; }
+              el.hidden = false; el.classList.remove("playing");
+              el.innerHTML = `<span class="rx-eq" aria-hidden="true"><i></i><i></i><i></i></span><span class="rx-np-k">on repeat</span> ${esc(ft)}${fa ? ` <span class="rx-dim">· ${esc(fa)}</span>` : ""}`;
+              return;
+            }
             const title = t.url ? `<a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.title)}</a>` : esc(t.title);
             el.hidden = false; el.classList.toggle("playing", !!t.playing);
             el.innerHTML = `<span class="rx-eq" aria-hidden="true"><i></i><i></i><i></i></span><span class="rx-np-k">${t.playing ? "now playing" : "last played"}</span> ${title} <span class="rx-dim">· ${esc(t.artist)}</span>`;
           });
-        } catch { npLines.forEach((el) => (el.hidden = true)); }
+        } catch { /* keep the on-repeat fallback already rendered */ }
       };
+      npLines.forEach((el) => { const ft = el.dataset.npTitle; if (ft) el.innerHTML = `<span class="rx-eq" aria-hidden="true"><i></i><i></i><i></i></span><span class="rx-np-k">on repeat</span> ${esc(ft)}${el.dataset.npArtist ? ` <span class="rx-dim">· ${esc(el.dataset.npArtist)}</span>` : ""}`; });
       load(); const npT = setInterval(load, 45000); off.push(() => clearInterval(npT));
     }
 
