@@ -11,7 +11,7 @@
       [...s].forEach((ch, i) => { if (P[ch]) R(c, x + i, y + j, 1, 1, P[ch]); }); });
   }
   /* 3x5 pixel font so labels stay crisp at 64px */
-  const GL = {A:"010101111101101",B:"110101110101110",C:"011100100100011",D:"110101101101110",E:"111100110100111",F:"111100110100100",G:"011100101101011",H:"101101111101101",I:"111010010010111",K:"101101110101101",L:"100100100100111",N:"110101101101101",P:"110101110100100",R:"110101110101101",T:"111010010010010",X:"101101010101101","!":"010010010000010",
+  const GL = {A:"010101111101101",B:"110101110101110",C:"011100100100011",D:"110101101101110",E:"111100110100111",F:"111100110100100",G:"011100101101011",H:"101101111101101",I:"111010010010111",K:"101101110101101",L:"100100100100111",N:"110101101101101",P:"110101110100100",R:"110101110101101",T:"111010010010010",X:"101101010101101",O:"111101101101111",S:"011100010001110","!":"010010010000010",
     0:"111101101101111",1:"010110010010111",2:"110001010100111",3:"110001010001110",4:"101101111001001",5:"111100110001110",6:"011100111101111",7:"111001010010010",8:"111101111101111",9:"111101111001110"};
   const txt = (c, s, x, y, col) => { y -= 5; [...String(s).toUpperCase()].forEach((ch, n) => { const g = GL[ch]; if (!g) return;
     for (let i = 0; i < 15; i++) if (g[i] === "1") { const px = x + n*4 + i % 3, py = y + (i / 3 | 0); R(c, px + 1, py + 1, 1, 1, "rgba(0,0,0,.55)"); R(c, px, py, 1, 1, col); } }); };
@@ -157,74 +157,77 @@
   }
 
   /* ---- dream car: burgundy performance coupe at sunset ---- */
-  /* dream car: a 1:1 pixel redraw of Daniel's yellow car (same pixel size as every
-     other scene), built from spans so the outline is automatic and the wheels spin. */
-  const CARPAL = { o:"#0b0b0f", L:"#fcf6aa", y:"#f0e46e", m:"#d6c64a", d:"#a8962e", g:"#2c2f3a", G:"#5c6070", w:"#ffffff", k:"#1c1c22", r:"#e0453a" };
-  const CW = 56, CH = 19, WHEELS = [[12, 15], [43, 15]];
-  const carSprite = (() => {
-    const grid = Array.from({ length: CH }, () => Array(CW).fill(""));
-    const span = (y, a, b, ch) => { for (let x = Math.max(0, a); x <= Math.min(CW - 1, b); x++) grid[y][x] = ch; };
+  /* F1: an open-wheel car in a Berkeley blue + gold livery, lapping past the grandstand.
+     Built from spans with an automatic outline; wheels spin, DRS opens on hover. */
+  const F1PAL = { o:"#0b0b0f", L:"#4a8ae0", b:"#1d4f91", d:"#12305a", g:"#FDB515", G:"#ffe08a", k:"#1a1a20", K:"#2c2c34", w:"#f2efe6", v:"#2a3550", h:"#e9e4d4" };
+  const FW = 58, FH = 13, F1WHEELS = [[11, 8, 5], [45, 9, 4]];
+  function buildF1(drs) {
+    const grid = Array.from({ length: FH }, () => Array(FW).fill(""));
+    const span = (y, a, b, ch) => { for (let x = Math.max(0, a); x <= Math.min(FW - 1, b); x++) grid[y][x] = ch; };
     const spans = (list, ch) => list.forEach(([y, a, b]) => span(y, a, b, ch));
-    // rear wing on a tall stand
-    spans([[0,0,9],[1,0,10],[2,1,9]], "y"); spans([[3,6,7],[4,6,7]], "y");
-    // cabin: rounded roof, long raked windshield
-    spans([[1,17,33],[2,15,37],[3,13,40],[4,12,43]], "y");
-    // rear haunch + body + long hood sloping to the nose
-    spans([[4,2,8],[5,1,46],[6,1,50],[7,0,53],[8,0,55],[9,0,55],[10,0,55],[11,0,55],[12,0,55],[13,0,55],[14,0,55],[15,1,55],[16,2,54],[17,4,52]], "y");
-    WHEELS.forEach(([cx, cy]) => { for (let y = 8; y < CH; y++) for (let x = cx - 7; x <= cx + 7; x++) if (x >= 0 && x < CW && grid[y][x] && (x - cx) ** 2 + (y - cy) ** 2 <= 42) grid[y][x] = "k"; });
-    // light from the top-left: highlights on top surfaces, mid + shadow lower down
-    for (let y = 0; y < CH; y++) for (let x = 0; x < CW; x++) if (grid[y][x] && grid[y][x] !== "k") {
-      if (y === 1 || (y === 0) || (y === 5 && x < 16) || ((y === 6 || y === 7) && x > 38)) grid[y][x] = "L";
-      else if (y >= 15) grid[y][x] = "d"; else if (y >= 13) grid[y][x] = "m"; }
-    span(2, 1, 9, "m");
-    // D-shaped side window + big windshield, with reflection streaks
-    spans([[3,18,27],[4,16,28],[5,16,27]], "g");
-    spans([[3,31,38],[4,31,41],[5,32,44]], "g");
-    [[4,19],[5,18],[3,21],[4,20],[3,34],[4,33],[5,34],[4,36]].forEach(([y, x]) => grid[y][x] = "G");
-    // front plane of the 3/4 view
-    for (let y = 9; y <= 15; y++) span(y, 49 + (y > 12 ? 0 : 1), 55, y > 12 ? "d" : "m");
-    // door + body lines, side skirt
-    for (let y = 6; y <= 14; y++) grid[y][29] = "d";
-    for (let y = 7; y <= 13; y++) grid[y][15] = "d"; span(14, 16, 28, "d"); span(7, 16, 28, "m");
-    grid[9][24] = "d"; grid[9][25] = "d";
-    span(16, 20, 35, "k");
-    // lights, vents, splitter
-    span(8, 48, 52, "w"); span(9, 50, 54, "G"); grid[9][49] = "w";
-    span(12, 44, 50, "k"); span(13, 45, 50, "k"); grid[12][53] = "w"; grid[12][54] = "G";
-    span(17, 46, 52, "k");
-    span(7, 1, 2, "r"); grid[8][1] = "r";
-    // automatic 1px outline
+    // rear wing: endplate, main plane, DRS flap (lifts when open), pylon
+    spans([[0,0,2],[1,0,2],[2,0,2],[3,0,2],[4,0,2],[5,0,2],[6,1,2]], "K");
+    spans([[1,3,9],[2,3,9]], "k"); span(drs ? 0 : 3, 3, 9, drs ? "g" : "k");
+    spans([[4,6,7],[5,6,7]], "K");
+    // engine cover rising to the airbox / roll hoop
+    spans([[2,23,26],[3,20,27],[4,15,28],[5,10,30],[6,6,34]], "b");
+    // sidepod + nose sloping down to the front wing
+    spans([[7,5,40],[8,5,46],[9,6,51],[10,8,54]], "b");
+    // floor / plank and front wing with endplate
+    span(11, 8, 44, "k"); spans([[10,47,57],[11,46,57]], "k"); spans([[7,56,57],[8,56,57],[9,56,57]], "K");
+    // shading
+    for (let y = 0; y < FH; y++) for (let x = 0; x < FW; x++) if (grid[y][x] === "b") {
+      if (y <= 3 || (y === 4 && x < 24) || (y === 5 && x < 18) || (y === 6 && x > 30) || (y === 7 && x > 36)) grid[y][x] = "L";
+      else if (y >= 9) grid[y][x] = "d"; }
+    // gold livery stripe + nose tip, number on the engine cover
+    span(8, 10, 44, "g"); span(8, 26, 27, "G"); span(9, 50, 51, "g"); span(10, 52, 54, "g");
+    span(4, 18, 19, "g"); span(5, 18, 19, "g");
+    // cockpit: driver helmet with visor, halo over the top
+    spans([[4,30,32],[5,30,32]], "g"); grid[4][32] = "v"; grid[5][32] = "v"; grid[4][30] = "G";
+    span(3, 29, 34, "K"); grid[4][34] = "K"; grid[5][35] = "K";
+    // sidepod inlet
+    spans([[7,37,38],[8,38,39]], "k");
     const out = grid.map(r => r.slice());
-    for (let y = 0; y < CH; y++) for (let x = 0; x < CW; x++) if (grid[y][x] && grid[y][x] !== "k")
+    for (let y = 0; y < FH; y++) for (let x = 0; x < FW; x++) if (grid[y][x] && !"kK".includes(grid[y][x]))
       if ([[1,0],[-1,0],[0,1],[0,-1]].some(([dx, dy]) => !(grid[y + dy] || [])[x + dx])) out[y][x] = "o";
-    const cv = document.createElement("canvas"); cv.width = CW; cv.height = CH; const c = cv.getContext("2d");
-    out.forEach((r, y) => r.forEach((ch, x) => { if (ch) R(c, x, y, 1, 1, CARPAL[ch]); }));
+    const cv = document.createElement("canvas"); cv.width = FW; cv.height = FH; const c = cv.getContext("2d");
+    out.forEach((r, y) => r.forEach((ch, x) => { if (ch) R(c, x, y, 1, 1, F1PAL[ch]); }));
     return cv;
-  })();
-  function wheel(c, cx, cy, ang) {
-    for (let y = -5; y <= 5; y++) for (let x = -5; x <= 5; x++) { const d = x*x + y*y;
-      if (d <= 28) R(c, cx + x, cy + y, 1, 1, d <= 12 ? "#c8ccd4" : d <= 16 ? "#8a8f99" : "#111114"); }
-    R(c, cx - 2, cy - 3, 2, 1, "#eef0f4"); R(c, cx - 3, cy - 2, 1, 1, "#eef0f4");
-    for (let k = 0; k < 5; k++) { const a = ang + k * Math.PI * 2 / 5;
-      for (let r = 1; r <= 3.2; r += .7) R(c, cx + Math.round(Math.cos(a) * r), cy + Math.round(Math.sin(a) * r), 1, 1, "#5a5e68"); }
-    R(c, cx, cy, 1, 1, "#FDB515");
   }
-  let carPos = 0;
+  const F1 = buildF1(false), F1DRS = buildF1(true);
+  function f1wheel(c, cx, cy, r, ang) {
+    const r2 = r * r + 1;
+    for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) { const d = x*x + y*y;
+      if (d <= r2) R(c, cx + x, cy + y, 1, 1, d <= (r - 2) * (r - 2) + 1 ? "#2c2c34" : d <= (r - 1) * (r - 1) ? "#16161a" : "#0b0b0f"); }
+    // sidewall stripe that rotates, so the spin reads at speed
+    for (let k = 0; k < 3; k++) { const a = ang + k * Math.PI * 2 / 3;
+      R(c, cx + Math.round(Math.cos(a) * (r - 1)), cy + Math.round(Math.sin(a) * (r - 1)), 1, 1, "#FDB515"); }
+    R(c, cx - 1, cy - r + 1, 2, 1, "#3a3a44"); R(c, cx, cy, 1, 1, "#9aa3b2");
+  }
+  let lap = 0;
   function car(c, f, hov) {
-    const sp = hov ? 2 : 1; carPos += sp;
-    [["#1a1440",8],["#3a1f5c",6],["#7a3a6a",5],["#d9714e",4],["#f0a040",2],["#FDB515",5]].reduce((y, [col, h]) => { R(c, 0, y, W, h, col); return y + h; }, 0);
-    for (let dy = -5; dy <= 5; dy++) { const w = Math.round(Math.sqrt(25 - dy*dy)); R(c, 52 - w, 20 + dy, w*2, 1, "#ffd36a"); }
-    for (let x = 0; x < W; x++) { const h1 = Math.round(6 + Math.sin((x + carPos*.1)/7) * 3 + Math.sin((x + carPos*.1)/3)); R(c, x, 30 - h1, 1, h1, "#2a1f4a");
-      const h2 = Math.round(3 + Math.sin((x + carPos*.3)/5) * 2); R(c, x, 30 - h2, 1, h2, "#1a1838"); }
-    if (f % 40 < 20) R(c, 6, 3, 1, 1, "#fff"); R(c, 22, 5, 1, 1, "#cfd8ff");
-    R(c, 0, 30, W, 10, "#22253a"); R(c, 0, 30, W, 1, "#4a4f6a");
-    for (let i = 0; i < 6; i++) R(c, ((i*14 - carPos*2) % 84 + 84) % 84 - 10, 36, 6, 1, "#FDB515");
-    for (let i = 0; i < 3; i++) R(c, ((40 - carPos*3 + i*23) % 70 + 70) % 70 - 6, 14 + i*4, 3 + sp*2, 1, "rgba(255,255,255,.28)");
-    const x = 4, y = 10 + ((!hov && (carPos >> 3) % 2) ? 1 : 0);
-    R(c, x + 3, 30, CW - 6, 1, "rgba(0,0,0,.45)");
-    c.drawImage(carSprite, x, y);
-    WHEELS.forEach(([wx, wy]) => wheel(c, x + wx, 25, carPos * .35));
-    if (hov) [["#fff2a8",0],["#FDB515",1],["#ff8a3d",2],["#ff4a3d",3]].forEach(([col, i]) => R(c, x - 1 - i - (f % 2), y + 15, 1, 1, col));
+    const sp = hov ? 3 : 1.5; lap += sp;
+    // sky + grandstand with a flickering crowd
+    R(c, 0, 0, W, 8, "#7fb6e8"); R(c, 0, 0, W, 3, "#6aa6dc");
+    R(c, 0, 8, W, 10, "#2c3550"); R(c, 0, 8, W, 1, "#4a5578"); R(c, 0, 7, W, 1, "#c0c6d0");
+    const CROWD = ["#e0453a","#FDB515","#f2efe6","#3b7dd8","#7BE08A","#C9A2FF"];
+    for (let y = 10; y < 17; y += 2) for (let x = 0; x < W; x += 2) {
+      const sx = ((x + Math.floor(lap * .2)) % W + W) % W, n = (sx * 7 + y * 13) % 6;
+      if ((sx * 3 + y) % 5) R(c, x, y - ((f + sx * 5 + y) % 23 === 0 ? 1 : 0), 1, 1, CROWD[n]); }
+    // barrier with gold boards, kerb, light asphalt so the carbon parts read
+    R(c, 0, 18, W, 2, "#1d3a63"); for (let x = -((lap * .2) % 16); x < W; x += 16) R(c, x + 6, 18, 4, 2, "#FDB515");
+    for (let x = -((lap * 2) % 8); x < W; x += 8) { R(c, x, 20, 4, 2, "#e0453a"); R(c, x + 4, 20, 4, 2, "#f2efe6"); }
+    R(c, 0, 22, W, 18, "#5a5e6a"); R(c, 0, 22, W, 1, "#6c707c");
+    for (let i = 0; i < 5; i++) R(c, ((i * 17 - lap * 3) % 85 + 85) % 85 - 10, 38, 8, 1, "#f2efe6");
+    // speed lines + car
+    for (let i = 0; i < 4; i++) R(c, ((50 - lap * 4 + i * 19) % 72 + 72) % 72 - 8, 25 + i * 3, 4 + (hov ? 6 : 2), 1, "rgba(255,255,255,.3)");
+    const x = 3, y = 22;
+    R(c, x + 4, 35, FW - 8, 1, "rgba(0,0,0,.45)");
+    c.drawImage(hov ? F1DRS : F1, x, y);
+    F1WHEELS.forEach(([wx, wy, r]) => f1wheel(c, x + wx, y + wy, r, lap * .5));
+    if (hov) { for (let i = 0; i < 4; i++) if ((f + i) % 2) R(c, x + 12 + ((f * 7 + i * 9) % 30), y + 12 + (i % 2), 1, 1, i % 2 ? "#FDB515" : "#ff8a3d");
+      txt(c, "drs", 2, 6, "#1d3a63"); }
+    else if ((Math.floor(lap / 90)) % 2 === 0 && (lap % 90) < 30) txt(c, "box box", 2, 6, "#1d3a63");
   }
 
   window.HOBBY_SCENES = { climb, gym, golf, volley, fashion, cafe, car, W, H };
