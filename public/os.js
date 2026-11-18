@@ -470,7 +470,7 @@ function renderTerminal(b){
   CMDS.tidy=()=>{ try{ localStorage.removeItem(ICON_POS_KEY); }catch(e){} document.querySelectorAll("#icons .icon").forEach(i=>{ i.style.translate=""; }); print("desktop icons tidied.","ok"); };
   CMDS.clean=()=>{ const v=!document.body.classList.contains("clean"); setClean(v); print(v?"clean mode on: effects off, easier reading.":"clean mode off: effects back on.","ok"); };
   CMDS.screensaver=()=>{ print("starting screensaver…","m"); setTimeout(startSaver,300); };
-  CMDS.chime=()=>{ if(!Sound.on) return print("sound is off. turn it on with the ♪ button in the taskbar.","m"); campanile(new Date().getHours()%12||12); print("the Campanile chimes.","ok"); };
+  CMDS.chime=()=>{ if(!Sound.on) return print("sound is off. it switches on in 8-bit mode (try the Konami code).","m"); campanile(new Date().getHours()%12||12); print("the Campanile chimes.","ok"); };
   inp.addEventListener("keydown",async e=>{
     if(is8() && e.key.length===1) Sound.tone(1400,.02,"square",.02);
     if(e.key==="c" && e.ctrlKey && mode){ e.preventDefault(); print("^C","m"); mode=null; mail=null; setPrompt(); return; }
@@ -605,8 +605,6 @@ setInterval(()=>{ if(!saverOn && Date.now()-lastAct>60000) startSaver(); },1000)
 /* ---------- sound toggle + Campanile chimes ---------- */
 $("#pwr").onclick=()=>reboot();
 $("#fx").onclick=()=>setClean(!document.body.classList.contains("clean"));
-$("#snd").onclick=()=>{ setSound(!Sound.on); if(Sound.on) Sound.bell(784); };
-try{ if(localStorage.getItem("snd")==="1") setSound(true); }catch(e){}
 function campanile(hour){
   if(!Sound.on) return; const ph=[659.25,523.25,587.33,392.0]; ph.forEach((f,i)=>Sound.bell(f,i*.75));
   const ck=$("#clock"), start=3.6;

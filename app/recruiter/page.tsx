@@ -57,10 +57,6 @@ export default function RecruiterPage() {
           <a href="#skills"><i>03</i>skills</a><a href="#off-clock"><i>04</i>off the clock</a>
         </nav>
         <span className="rx-clock"><i className="rx-dot" /><span data-clock>--:--</span></span>
-        <div className="rx-np-wrap">
-          <button type="button" className="rx-np" data-np aria-expanded="false" aria-label="What I'm listening to">[♪]</button>
-          <div className="rx-np-pop" role="status" data-np-pop hidden />
-        </div>
         <button type="button" className="rx-toggle" role="switch" aria-checked="false" data-mode-toggle>
           <span className="rx-knob" aria-hidden="true" /> recruiter mode
         </button>
@@ -193,6 +189,7 @@ export default function RecruiterPage() {
               <li>{P.recruiter.openTo.toLowerCase()}</li>
               <li>i turn messy data and fuzzy problems into things people can actually use</li>
               <li className="rx-dim">now: learning mandarin, chasing v-grades, drinking mind coffee</li>
+              <li className="rx-np-line" data-np-line hidden />
             </ul>
           </section>
 
@@ -251,6 +248,7 @@ export default function RecruiterPage() {
             <canvas width={48} height={28} aria-hidden="true" />
           </button>
           <div className="rx-foot-txt">
+            <p className="rx-np-line rx-np-foot" data-np-line hidden />
             <p className="rx-eot">end of transmission.</p>
             <p className="rx-signoff"><span lang="zh">{SIGN_OFF}</span> hello, I&apos;m learning Chinese.</p>
             <p className="rx-small">© {new Date().getFullYear()} {P.name} · built with Next.js and too much Mind Coffee</p>

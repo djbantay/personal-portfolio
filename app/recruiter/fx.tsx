@@ -47,22 +47,24 @@ export default function RecruiterFx() {
     const tick = () => { const t = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/Los_Angeles" }) + " PT"; clocks.forEach((c) => (c.textContent = t)); };
     tick(); const clockT = setInterval(tick, 15000); off.push(() => clearInterval(clockT));
 
-    // ---------- [♪] now playing ----------
-    const npBtn = document.querySelector<HTMLButtonElement>("[data-np]"), npPop = document.querySelector<HTMLElement>("[data-np-pop]");
-    if (npBtn && npPop) {
-      const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
-      on(npBtn, "click", async () => {
-        const open = npPop.hidden; npPop.hidden = !open; npBtn.setAttribute("aria-expanded", String(open)); if (!open) return;
-        npPop.innerHTML = "<span class='rx-dim'>tuning in…</span>";
+    // ---------- now playing (spotify) ----------
+    const npLines = document.querySelectorAll<HTMLElement>("[data-np-line]");
+    if (npLines.length) {
+      const esc = (x: string) => x.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
+      const load = async () => {
+        if (document.hidden) return;
         try {
           const j = await fetch("/api/now-playing").then((r) => r.json());
-          if (!j.configured) npPop.innerHTML = "<span class='rx-dim'>♪ the jukebox is unplugged right now.</span>";
-          else if (!j.track) npPop.innerHTML = "<span class='rx-dim'>♪ nothing on the turntable right now.</span>";
-          else { const t = j.track, title = t.url ? `<a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.title)}</a>` : esc(t.title);
-            npPop.innerHTML = `<span class="rx-np-k">${t.playing ? "now playing" : "last played"}</span>${title}<span class="rx-dim">${esc(t.artist)}</span>`; }
-        } catch { npPop.innerHTML = "<span class='rx-dim'>♪ couldn't reach the jukebox.</span>"; }
-      });
-      on(document, "click", (e) => { if (!npPop.hidden && !(e.target as Element).closest(".rx-np-wrap")) { npPop.hidden = true; npBtn.setAttribute("aria-expanded", "false"); } });
+          const t = j.configured && j.track;
+          npLines.forEach((el) => {
+            if (!t) { el.hidden = true; return; }
+            const title = t.url ? `<a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.title)}</a>` : esc(t.title);
+            el.hidden = false; el.classList.toggle("playing", !!t.playing);
+            el.innerHTML = `<span class="rx-eq" aria-hidden="true"><i></i><i></i><i></i></span><span class="rx-np-k">${t.playing ? "now playing" : "last played"}</span> ${title} <span class="rx-dim">· ${esc(t.artist)}</span>`;
+          });
+        } catch { npLines.forEach((el) => (el.hidden = true)); }
+      };
+      load(); const npT = setInterval(load, 45000); off.push(() => clearInterval(npT));
     }
 
     // ---------- "decrypt" text ----------
