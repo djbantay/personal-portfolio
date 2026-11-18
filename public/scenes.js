@@ -422,7 +422,7 @@
     if (awake) { R(c, 12, 10, 2, 2, "#0b0b0f"); R(c, 18, 10, 2, 2, "#0b0b0f"); R(c, 12, 10, 1, 1, "#fff"); R(c, 18, 10, 1, 1, "#fff"); txt(c, "!", 24, 6, "#FDB515"); }
     else { const z = (f >> 3) % 4; for (let i = 0; i < z; i++) txt(c, "Z", 22 + i * 3, 6 - i * 2, "#FDB515"); }
   }
-  window.BEAR = { walk: BEAR_WALK, sit: BEAR_SIT, sleep: bearSleep };
+  window.BEAR = { walk: BEAR_WALK, sit: BEAR_SIT, seated: BEAR_SEATED, sleep: bearSleep };
 
   window.HOBBY_SCENES = { climb, gym, golf, volley, fashion, cafe, car, desk, bear, W, H };
 })();
