@@ -352,3 +352,5 @@ body.booted #fastlane{display:none}
 #tray #tldr{color:var(--navy);background:var(--gold);text-decoration:none;padding:0 8px;font-weight:600;border-radius:2px}
 #tray #tldr:hover{filter:brightness(1.08)}
 @media print{#fastlane{display:none}}
+
+.win .aff{margin:4px 0 10px;font-size:13px}.win .aff a,.win .aff b{color:var(--gold)}.win .aff .dim{color:var(--dim)}

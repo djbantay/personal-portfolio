@@ -105,6 +105,17 @@ export const PROFILE = {
       ]
     }
   ],
+  "affiliations": [
+    { "at": "UC Berkeley", "href": "https://eecs.berkeley.edu/", "role": "Computer Science", "prev": false },
+    { "at": "Catalyst Brands", "href": "", "role": "ML & Data Engineering", "prev": true },
+    { "at": "Sugar Creek Studio", "href": "", "role": "Data Analytics", "prev": true }
+  ],
+  "stats": [
+    { "n": 1, "suffix": "B+", "label": "retail transactions piped through ETL" },
+    { "n": 21.6, "suffix": "M", "label": "customers modeled and segmented" },
+    { "n": 6, "suffix": "", "label": "vision models benchmarked for Wallflower" },
+    { "n": 37, "suffix": "", "label": "pytest tests guarding the alert engine" }
+  ],
   "recruiter": {
     "openTo": "Software, ML, and data engineering roles",
     "highlights": [
@@ -196,6 +207,8 @@ export const PROFILE = {
   links: { email: string; linkedin: string; github: string; resume: string };
   projects: Project[]; experience: Job[];
   recruiter: { openTo: string; highlights: string[] };
+  affiliations: { at: string; href: string; role: string; prev: boolean }[];
+  stats: { n: number; suffix: string; label: string }[];
   education: { school: string; degree: string; when: string; courses: string[] };
   skills: Record<string, string[]>;
   personal: { intro: string; hobbies: { name: string; scene?: string; detail: string; quip: string }[]; cafes: { name: string; city: string; note: string }[];

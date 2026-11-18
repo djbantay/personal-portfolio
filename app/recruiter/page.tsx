@@ -1,125 +1,168 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { PROFILE } from "@/lib/profile";
+import RecruiterFx from "./fx";
 import "./recruiter.css";
 
-// Recruiter mode: the whole portfolio on one fast, plain, printable page.
-// Everything comes from lib/profile.ts, so it never drifts from the desktop version.
+// Recruiter mode: everything a recruiter needs above the fold, still playful.
+// All content comes from lib/profile.ts so it never drifts from the desktop.
 
 export const metadata: Metadata = {
-  title: `${PROFILE.name} — Résumé at a glance`,
-  description: `${PROFILE.name}, ${PROFILE.title}. Experience, projects, and skills on one page.`,
-  openGraph: {
-    title: `${PROFILE.name} — Résumé at a glance`,
-    description: `${PROFILE.title}. ${PROFILE.recruiter.openTo}.`,
-    type: "profile",
-  },
+  title: `${PROFILE.name} — recruiter mode`,
+  description: `${PROFILE.name}, ${PROFILE.title}. Selected work, experience, and skills in one fast, interactive page.`,
+  openGraph: { title: `${PROFILE.name} — recruiter mode`, description: `${PROFILE.title}. ${PROFILE.recruiter.openTo}.`, type: "profile" },
 };
 
 const host = (u: string) => u.replace(/^https?:\/\//, "").replace(/\/$/, "");
 
 export default function RecruiterPage() {
-  const P = PROFILE;
-  const L = P.links;
+  const P = PROFILE, L = P.links;
+  const allTech = (t: string[]) => t.join("|");
   return (
-    <div className="rc">
-      {/* this page scrolls and prints like a normal document */}
-      <style>{`html,body{height:auto;overflow:auto;background:#f7f4ec}`}</style>
+    <div className="rx">
+      <style>{`html,body{height:auto;overflow:auto;background:#001428}`}</style>
 
-      <nav className="rc-top" aria-label="Page">
-        <a href="/#desktop" className="rc-boot">◂ Boot the full DANIEL_OS experience</a>
-        <span className="rc-actions">
-          <a href={L.resume} target="_blank" rel="noopener">Résumé PDF</a>
-          <a href={`mailto:${L.email}`} className="rc-cta">Email me</a>
-        </span>
-      </nav>
+      <header className="rx-bar">
+        <a href="/#desktop" className="rx-brand" aria-label="Back to DANIEL_OS">DANIEL_OS<span>//</span></a>
+        <nav aria-label="Sections">
+          <a href="#work"><i>01</i>work</a><a href="#experience"><i>02</i>experience</a>
+          <a href="#skills"><i>03</i>skills</a><a href="#off-clock"><i>04</i>off the clock</a>
+        </nav>
+        <a href="/#desktop" className="rx-toggle" role="switch" aria-checked="true" title="Turn recruiter mode off and boot the full desktop">
+          <span className="rx-knob" aria-hidden="true" /> recruiter mode
+        </a>
+      </header>
 
-      <main className="rc-page">
-        <header className="rc-head">
-          <div className="rc-id">
-            {P.avatar && <img src={P.avatar} alt="" width={64} height={64} className="rc-avatar" />}
-            <div>
-              <h1>{P.name}</h1>
-              <p className="rc-title">{P.title} · {P.location}</p>
-              <p className="rc-open"><b>Open to:</b> {P.recruiter.openTo}</p>
+      <main className="rx-page">
+        {/* ---------- hero ---------- */}
+        <section className="rx-hero" id="top">
+          <div className="rx-hero-l">
+            <p className="rx-prompt"><span>guest@db-1</span>:~$ <b data-type="whoami --short">whoami --short</b><i className="rx-caret" /></p>
+            <h1 data-scramble>{P.name}.</h1>
+            <p className="rx-tag">I turn messy data and fuzzy problems into things people can actually use.</p>
+            <ul className="rx-aff">
+              {P.affiliations.map((a) => (
+                <li key={a.at}>
+                  {a.prev && <span className="rx-prev">prev</span>}
+                  {a.href ? <a href={a.href} target="_blank" rel="noopener">@{a.at.toUpperCase()}</a> : <b>@{a.at.toUpperCase()}</b>}
+                  <span className="rx-role">{a.role}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="rx-links">
+              <a href={L.resume} target="_blank" rel="noopener" className="rx-btn rx-primary">résumé ↗</a>
+              <a href={L.linkedin} target="_blank" rel="noopener" className="rx-btn">linkedin ↗</a>
+              <a href={L.github} target="_blank" rel="noopener" className="rx-btn">github ↗</a>
+              <a href={`mailto:${L.email}`} className="rx-btn">email ↗</a>
+              <button type="button" className="rx-btn rx-copy" data-copy={L.email}>copy email</button>
             </div>
           </div>
-          <ul className="rc-links">
-            <li><span>Email</span><a href={`mailto:${L.email}`}>{L.email}</a></li>
-            <li><span>LinkedIn</span><a href={L.linkedin} target="_blank" rel="noopener">{host(L.linkedin)}</a></li>
-            <li><span>GitHub</span><a href={L.github} target="_blank" rel="noopener">{host(L.github)}</a></li>
-          </ul>
-        </header>
 
-        <section className="rc-tldr" aria-labelledby="tldr">
-          <h2 id="tldr">In 30 seconds</h2>
-          <ul>{P.recruiter.highlights.map((h) => <li key={h}>{h}</li>)}</ul>
+          <aside className="rx-badge" data-tilt aria-label="Access badge">
+            <div className="rx-badge-top"><span>ACCESS BADGE</span><span className="rx-live"><i />online</span></div>
+            <div className="rx-badge-id">
+              {P.avatar && <img src={P.avatar} alt="Daniel's pixel portrait" width={88} height={88} />}
+              <div>
+                <p className="rx-k">holder</p><p className="rx-v">{P.name}</p>
+                <p className="rx-k">clearance</p><p className="rx-v rx-gold">RECRUITER</p>
+                <p className="rx-k">local time</p><p className="rx-v" data-clock>--:--</p>
+              </div>
+            </div>
+            <p className="rx-k">open to</p><p className="rx-v">{P.recruiter.openTo}</p>
+            <p className="rx-k">based in</p><p className="rx-v">{P.location}</p>
+            <div className="rx-barcode" aria-hidden="true">{[...P.handle].map((c) => c.charCodeAt(0).toString(2).padStart(8, "0")).join(" ")}</div>
+            <div className="rx-sheen" aria-hidden="true" />
+          </aside>
         </section>
 
-        <div className="rc-cols">
-          <div className="rc-main">
-            <section aria-labelledby="exp">
-              <h2 id="exp">Experience</h2>
-              {P.experience.map((j) => (
-                <article key={j.org} className="rc-item">
-                  <div className="rc-row">
-                    <h3>{j.role} · <span>{j.org}</span></h3>
-                    <span className="rc-when">{j.when}</span>
-                  </div>
-                  <p className="rc-where">{j.where}</p>
-                  <ul>{j.bullets.map((b) => <li key={b}>{b}</li>)}</ul>
-                </article>
-              ))}
-            </section>
+        {/* ---------- numbers ---------- */}
+        <section className="rx-stats" aria-label="Highlights">
+          {P.stats.map((s) => (
+            <div key={s.label} className="rx-stat" data-reveal>
+              <p className="rx-num"><span data-count={s.n}>{s.n}</span>{s.suffix}</p>
+              <p className="rx-lbl">{s.label}</p>
+            </div>
+          ))}
+        </section>
 
-            <section aria-labelledby="proj">
-              <h2 id="proj">Projects</h2>
-              {P.projects.map((p) => (
-                <article key={p.slug} className="rc-item">
-                  <div className="rc-row">
-                    <h3><a href={`/projects/${p.slug}`}>{p.name}</a></h3>
-                    {p.award && <span className="rc-award">{p.award}</span>}
-                  </div>
-                  <p className="rc-blurb">{p.blurb}</p>
+        {/* ---------- work ---------- */}
+        <section id="work" className="rx-sec">
+          <h2><i>01</i> selected work <span>hover a skill below to see where it was used</span></h2>
+          <div className="rx-cards">
+            {P.projects.map((p, i) => (
+              <article key={p.slug} className="rx-card" data-reveal data-tilt data-tech={allTech(p.tech)}>
+                <div className="rx-card-top"><span>FILE_0{i + 1}</span>{p.award && <span className="rx-award">{p.award}</span>}</div>
+                <h3 data-scramble>{p.name}</h3>
+                <p>{p.blurb}</p>
+                <details>
+                  <summary>show how it works</summary>
                   <ul>{p.details.map((d) => <li key={d}>{d}</li>)}</ul>
-                  <p className="rc-tech">{p.tech.map((t) => <span key={t}>{t}</span>)}</p>
-                  <p className="rc-more">
-                    <a href={`/projects/${p.slug}`}>Full write-up →</a>
-                    {p.repo && <a href={p.repo} target="_blank" rel="noopener">Code ↗</a>}
-                    {p.demo && <a href={p.demo} target="_blank" rel="noopener">Demo ↗</a>}
-                  </p>
-                </article>
-              ))}
-            </section>
+                </details>
+                <p className="rx-chips">{p.tech.map((t) => <span key={t}>{t}</span>)}</p>
+                <a className="rx-more" href={`/projects/${p.slug}`}>read the case study →</a>
+              </article>
+            ))}
           </div>
+        </section>
 
-          <aside className="rc-side">
-            <section aria-labelledby="skills">
-              <h2 id="skills">Skills</h2>
-              {Object.entries(P.skills).map(([group, items]) => (
-                <div key={group} className="rc-skill">
-                  <h3>{group}</h3>
-                  <p className="rc-tech">{items.map((s) => <span key={s}>{s}</span>)}</p>
+        {/* ---------- experience ---------- */}
+        <section id="experience" className="rx-sec">
+          <h2><i>02</i> experience</h2>
+          <ol className="rx-time">
+            {P.experience.map((j) => (
+              <li key={j.org} data-reveal>
+                <div className="rx-when">{j.when}<span>{j.where}</span></div>
+                <div className="rx-job">
+                  <h3>{j.role} <span>@{j.org}</span></h3>
+                  <ul>{j.bullets.slice(0, 2).map((b) => <li key={b}>{b}</li>)}</ul>
+                  {j.bullets.length > 2 && (
+                    <details><summary>+{j.bullets.length - 2} more</summary><ul>{j.bullets.slice(2).map((b) => <li key={b}>{b}</li>)}</ul></details>
+                  )}
                 </div>
-              ))}
-            </section>
-            <section aria-labelledby="edu">
-              <h2 id="edu">Education</h2>
-              <p><b>{P.education.school}</b></p>
-              <p>{P.education.degree}{P.education.when ? ` · ${P.education.when}` : ""}</p>
-              {P.education.courses.length > 0 && <p className="rc-where">{P.education.courses.join(" · ")}</p>}
-            </section>
-            <section aria-labelledby="else" className="rc-human">
-              <h2 id="else">Outside work</h2>
-              <p>{P.personal.hobbies.map((h) => h.name).join(" · ")}</p>
-              <p className="rc-where">Learning {P.personal.learning}. Favorite F1 team: {P.personal.f1Team}.</p>
-            </section>
-          </aside>
-        </div>
+              </li>
+            ))}
+          </ol>
+        </section>
 
-        <footer className="rc-foot">
-          <p>Have 5 more minutes? <a href="/#desktop">Boot DANIEL_OS</a>: a retro desktop with a real terminal, live git log, and a guestbook you sign over ssh.</p>
+        {/* ---------- skills ---------- */}
+        <section id="skills" className="rx-sec">
+          <h2><i>03</i> loaded modules</h2>
+          <div className="rx-skills">
+            {Object.entries(P.skills).map(([g, items]) => (
+              <div key={g} data-reveal>
+                <h3>{g}</h3>
+                <p className="rx-chips">{items.map((s) => <button type="button" key={s} data-skill={s}>{s}</button>)}</p>
+              </div>
+            ))}
+          </div>
+          <p className="rx-usedin" aria-live="polite" data-usedin>hover or tab through a module to see which projects used it.</p>
+          <p className="rx-edu"><b>Education</b> · <a href={P.affiliations[0]?.href || "#"} target="_blank" rel="noopener">{P.education.school}</a> · {P.education.degree}</p>
+        </section>
+
+        {/* ---------- off the clock ---------- */}
+        <section id="off-clock" className="rx-sec">
+          <h2><i>04</i> off the clock</h2>
+          <div className="rx-scenes">
+            {P.personal.hobbies.filter((h) => h.scene).map((h) => (
+              <figure key={h.name} className="rx-scene">
+                <canvas className="scene" data-scene={h.scene} width={64} height={40} aria-hidden="true" />
+                <figcaption><b>{h.name}</b>{h.detail && <span>{h.detail}</span>}</figcaption>
+              </figure>
+            ))}
+          </div>
+          <p className="rx-zh">你好！ {P.personal.learningWhy}</p>
+        </section>
+
+        <footer className="rx-foot">
+          <p>end of transmission. <span>thanks for stopping by.</span></p>
+          <a href="/#desktop" className="rx-btn rx-primary">boot the full DANIEL_OS →</a>
+          <a href="#top" className="rx-btn">↑ back to top</a>
         </footer>
       </main>
+
+      <Script src="/scenes.js" strategy="afterInteractive" />
+      <Script src="/cursor.js" strategy="afterInteractive" />
+      <RecruiterFx />
     </div>
   );
 }

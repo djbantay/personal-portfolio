@@ -223,6 +223,7 @@ function renderAbout(b){
 | | | | |  _ \\   ${esc(DATA.title)}
 | |_| | | |_) |  ${esc(DATA.location)}
 |____/  |____/   status: <span style="color:#7be08a">online</span></pre>
+  ${(DATA.affiliations||[]).length?`<p class="aff">${DATA.affiliations.map(a=>`${a.prev?'<span class="dim">prev </span>':''}${a.href?`<a href="${esc(a.href)}" target="_blank" rel="noopener">@${esc(a.at.toUpperCase())}</a>`:`<b>@${esc(a.at.toUpperCase())}</b>`} <span class="dim">${esc(a.role)}</span>`).join(" &nbsp;·&nbsp; ")}</p>`:""}
   <p style="margin-top:14px">${esc(DATA.bio)}</p>
   <p class="sub" style="margin-top:16px">education</p>
   <p><b style="color:var(--gold)">${esc(DATA.education.school)}</b><br>${esc(DATA.education.degree)}${DATA.education.when?" · "+esc(DATA.education.when):""}</p>
