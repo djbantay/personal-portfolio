@@ -58,32 +58,18 @@ const ICONS = {
   doc:   P(["gggggggg....","gwwwwwwgg...","gwwwwwwgwg..","gwwwwwwggggg","gwnnnnnwwwwg","gwwwwwwwwwwg","gwnnnnnnnnwg","gwwwwwwwwwwg","gwnnnnnnwwwg","gwwwwwwwwwwg","gggggggggggg","............"],C),
 };
 
-/* ---------- digital rain (binary) ---------- */
+/* ---------- background: the dot-matrix bear (public/dotbear.js) ----------
+   Replaces the old falling binary. Same API the rest of the OS already uses: setColors, toggle, boost. */
 const rain = (() => {
-  const cv = $("#rain"), cx = cv.getContext("2d");
-  let cols=[], fs=18, on=true, speed=1; let RC={head:"#C9921A",t1:"#24506d",t2:"#1a3a52",fade:"rgba(3,8,15,.2)"};
-  const glyphs = "0101010110";
-  function size(){ cv.width=cv.offsetWidth; cv.height=cv.offsetHeight; fs = mobile()?14:18;
-    cols = Array.from({length:Math.ceil(cv.width/fs)},()=>({y:Math.random()*cv.height/fs - 20, v:.25+Math.random()*.55, trail:[] })); }
-  function frame(){
-    if(on||document.body.classList.contains("saver")){
-      cx.fillStyle=RC.fade; cx.fillRect(0,0,cv.width,cv.height);
-      cx.font=`${fs}px VT323, monospace`;
-      cols.forEach((c,i)=>{
-        const ch = Math.random()<.04 ? "ABCDEF8"[Math.random()*7|0] : glyphs[Math.random()*glyphs.length|0];
-        const x=i*fs, y=c.y*fs;
-        cx.fillStyle = Math.random()<.5 ? RC.t1 : RC.t2; cx.shadowBlur=0;
-        cx.fillText(glyphs[Math.random()*glyphs.length|0], x, y-fs);
-        cx.fillStyle=RC.head; cx.shadowColor=RC.head; cx.shadowBlur=10;
-        cx.fillText(ch,x,y); cx.shadowBlur=0;
-        c.y += c.v*speed;
-        if(y>cv.height && Math.random()>.975){ c.y=Math.random()*-20; c.v=.25+Math.random()*.55; }
-      });
-    }
-    requestAnimationFrame(frame);
-  }
-  addEventListener("resize",size); size(); frame();
-  return { setColors(c){ RC={...RC,...c}; }, toggle(){ on=!on; cv.style.opacity = on? "":"0"; return on; }, boost(v){ speed=v; }, el:cv };
+  let impl=null, pend={boost:1,colors:null,on:true};
+  const make=()=>{ if(impl) return; if(!window.DotBear){ setTimeout(make,100); return; }
+    impl=window.DotBear($("#rain"), { anchorX: mobile() ? .5 : .56, anchorY: .56, height: .82, alpha: .12 });
+    impl.boost(pend.boost); if(pend.colors) impl.setColors(pend.colors); if(!pend.on) impl.toggle(); };
+  make();
+  return { el:$("#rain"),
+    setColors(c){ pend.colors=c; impl&&impl.setColors(c); },
+    toggle(){ pend.on=!pend.on; impl&&impl.toggle(); return pend.on; },
+    boost(v){ pend.boost=v; impl&&impl.boost(v); } };
 })();
 
 /* ---------- boot sequence ---------- */
@@ -115,7 +101,7 @@ async function boot(){
 
 /* ---------- window manager ---------- */
 /* each window type gets its own accent so overlapping windows are easy to tell apart */
-const ACCENTS={hobbies:"#C9A2FF",about:"#FDB515",projects:"#FDB515",experience:"#6FB7F0",skills:"#7BE08A",terminal:"#E9E4D4",contact:"#FF8FB8",resume:"#E9E4D4",guestbook:"#FFB65C",secret:"#FF7A6B"};
+const ACCENTS={hobbies:"#FDB515",about:"#FDB515",projects:"#FDB515",experience:"#FDB515",skills:"#FDB515",terminal:"#E9E4D4",contact:"#FDB515",resume:"#E9E4D4",guestbook:"#FDB515",secret:"#FDB515"};
 
 /* clean mode: no scanlines, rain or flicker (auto-on for prefers-reduced-motion) */
 function setClean(v){ document.body.classList.toggle("clean",v); const b=$("#fx"); if(b){ b.textContent=v?"fx off":"fx on"; b.setAttribute("aria-pressed",String(!v)); } try{ localStorage.setItem("clean",v?"1":"0"); }catch(e){} }
@@ -469,7 +455,7 @@ function renderTerminal(b){
     date:()=>print(new Date().toString()),
     echo:a=>print(esc(a.join(" "))),
     binary:a=>print(toBin(a.join(" ")||"hello")),
-    matrix:()=>print(rain.toggle()?"rain: on":"rain: off","ok"),
+    matrix:()=>print(rain.toggle()?"bear: on":"bear: off","ok"),
     sudo:()=>print(`[sudo] password for guest: \n<span class="e">guest is not in the sudoers file. This incident will be reported.</span>`),
     rm:()=>print("rm: refusing to remove '/' — this portfolio is load-bearing.","e"),
     hack:()=>hack(print),
@@ -590,8 +576,8 @@ addEventListener("keydown",e=>{
 });
 function toggle8bit(){
   const on=document.body.classList.toggle("eightbit");
-  if(on){ setSound(true); rain.setColors({head:"#FFEC27",t1:"#FF77A8",t2:"#29ADFF",fade:"rgba(29,43,83,.2)"}); Sound.seq([523,659,784,1047,0,784,1047],.08); }
-  else { rain.setColors({head:"#FDB515",t1:"#3B7EA1",t2:"#2a5f80",fade:"rgba(0,20,40,.16)"}); Sound.seq([1047,784,659,523],.08); }
+  if(on){ setSound(true); rain.setColors({head:"#FFEC27"}); Sound.seq([523,659,784,1047,0,784,1047],.08); }
+  else { rain.setColors({head:"#FDB515"}); Sound.seq([1047,784,659,523],.08); }
   const ov=$("#overlay"); ov.innerHTML=`<div class="big glow">8-BIT MODE: ${on?"ON":"OFF"}</div><div style="color:var(--dim)">${on?"enter the code again to exit":"back to normal"}</div>`; ov.style.display="flex";
   clearTimeout(toggle8bit.t); toggle8bit.t=setTimeout(()=>ov.style.display="none",1500);
 }

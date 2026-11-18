@@ -3,7 +3,8 @@ import { useEffect } from "react";
 
 type Scene = ((c: CanvasRenderingContext2D, f: number, hov: boolean) => void) & { size?: [number, number] };
 type BearKit = { walk: HTMLCanvasElement[]; sit: HTMLCanvasElement; sleep: (c: CanvasRenderingContext2D, f: number, awake: boolean) => void };
-type W = Window & { HOBBY_SCENES?: Record<string, Scene> & { W: number; H: number }; BEAR?: BearKit };
+type DotBearApi = { set: (o: Record<string, unknown>) => void };
+type W = Window & { HOBBY_SCENES?: Record<string, Scene> & { W: number; H: number }; BEAR?: BearKit; DotBear?: (cv: HTMLCanvasElement, o: Record<string, unknown>) => DotBearApi };
 
 // Everything interactive on the portfolio page, wired to data-attributes in page.tsx.
 export default function RecruiterFx() {
@@ -21,7 +22,24 @@ export default function RecruiterFx() {
       if (push) { const u = new URL(location.href); if (mode === "recruiter") u.searchParams.set("recruiter", "true"); else u.searchParams.delete("recruiter"); history.replaceState(null, "", u); }
       document.title = mode === "recruiter" ? "Daniel Bantay — recruiter mode" : "Daniel Bantay — portfolio";
       if (mode === "explore") requestAnimationFrame(() => document.querySelectorAll("[data-reveal]").forEach((e) => io.observe(e)));
+      bg?.set(bgPos(mode));
     };
+    let bg: DotBearApi | undefined;
+    const bgPos = (mode = root.dataset.mode) => innerWidth < 860 ? { anchorX: .5, anchorY: .6, height: .6, alpha: .12 }
+      : mode === "recruiter" ? { anchorX: .76, anchorY: .54, height: .74, alpha: .12 } : { anchorX: .5, anchorY: .56, height: .86, alpha: .07 };
+    const keys: Record<string, string | (() => void)> = {
+      r: (document.querySelector<HTMLAnchorElement>(".rx-r-links a[href$='.pdf']")?.href) || "",
+      e: (document.querySelector<HTMLAnchorElement>(".rx-r-links a[href^='mailto:']")?.href) || "",
+      g: (document.querySelector<HTMLAnchorElement>(".rx-r-links a[href*='github']")?.href) || "",
+      l: (document.querySelector<HTMLAnchorElement>(".rx-r-links a[href*='linkedin']")?.href) || "",
+      x: () => setMode("explore", true),
+    };
+    on(document, "keydown", (ev) => {
+      const e = ev as KeyboardEvent; if (root.dataset.mode !== "recruiter" || e.metaKey || e.ctrlKey || e.altKey) return;
+      if ((e.target as Element).closest("input, textarea, [contenteditable]")) return;
+      const k = keys[e.key.toLowerCase()]; if (!k) return; e.preventDefault();
+      if (typeof k === "function") { k(); window.scrollTo({ top: 0 }); } else if (k.startsWith("mailto:")) location.href = k; else window.open(k, "_blank", "noopener");
+    });
     if (toggle) on(toggle, "click", () => { setMode(root.dataset.mode === "recruiter" ? "explore" : "recruiter", true); window.scrollTo({ top: 0, behavior: calm() ? "auto" : "smooth" }); });
 
     // ---------- live clocks ----------
@@ -110,7 +128,10 @@ export default function RecruiterFx() {
     // ---------- canvases: scenes, walking guides, sleeper ----------
     const boot = () => {
       const w = window as W, S = w.HOBBY_SCENES, B = w.BEAR;
-      if (!S || !B) { if (alive) setTimeout(boot, 120); return; }
+      if (!S || !B || !w.DotBear) { if (alive) setTimeout(boot, 120); return; }
+      const bgCanvas = document.querySelector<HTMLCanvasElement>("canvas[data-dotbear]");
+      if (bgCanvas) bg = w.DotBear(bgCanvas, bgPos());
+      on(window, "resize", () => bg?.set(bgPos()));
 
       const scenes = [...document.querySelectorAll<HTMLCanvasElement>("canvas.scene")].map((cv) => {
         const fn = S[cv.dataset.scene || ""] as Scene | undefined; const host = cv.closest("figure, .rx-card, li") || cv;

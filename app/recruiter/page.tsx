@@ -48,8 +48,7 @@ export default function RecruiterPage() {
       <script dangerouslySetInnerHTML={{ __html: `try{if(/[?&]recruiter=(1|true)/.test(location.search))document.currentScript.parentElement.dataset.mode="recruiter"}catch(e){}` }} />
       <style>{`html,body{height:auto;overflow:auto;background:#001428}`}</style>
       {/* the dot-matrix bear: a quiet signature behind everything */}
-      <div className="rx-dots rx-dots-a" aria-hidden="true" />
-      <div className="rx-dots rx-dots-b" aria-hidden="true" />
+      <canvas className="rx-bg" data-dotbear aria-hidden="true" />
 
       <header className="rx-bar">
         <a href="/#desktop" className="rx-brand" aria-label="Back to DANIEL_OS">DANIEL_OS<span>//</span></a>
@@ -172,56 +171,78 @@ export default function RecruiterPage() {
         </div>
 
         {/* =================== RECRUITER VIEW =================== */}
+        {/* nonchalant, lowercase, to the point: the minimal mono frame from the Figma file */}
         <div className="rx-rows">
-          <div className="rx-r-head">
-            <div className="rx-r-links">
-              <a href={L.resume} target="_blank" rel="noopener">RÉSUMÉ ↗</a>
-              <a href={L.linkedin} target="_blank" rel="noopener">LINKEDIN ↗</a>
-              <a href={`mailto:${L.email}`}>EMAIL ↗</a>
-              <a href={L.github} target="_blank" rel="noopener">GITHUB ↗</a>
-              <button type="button" data-copy={L.email}>COPY EMAIL</button>
+          <header className="rx-r-head">
+            <h1>{P.name.toLowerCase()}<i className="rx-r-cur" aria-hidden="true">_</i></h1>
+            <p className="rx-r-sub">cs @ uc berkeley · ml, data &amp; full-stack · <i className="rx-dot" /> <span data-clock>--:--</span></p>
+            <nav className="rx-r-links" aria-label="Links">
+              <a href={L.resume} target="_blank" rel="noopener">[résumé]</a>
+              <a href={`mailto:${L.email}`}>[email]</a>
+              <a href={L.github} target="_blank" rel="noopener">[github]</a>
+              <a href={L.linkedin} target="_blank" rel="noopener">[linkedin]</a>
+              <button type="button" data-copy={L.email}>[copy email]</button>
+            </nav>
+            <p className="rx-r-keys" aria-hidden="true">keys: <kbd>r</kbd> résumé · <kbd>e</kbd> email · <kbd>g</kbd> github · <kbd>l</kbd> linkedin · <kbd>x</kbd> explore</p>
+          </header>
+
+          <section className="rx-r-sec">
+            <h2>about</h2>
+            <ul className="rx-r-dash">
+              <li>computer science at <a href={P.affiliations[0]?.href} target="_blank" rel="noopener">uc berkeley</a></li>
+              <li>{P.recruiter.openTo.toLowerCase()}</li>
+              <li>i turn messy data and fuzzy problems into things people can actually use</li>
+              <li className="rx-dim">now: learning mandarin, chasing v-grades, drinking mind coffee</li>
+            </ul>
+          </section>
+
+          <section className="rx-r-sec">
+            <h2>things i&apos;ve done</h2>
+            <ul className="rx-r-dash">{P.recruiter.highlights.map((h) => <li key={h}>{h.replace(/\.$/, "").toLowerCase()}</li>)}</ul>
+          </section>
+
+          <section className="rx-r-sec">
+            <h2>work</h2>
+            <ul className="rx-r-work">
+              {projects.map((p) => (
+                <li key={p.slug}>
+                  <a href={`/projects/${p.slug}`} className="rx-r-row">
+                    <span className="rx-r-thumb"><Thumb slug={p.slug} name={p.name} media={p.media} small /></span>
+                    <span className="rx-r-txt">
+                      <b>{p.name.toLowerCase()}</b>
+                      <span>{p.blurb.toLowerCase()}</span>
+                    </span>
+                    <span className="rx-r-go">{p.slug === "daniel-os" ? "[process ↗]" : "[case study ↗]"}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="rx-r-sec">
+            <h2>experience</h2>
+            <ul className="rx-r-lead">
+              {P.experience.map((j) => (
+                <li key={j.org}><b>{j.org.toLowerCase()}</b><span>· {j.role.replace(" (Contract)", "").toLowerCase()}</span><i /><em>{j.when.toLowerCase().replace(/ 20(\d\d)/g, " '$1")}</em></li>
+              ))}
+              <li><b>uc berkeley</b><span>· b.a. computer science</span><i /><em>eecs</em></li>
+            </ul>
+          </section>
+
+          <section className="rx-r-sec">
+            <h2>stack</h2>
+            <p className="rx-r-line">{Object.values(P.skills).flat().slice(0, 16).join(" · ").toLowerCase()}</p>
+          </section>
+
+          <section className="rx-r-sec">
+            <h2>off the clock</h2>
+            <div className="rx-r-strip">
+              {P.personal.hobbies.filter((h) => h.scene).map((h) => (
+                <figure key={h.name} title={h.name}><canvas className="scene" data-scene={h.scene} width={64} height={40} aria-hidden="true" /></figure>
+              ))}
             </div>
-            <div className="rx-r-id">
-              <canvas className="rx-guide rx-guide-static" width={22} height={16} aria-hidden="true" />
-              <div>
-                <h1>{P.name}</h1>
-                <p>{P.title}. {P.recruiter.openTo}. {P.affiliations.filter((a) => a.prev).map((a) => `Prev ${a.role} @ ${a.at}`).join(". ")}.</p>
-                <p className="rx-r-meta"><i className="rx-dot" /> online · <span data-clock>--:--</span> · {P.location}</p>
-              </div>
-            </div>
-          </div>
-
-          <h2 className="rx-r-label">experience</h2>
-          <ul className="rx-r-list">
-            {P.experience.map((j) => (
-              <li key={j.org}>
-                <div><b>{j.org}</b><span>{j.role} · {j.where}</span></div>
-                <span className="rx-r-right">{j.when}</span>
-              </li>
-            ))}
-          </ul>
-
-          <h2 className="rx-r-label">selected work</h2>
-          <ul className="rx-r-list rx-r-work">
-            {projects.map((p) => (
-              <li key={p.slug}>
-                <a href={`/projects/${p.slug}`} className="rx-r-thumb" tabIndex={-1} aria-hidden="true"><Thumb slug={p.slug} name={p.name} media={p.media} small /></a>
-                <div><a href={`/projects/${p.slug}`} className="rx-r-title">{p.name}</a><span>{p.tech.slice(0, 4).join(" · ")}{p.award ? ` · ${p.award}` : ""}</span></div>
-                <a href={`/projects/${p.slug}`} className="rx-r-right rx-r-cta">{p.slug === "daniel-os" ? "process ↗" : "case study ↗"}</a>
-              </li>
-            ))}
-          </ul>
-
-          <h2 className="rx-r-label">skills</h2>
-          <p className="rx-r-line">{Object.values(P.skills).flat().slice(0, 18).join(" · ")}</p>
-
-          <h2 className="rx-r-label">education</h2>
-          <ul className="rx-r-list">
-            <li><div><b>{P.education.school}</b><span>{P.education.degree}</span></div><a className="rx-r-right" href={P.affiliations[0]?.href} target="_blank" rel="noopener">EECS ↗</a></li>
-          </ul>
-
-          <h2 className="rx-r-label">off the clock</h2>
-          <p className="rx-r-line rx-dim">{P.personal.hobbies.map((h) => h.name).join(" · ")} · learning {P.personal.learning}</p>
+            <p className="rx-r-line rx-dim">bouldering · gym · golf at franklin canyon · volleyball · diesel &amp; buck mason · mind coffee · ferrari</p>
+          </section>
         </div>
 
         {/* =================== SHARED FOOTER =================== */}
@@ -239,6 +260,7 @@ export default function RecruiterPage() {
       </main>
 
       <Script src="/scenes.js" strategy="afterInteractive" />
+      <Script src="/dotbear.js" strategy="afterInteractive" />
       <Script src="/cursor.js" strategy="afterInteractive" />
       <RecruiterFx />
     </div>
